@@ -35,3 +35,5 @@ Paste as text, not a screenshot
 - [ ] Sometimes
 - [ ] Happened once
 
+
+Be sure to include all the details that might be needed to solve your issue, try to minimize the amount of back and forth that would be necessary to solve this issue.
