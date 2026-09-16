@@ -4,3 +4,17 @@
  * This is a general purpose Gradle build.
  * Learn more about Gradle by exploring our Samples at https://docs.gradle.org/9.7.1/samples
  */
+repositories {
+  maven {
+    name = "papermc"
+    url = uri("https://repo.papermc.io/repository/maven-public/")
+  }
+}
+
+dependencies {
+  compileOnly("io.papermc.paper:paper-api:26.2.build.+")
+}
+
+java {
+  toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+}
