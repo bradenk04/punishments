@@ -1,0 +1,5 @@
+name: Punishment
+version: '1.0'
+main: com.bradenkennedy.punishment.PunishmentPlugin
+description: Simple and effective punishment plugin
+api-version: '26.2'
