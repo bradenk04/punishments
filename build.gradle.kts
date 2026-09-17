@@ -1,12 +1,16 @@
+plugins {
+  java
+}
+
 repositories {
+  mavenCentral()
   maven {
-    name = "papermc"
-    url = uri("https://repo.papermc.io/repository/maven-public/")
+    url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
   }
 }
 
 dependencies {
-  compileOnly("io.papermc.paper:paper-api:26.2.build.+")
+  compileOnly("org.spigotmc:spigot-api:26.2-R0.1-SNAPSHOT")
 }
 
 java {
