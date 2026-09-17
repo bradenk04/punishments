@@ -1,5 +1,6 @@
 plugins {
   java
+  id("com.gradleup.shadow") version "8.3.5"
 }
 
 repositories {
@@ -18,6 +19,8 @@ dependencies {
   implementation("net.kyori:adventure-api:4.17.0")
   implementation("net.kyori:adventure-text-minimessage:4.17.0")
   implementation("net.kyori:adventure-platform-bukkit:4.3.4")
+  implementation("com.h2database:h2:2.5.250")
+  implementation("com.j256.ormlite:ormlite-jdbc:6.1")
 }
 
 java {
@@ -26,6 +29,11 @@ java {
 
 tasks.withType<JavaCompile> {
   options.encoding = "UTF-8"
+}
+
+tasks.shadowJar {
+  relocate("com.h2database", "com.bradenkennedy.punishment.libs.h2")
+  relocate("net.kyori", "com.bradenkennedy.punishment.libs.kyori") 
 }
 
 tasks.jar {
