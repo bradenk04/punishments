@@ -11,7 +11,7 @@ public record Punishment(
         @NotNull PunishmentType type,
         @NotNull PunishmentIssuer issuer,
         @Nullable String reason,
-        @Nullable Instant expiry
-) {
+        @Nullable Instant expiry,
+        @NotNull boolean revoked) {
 
 }
