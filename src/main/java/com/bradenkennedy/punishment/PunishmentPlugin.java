@@ -1,12 +1,17 @@
 package com.bradenkennedy.punishment;
 
+import com.bradenkennedy.punishment.storage.H2PunishmentRepository;
+import com.bradenkennedy.punishment.storage.PunishmentRepository;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.sql.SQLException;
+
 public class PunishmentPlugin extends JavaPlugin {
 
     private static PunishmentPlugin instance;
+    private static PunishmentRepository dataRepository;
 
     private BukkitAudiences adventure;
     private MiniMessage miniMessage;
@@ -23,6 +28,12 @@ public class PunishmentPlugin extends JavaPlugin {
         instance = this;
         this.adventure = BukkitAudiences.create(this);
         this.miniMessage = MiniMessage.miniMessage();
+
+        try {
+            PunishmentPlugin.dataRepository = new H2PunishmentRepository(this.getDataFolder());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -56,4 +67,6 @@ public class PunishmentPlugin extends JavaPlugin {
     public static MiniMessage getMiniMessage() {
         return getInstance().miniMessage();
     }
+
+    public static PunishmentRepository getDataRepository() { return dataRepository; };
 }
