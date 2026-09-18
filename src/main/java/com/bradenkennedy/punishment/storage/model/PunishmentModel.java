@@ -3,6 +3,7 @@ package com.bradenkennedy.punishment.storage.model;
 import java.time.Instant;
 import java.util.UUID;
 
+import com.bradenkennedy.punishment.storage.InstantPersister;
 import org.jetbrains.annotations.Nullable;
 
 import com.bradenkennedy.punishment.api.model.Punishment;
@@ -25,13 +26,13 @@ public class PunishmentModel {
     @DatabaseField
     private UUID issuerId;
 
-    @DatabaseField
+    @DatabaseField(persisterClass = InstantPersister.class)
     private Instant issuedAt;
 
     @DatabaseField
     private String reason;
 
-    @DatabaseField
+    @DatabaseField(persisterClass = InstantPersister.class)
     private Instant expiry;
 
     @DatabaseField
@@ -43,7 +44,7 @@ public class PunishmentModel {
     @DatabaseField
     private UUID revokedBy;
 
-    @DatabaseField
+    @DatabaseField(persisterClass = InstantPersister.class)
     private Instant revokedAt;
 
     public PunishmentModel() {

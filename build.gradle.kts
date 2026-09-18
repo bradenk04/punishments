@@ -1,6 +1,7 @@
 plugins {
   java
-  id("com.gradleup.shadow") version "8.3.5"
+  id("com.gradleup.shadow") version "9.6.1"
+  id("xyz.jpenilla.run-paper") version "3.1.0"
 }
 
 repositories {
@@ -24,7 +25,7 @@ dependencies {
 }
 
 java {
-  toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+  toolchain.languageVersion.set(JavaLanguageVersion.of(25))
 }
 
 tasks.withType<JavaCompile> {
@@ -43,3 +44,7 @@ tasks.jar {
     configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
   })
 }
+
+tasks.runServer {
+    minecraftVersion("26.2")
+  }
