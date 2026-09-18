@@ -38,22 +38,23 @@ public class PunishmentModel {
     private boolean revoked;
 
     @DatabaseField
-    private String revokeReason;
+    private String revokedReason;
 
     @DatabaseField
     private UUID revokedBy;
 
-    public PunishmentModel() {}
+    public PunishmentModel() {
+    }
+
     public PunishmentModel(
-        UUID id,
-        PunishmentType type,
-        PunishmentIssuer issuer,
-        String reason,
-        Instant expiry,
-        boolean revoked,
-        @Nullable String revokeReason,
-        @Nullable UUID revokedBy
-    ) {
+            UUID id,
+            PunishmentType type,
+            PunishmentIssuer issuer,
+            String reason,
+            Instant expiry,
+            boolean revoked,
+            @Nullable String revokeReason,
+            @Nullable UUID revokedBy) {
         this.id = id;
         this.type = type;
         this.issuedAt = issuer.issuedAt();
@@ -67,15 +68,93 @@ public class PunishmentModel {
 
     public PunishmentModel(Punishment punishment) {
         this(
-            punishment.id(),
-            punishment.type(),
-            punishment.issuer(),
-            punishment.reason(),
-            punishment.expiry(),
-            punishment.revoked(),
-            null,
-            null
-        );
+                punishment.id(),
+                punishment.type(),
+                punishment.issuer(),
+                punishment.reason(),
+                punishment.expiry(),
+                punishment.revoked(),
+                null,
+                null);
     }
-    
+
+    public UUID getUuid() {
+        return this.id;
+    }
+
+    public void setUuid(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getTarget() {
+        return this.target;
+    }
+
+    public void setTarget(UUID target) {
+        this.target = target;
+    }
+
+    public PunishmentType getType() {
+        return this.type;
+    }
+
+    public void setType(PunishmentType type) {
+        this.type = type;
+    }
+
+    public UUID getIssuerUuid() {
+        return this.issuerId;
+    }
+
+    public void setIssuerUuid(UUID issuerUuid) {
+        this.issuerId = issuerUuid;
+    }
+
+    public Instant getIssuedAt() {
+        return this.issuedAt;
+    }
+
+    public void setIssuedAt(Instant issueTime) {
+        this.issuedAt = issueTime;
+    }
+
+    public String getReason() {
+        return this.reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public Instant getExpiry() {
+        return this.expiry;
+    }
+
+    public void setExpiry(Instant expiry) {
+        this.expiry = expiry;
+    }
+
+    public boolean isRevoked() {
+        return this.revoked;
+    }
+
+    public void setIsRevoked(boolean revoked) {
+        this.revoked = revoked;
+    }
+
+    public String getRevokedReason() {
+        return this.revokedReason;
+    }
+
+    public void setRevokedReason(String reason) {
+        this.revokedReason = reason;
+    }
+
+    public UUID getRevokedBy() {
+        return this.revokedBy;
+    }
+
+    public void setRevokedBy(UUID revokedBy) {
+        this.revokedBy = revokedBy;
+    }
 }
