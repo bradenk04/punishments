@@ -9,7 +9,7 @@ import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 
 public interface PunishmentRepository {
-    void save(Punishment punishment);
+    void create(Punishment punishment);
 
     void revoke(UUID punishmentId, UUID revokedBy, String reason, Instant atTime);
 

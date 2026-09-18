@@ -43,6 +43,9 @@ public class PunishmentModel {
     @DatabaseField
     private UUID revokedBy;
 
+    @DatabaseField
+    private Instant revokedAt;
+
     public PunishmentModel() {
     }
 
@@ -53,8 +56,9 @@ public class PunishmentModel {
             String reason,
             Instant expiry,
             boolean revoked,
-            @Nullable String revokeReason,
-            @Nullable UUID revokedBy) {
+            @Nullable String revokedReason,
+            @Nullable UUID revokedBy,
+            @Nullable Instant revokedAt) {
         this.id = id;
         this.type = type;
         this.issuedAt = issuer.issuedAt();
@@ -62,8 +66,9 @@ public class PunishmentModel {
         this.reason = reason;
         this.expiry = expiry;
         this.revoked = revoked;
-        this.revokeReason = revokeReason;
+        this.revokedReason = revokedReason;
         this.revokedBy = revokedBy;
+        this.revokedAt = revokedAt;
     }
 
     public PunishmentModel(Punishment punishment) {
@@ -74,6 +79,7 @@ public class PunishmentModel {
                 punishment.reason(),
                 punishment.expiry(),
                 punishment.revoked(),
+                null,
                 null,
                 null);
     }
@@ -156,5 +162,12 @@ public class PunishmentModel {
 
     public void setRevokedBy(UUID revokedBy) {
         this.revokedBy = revokedBy;
+    }
+
+    public Punishment toPunishment() {
+        return new Punishment(this.id, this.target, this.type, new PunishmentIssuer(
+                this.issuerId,
+                this.issuedAt
+        ), this.reason, this.expiry, this.revoked);
     }
 }
