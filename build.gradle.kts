@@ -22,6 +22,9 @@ dependencies {
   implementation("com.h2database:h2:2.5.252")
   implementation("com.j256.ormlite:ormlite-jdbc:6.1")
   implementation("org.incendo:cloud-paper:2.0.1")
+
+  testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")
 }
 
 java {
@@ -30,6 +33,10 @@ java {
 
 tasks.withType<JavaCompile> {
   options.encoding = "UTF-8"
+}
+
+tasks.test {
+  useJUnitPlatform()
 }
 
 tasks.shadowJar {
