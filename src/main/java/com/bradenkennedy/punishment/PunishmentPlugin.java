@@ -1,10 +1,13 @@
 package com.bradenkennedy.punishment;
 
+import com.bradenkennedy.punishment.command.PunishmentCommands;
 import com.bradenkennedy.punishment.storage.H2PunishmentRepository;
 import com.bradenkennedy.punishment.storage.PunishmentRepository;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.paper.LegacyPaperCommandManager;
 
 import java.sql.SQLException;
 
@@ -34,6 +37,8 @@ public class PunishmentPlugin extends JavaPlugin {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        PunishmentCommands.register(LegacyPaperCommandManager.createNative(this, ExecutionCoordinator.asyncCoordinator()));
     }
 
     @Override

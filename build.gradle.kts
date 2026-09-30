@@ -1,6 +1,6 @@
 plugins {
   java
-  id("com.gradleup.shadow") version "8.3.5"
+  id("com.gradleup.shadow") version "9.6.1"
 }
 
 repositories {
@@ -16,11 +16,12 @@ repositories {
 dependencies {
   compileOnly("org.spigotmc:spigot-api:26.2-R0.1-SNAPSHOT")
 
-  implementation("net.kyori:adventure-api:4.17.0")
-  implementation("net.kyori:adventure-text-minimessage:4.17.0")
-  implementation("net.kyori:adventure-platform-bukkit:4.3.4")
-  implementation("com.h2database:h2:2.5.250")
+  implementation("net.kyori:adventure-api:4.26.1")
+  implementation("net.kyori:adventure-text-minimessage:4.26.1")
+  implementation("net.kyori:adventure-platform-bukkit:4.4.1")
+  implementation("com.h2database:h2:2.5.252")
   implementation("com.j256.ormlite:ormlite-jdbc:6.1")
+  implementation("org.incendo:cloud-paper:2.0.1")
 }
 
 java {
@@ -33,7 +34,8 @@ tasks.withType<JavaCompile> {
 
 tasks.shadowJar {
   relocate("com.h2database", "com.bradenkennedy.punishment.libs.h2")
-  relocate("net.kyori", "com.bradenkennedy.punishment.libs.kyori") 
+  relocate("net.kyori", "com.bradenkennedy.punishment.libs.kyori")
+  relocate("org.incendo.cloud", "com.bradenkennedy.punishment.libs.cloud")
 }
 
 tasks.jar {
