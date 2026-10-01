@@ -56,14 +56,19 @@ public class H2PunishmentRepository implements PunishmentRepository {
     @Override
     public Optional<Punishment> findActive(UUID player, PunishmentType type) {
         try {
-            PunishmentModel model = punishmentDao.queryBuilder()
+            Instant now = Instant.now();
+            return punishmentDao.queryBuilder()
                     .where()
                     .eq("target", player)
                     .and()
                     .eq("type", type)
-                    .queryForFirst();
-            if (model == null) return Optional.empty();
-            return Optional.of(model.toPunishment());
+                    .and()
+                    .eq("revoked", false)
+                    .query()
+                    .stream()
+                    .map(PunishmentModel::toPunishment)
+                    .filter(p -> p.expiry() == null || p.expiry().isAfter(now))
+                    .findFirst();
         } catch (SQLException e) {
             return Optional.empty();
         }

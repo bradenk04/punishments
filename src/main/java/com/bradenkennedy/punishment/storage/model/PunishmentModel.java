@@ -82,6 +82,7 @@ public class PunishmentModel {
                 null,
                 null,
                 null);
+        this.target = punishment.target();
     }
 
     public UUID getUuid() {
