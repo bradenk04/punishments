@@ -16,4 +16,8 @@ public interface PunishmentRepository {
     Optional<Punishment> findActive(UUID player, PunishmentType type);
 
     List<Punishment> findHistory(UUID player);
+
+    List<Punishment> findUnacknowledgedWarnings(UUID player);
+
+    void acknowledge(UUID punishmentId);
 }

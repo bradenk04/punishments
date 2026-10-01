@@ -2,7 +2,9 @@ package com.bradenkennedy.punishment;
 
 import com.bradenkennedy.punishment.command.MuteCommands;
 import com.bradenkennedy.punishment.command.PunishmentCommands;
+import com.bradenkennedy.punishment.command.WarnCommands;
 import com.bradenkennedy.punishment.listener.MuteListener;
+import com.bradenkennedy.punishment.listener.WarnListener;
 import com.bradenkennedy.punishment.storage.H2PunishmentRepository;
 import com.bradenkennedy.punishment.storage.PunishmentRepository;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -42,10 +44,12 @@ public class PunishmentPlugin extends JavaPlugin {
 
         saveDefaultConfig();
         getServer().getPluginManager().registerEvents(new MuteListener(getConfig().getStringList("mute.blocked-commands")), this);
+        getServer().getPluginManager().registerEvents(new WarnListener(), this);
 
         var commandManager = LegacyPaperCommandManager.createNative(this, ExecutionCoordinator.asyncCoordinator());
         PunishmentCommands.register(commandManager);
         MuteCommands.register(commandManager);
+        WarnCommands.register(commandManager);
     }
 
     @Override

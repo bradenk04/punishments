@@ -29,8 +29,9 @@ public final class PunishmentCommands {
                         audience.sendMessage(PunishmentPlugin.getMiniMessage().deserialize("<gray>No punishments found for <white><name>",
                                 Placeholder.unparsed("name", Objects.requireNonNullElse(target.getName(), target.getUniqueId().toString()))));
                     }
-                    history.forEach(p -> audience.sendMessage(PunishmentPlugin.getMiniMessage().deserialize("<red><type></red> <gray><reason><revoked>",
+                    history.forEach(p -> audience.sendMessage(PunishmentPlugin.getMiniMessage().deserialize("<red><type></red> <dark_gray><id></dark_gray> <gray><reason><revoked>",
                             Placeholder.unparsed("type", p.type().name()),
+                            Placeholder.unparsed("id", p.id().toString()),
                             Placeholder.unparsed("reason", Objects.requireNonNullElse(p.reason(), "No reason")),
                             Placeholder.unparsed("revoked", p.revoked() ? " (revoked)" : ""))));
                 }));

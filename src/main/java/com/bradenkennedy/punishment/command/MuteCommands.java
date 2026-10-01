@@ -6,10 +6,8 @@ import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.bradenkennedy.punishment.command.parser.DurationParser;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.context.CommandContext;
 import org.jetbrains.annotations.Nullable;
@@ -19,14 +17,14 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
+import static com.bradenkennedy.punishment.command.CommandSupport.announce;
+import static com.bradenkennedy.punishment.command.CommandSupport.issuerId;
+import static com.bradenkennedy.punishment.command.CommandSupport.reply;
 import static com.bradenkennedy.punishment.command.parser.DurationParser.durationParser;
 import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser;
 import static org.incendo.cloud.parser.standard.StringParser.greedyFlagYieldingStringParser;
 
 public final class MuteCommands {
-
-    private static final UUID CONSOLE_ID = new UUID(0, 0);
-    private static final String NOTIFY_PERMISSION = "punishments.notify";
 
     private MuteCommands() {
     }
@@ -79,30 +77,5 @@ public final class MuteCommands {
                     announce(ctx, "<green><name> was unmuted by <staff>", target);
                 },
                 () -> reply(ctx, "<red><name> is not muted", target));
-    }
-
-    private static void reply(CommandContext<CommandSender> ctx, String message, OfflinePlayer target) {
-        PunishmentPlugin.getAdventure().sender(ctx.sender())
-                .sendMessage(PunishmentPlugin.getMiniMessage().deserialize(message, Placeholder.unparsed("name", nameOf(target))));
-    }
-
-    private static void announce(CommandContext<CommandSender> ctx, String message, OfflinePlayer target, TagResolver... extra) {
-        boolean silent = ctx.flags().isPresent("silent");
-        var resolver = TagResolver.builder()
-                .resolver(Placeholder.unparsed("name", nameOf(target)))
-                .resolver(Placeholder.unparsed("staff", ctx.sender().getName()))
-                .resolvers(extra)
-                .build();
-        PunishmentPlugin.getAdventure()
-                .filter(s -> !silent || s == ctx.sender() || s.hasPermission(NOTIFY_PERMISSION))
-                .sendMessage(PunishmentPlugin.getMiniMessage().deserialize((silent ? "<gray>[S]</gray> " : "") + message, resolver));
-    }
-
-    private static String nameOf(OfflinePlayer player) {
-        return Objects.requireNonNullElse(player.getName(), player.getUniqueId().toString());
-    }
-
-    private static UUID issuerId(CommandSender sender) {
-        return sender instanceof Player player ? player.getUniqueId() : CONSOLE_ID;
     }
 }

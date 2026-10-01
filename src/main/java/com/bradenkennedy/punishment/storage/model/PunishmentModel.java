@@ -46,6 +46,9 @@ public class PunishmentModel {
     @DatabaseField
     private Instant revokedAt;
 
+    @DatabaseField
+    private boolean acknowledged;
+
     public PunishmentModel() {
     }
 

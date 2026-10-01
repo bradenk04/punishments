@@ -75,6 +75,37 @@ public class H2PunishmentRepository implements PunishmentRepository {
     }
 
     @Override
+    public List<Punishment> findUnacknowledgedWarnings(UUID player) {
+        try {
+            return punishmentDao.queryBuilder()
+                    .where()
+                    .eq("target", player)
+                    .and()
+                    .eq("type", PunishmentType.WARN)
+                    .and()
+                    .eq("revoked", false)
+                    .and()
+                    .eq("acknowledged", false)
+                    .query()
+                    .stream()
+                    .map(PunishmentModel::toPunishment)
+                    .toList();
+        } catch (SQLException e) {
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public void acknowledge(UUID punishmentId) {
+        try {
+            var update = punishmentDao.updateBuilder();
+            update.updateColumnValue("acknowledged", true).where().idEq(punishmentId);
+            update.update();
+        } catch (SQLException e) {
+        }
+    }
+
+    @Override
     public List<Punishment> findHistory(UUID player) {
         try {
             List<PunishmentModel> models = punishmentDao.queryBuilder()
