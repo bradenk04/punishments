@@ -1,0 +1,11 @@
+language: en_US
+mute:
+  blocked-commands:
+    - msg
+    - tell
+    - w
+    - whisper
+    - r
+    - reply
+    - me
+    - teammsg

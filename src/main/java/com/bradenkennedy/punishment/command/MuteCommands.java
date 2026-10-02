@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Objects;
 import java.util.UUID;
 
 import static com.bradenkennedy.punishment.command.CommandSupport.announce;
@@ -55,7 +54,7 @@ public final class MuteCommands {
         OfflinePlayer target = ctx.get("player");
         var repository = PunishmentPlugin.getDataRepository();
         if (repository.findActive(target.getUniqueId(), PunishmentType.MUTE).isPresent()) {
-            reply(ctx, "<red><name> is already muted", target);
+            reply(ctx, "mute.already-muted", target);
             return;
         }
         Instant now = Instant.now();
@@ -63,9 +62,10 @@ public final class MuteCommands {
         repository.create(new Punishment(UUID.randomUUID(), target.getUniqueId(), PunishmentType.MUTE,
                 new PunishmentIssuer(issuerId(ctx.sender()), now), reason,
                 duration == null ? null : now.plus(duration), false));
-        announce(ctx, "<red><name> was muted by <staff> for <duration>: <reason>", target,
-                Placeholder.unparsed("duration", duration == null ? "ever" : DurationParser.format(duration)),
-                Placeholder.unparsed("reason", Objects.requireNonNullElse(reason, "No reason")));
+        var config = PunishmentPlugin.getPluginConfig();
+        announce(ctx, "mute.announce", target,
+                Placeholder.unparsed("duration", duration == null ? config.raw("permanent-duration") : DurationParser.format(duration)),
+                config.reason(reason));
     }
 
     private static void unmute(CommandContext<CommandSender> ctx) {
@@ -74,8 +74,8 @@ public final class MuteCommands {
         repository.findActive(target.getUniqueId(), PunishmentType.MUTE).ifPresentOrElse(
                 mute -> {
                     repository.revoke(mute.id(), issuerId(ctx.sender()), null, Instant.now());
-                    announce(ctx, "<green><name> was unmuted by <staff>", target);
+                    announce(ctx, "unmute.announce", target);
                 },
-                () -> reply(ctx, "<red><name> is not muted", target));
+                () -> reply(ctx, "unmute.not-muted", target));
     }
 }

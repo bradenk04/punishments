@@ -19,21 +19,23 @@ final class CommandSupport {
     private CommandSupport() {
     }
 
-    static void reply(CommandContext<CommandSender> ctx, String message, OfflinePlayer target) {
+    static void reply(CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target) {
         PunishmentPlugin.getAdventure().sender(ctx.sender())
-                .sendMessage(PunishmentPlugin.getMiniMessage().deserialize(message, Placeholder.unparsed("name", nameOf(target))));
+                .sendMessage(PunishmentPlugin.getPluginConfig().message(messageKey, Placeholder.unparsed("name", nameOf(target))));
     }
 
-    static void announce(CommandContext<CommandSender> ctx, String message, OfflinePlayer target, TagResolver... extra) {
+    static void announce(CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target, TagResolver... extra) {
         boolean silent = ctx.flags().isPresent("silent");
         var resolver = TagResolver.builder()
                 .resolver(Placeholder.unparsed("name", nameOf(target)))
                 .resolver(Placeholder.unparsed("staff", ctx.sender().getName()))
                 .resolvers(extra)
                 .build();
+        var config = PunishmentPlugin.getPluginConfig();
+        var message = config.message(messageKey, resolver);
         PunishmentPlugin.getAdventure()
                 .filter(s -> !silent || s == ctx.sender() || s.hasPermission(NOTIFY_PERMISSION))
-                .sendMessage(PunishmentPlugin.getMiniMessage().deserialize((silent ? "<gray>[S]</gray> " : "") + message, resolver));
+                .sendMessage(silent ? config.message("silent-prefix").append(message) : message);
     }
 
     static String nameOf(OfflinePlayer player) {

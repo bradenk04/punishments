@@ -5,7 +5,6 @@ import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.bradenkennedy.punishment.listener.WarnListener;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.incendo.cloud.CommandManager;
@@ -49,7 +48,7 @@ public final class WarnCommands {
         String reason = ctx.get("reason");
         PunishmentPlugin.getDataRepository().create(new Punishment(UUID.randomUUID(), target.getUniqueId(),
                 PunishmentType.WARN, new PunishmentIssuer(issuerId(ctx.sender()), Instant.now()), reason, null, false));
-        announce(ctx, "<yellow><name> was warned by <staff>: <reason>", target, Placeholder.unparsed("reason", reason));
+        announce(ctx, "warn.announce", target, PunishmentPlugin.getPluginConfig().reason(reason));
         if (target.getPlayer() != null) {
             WarnListener.deliverPending(target.getPlayer());
         }
@@ -66,8 +65,8 @@ public final class WarnCommands {
                 .ifPresentOrElse(
                         warning -> {
                             repository.revoke(warning.id(), issuerId(ctx.sender()), null, Instant.now());
-                            announce(ctx, "<green>A warning for <name> was removed by <staff>", target);
+                            announce(ctx, "unwarn.announce", target);
                         },
-                        () -> reply(ctx, "<red><name> has no matching warning", target));
+                        () -> reply(ctx, "unwarn.not-found", target));
     }
 }

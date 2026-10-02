@@ -1,0 +1,20 @@
+silent-prefix: "<gray>[S]</gray> "
+no-reason: "No reason"
+permanent-duration: "ever"
+mute:
+  already-muted: "<red><name> is already muted"
+  announce: "<red><name> was muted by <staff> for <duration>: <reason>"
+  notice: "<red>You are muted for <remaining>"
+unmute:
+  announce: "<green><name> was unmuted by <staff>"
+  not-muted: "<red><name> is not muted"
+warn:
+  announce: "<yellow><name> was warned by <staff>: <reason>"
+  notice: "<yellow>You have been warned: <reason>"
+unwarn:
+  announce: "<green>A warning for <name> was removed by <staff>"
+  not-found: "<red><name> has no matching warning"
+history:
+  empty: "<gray>No punishments found for <white><name>"
+  entry: "<red><type></red> <dark_gray><id></dark_gray> <gray><reason><revoked>"
+  revoked-suffix: " (revoked)"

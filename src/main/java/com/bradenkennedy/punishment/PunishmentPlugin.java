@@ -19,6 +19,7 @@ public class PunishmentPlugin extends JavaPlugin {
 
     private static PunishmentPlugin instance;
     private static PunishmentRepository dataRepository;
+    private static PluginConfig pluginConfig;
 
     private BukkitAudiences adventure;
     private MiniMessage miniMessage;
@@ -42,8 +43,8 @@ public class PunishmentPlugin extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
-        saveDefaultConfig();
-        getServer().getPluginManager().registerEvents(new MuteListener(getConfig().getStringList("mute.blocked-commands")), this);
+        PunishmentPlugin.pluginConfig = new PluginConfig(this);
+        getServer().getPluginManager().registerEvents(new MuteListener(pluginConfig.blockedMuteCommands()), this);
         getServer().getPluginManager().registerEvents(new WarnListener(), this);
 
         var commandManager = LegacyPaperCommandManager.createNative(this, ExecutionCoordinator.asyncCoordinator());
@@ -84,5 +85,7 @@ public class PunishmentPlugin extends JavaPlugin {
         return getInstance().miniMessage();
     }
 
-    public static PunishmentRepository getDataRepository() { return dataRepository; };
+    public static PunishmentRepository getDataRepository() { return dataRepository; }
+
+    public static PluginConfig getPluginConfig() { return pluginConfig; }
 }

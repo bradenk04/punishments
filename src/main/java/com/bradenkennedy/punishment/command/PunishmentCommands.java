@@ -7,8 +7,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.incendo.cloud.CommandManager;
 
-import java.util.Objects;
-
+import static com.bradenkennedy.punishment.command.CommandSupport.nameOf;
 import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser;
 
 public final class PunishmentCommands {
@@ -25,15 +24,15 @@ public final class PunishmentCommands {
                     OfflinePlayer target = ctx.get("player");
                     Audience audience = PunishmentPlugin.getAdventure().sender(ctx.sender());
                     var history = PunishmentPlugin.getDataRepository().findHistory(target.getUniqueId());
+                    var config = PunishmentPlugin.getPluginConfig();
                     if (history.isEmpty()) {
-                        audience.sendMessage(PunishmentPlugin.getMiniMessage().deserialize("<gray>No punishments found for <white><name>",
-                                Placeholder.unparsed("name", Objects.requireNonNullElse(target.getName(), target.getUniqueId().toString()))));
+                        audience.sendMessage(config.message("history.empty", Placeholder.unparsed("name", nameOf(target))));
                     }
-                    history.forEach(p -> audience.sendMessage(PunishmentPlugin.getMiniMessage().deserialize("<red><type></red> <dark_gray><id></dark_gray> <gray><reason><revoked>",
+                    history.forEach(p -> audience.sendMessage(config.message("history.entry",
                             Placeholder.unparsed("type", p.type().name()),
                             Placeholder.unparsed("id", p.id().toString()),
-                            Placeholder.unparsed("reason", Objects.requireNonNullElse(p.reason(), "No reason")),
-                            Placeholder.unparsed("revoked", p.revoked() ? " (revoked)" : ""))));
+                            config.reason(p.reason()),
+                            Placeholder.unparsed("revoked", p.revoked() ? config.raw("history.revoked-suffix") : ""))));
                 }));
     }
 }

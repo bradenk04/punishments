@@ -39,9 +39,10 @@ public final class MuteListener implements Listener {
     private boolean isMuted(Player player) {
         return PunishmentPlugin.getDataRepository().findActive(player.getUniqueId(), PunishmentType.MUTE)
                 .map(mute -> {
-                    String remaining = mute.expiry() == null ? "ever" : DurationParser.format(Duration.between(Instant.now(), mute.expiry()));
-                    PunishmentPlugin.getAdventure().player(player).sendMessage(PunishmentPlugin.getMiniMessage()
-                            .deserialize("<red>You are muted for <remaining>", Placeholder.unparsed("remaining", remaining)));
+                    var config = PunishmentPlugin.getPluginConfig();
+                    String remaining = mute.expiry() == null ? config.raw("permanent-duration") : DurationParser.format(Duration.between(Instant.now(), mute.expiry()));
+                    PunishmentPlugin.getAdventure().player(player)
+                            .sendMessage(config.message("mute.notice", Placeholder.unparsed("remaining", remaining)));
                     return true;
                 })
                 .orElse(false);
