@@ -1,13 +1,5 @@
 package com.bradenkennedy.punishment.storage;
 
-import java.io.File;
-import java.sql.SQLException;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.bradenkennedy.punishment.storage.model.PunishmentModel;
@@ -16,6 +8,13 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import java.io.File;
+import java.sql.SQLException;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class H2PunishmentRepository implements PunishmentRepository {
     public ConnectionSource connectionSource;
@@ -58,7 +57,8 @@ public class H2PunishmentRepository implements PunishmentRepository {
     public Optional<Punishment> findActive(UUID player, PunishmentType type) {
         try {
             Instant now = Instant.now();
-            return punishmentDao.queryBuilder()
+            return punishmentDao
+                    .queryBuilder()
                     .where()
                     .eq("target", player)
                     .and()
@@ -78,7 +78,8 @@ public class H2PunishmentRepository implements PunishmentRepository {
     @Override
     public List<Punishment> findUnacknowledgedWarnings(UUID player) {
         try {
-            return punishmentDao.queryBuilder()
+            return punishmentDao
+                    .queryBuilder()
                     .where()
                     .eq("target", player)
                     .and()
@@ -109,10 +110,8 @@ public class H2PunishmentRepository implements PunishmentRepository {
     @Override
     public List<Punishment> findHistory(UUID player) {
         try {
-            List<PunishmentModel> models = punishmentDao.queryBuilder()
-                    .where()
-                    .eq("target", player)
-                    .query();
+            List<PunishmentModel> models =
+                    punishmentDao.queryBuilder().where().eq("target", player).query();
             if (models == null || models.isEmpty()) return new ArrayList<>();
             return models.stream().map(PunishmentModel::toPunishment).toList();
         } catch (SQLException e) {

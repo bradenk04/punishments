@@ -1,19 +1,18 @@
 package com.bradenkennedy.punishment.storage.model;
 
-import java.sql.SQLException;
-import java.time.Instant;
-
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.types.BaseDataType;
 import com.j256.ormlite.support.DatabaseResults;
+import java.sql.SQLException;
+import java.time.Instant;
 
 /** Stores {@link Instant} as epoch milliseconds in a BIGINT column. */
 public class InstantPersister extends BaseDataType {
     private static final InstantPersister INSTANCE = new InstantPersister();
 
     private InstantPersister() {
-        super(SqlType.LONG, new Class<?>[] { Instant.class });
+        super(SqlType.LONG, new Class<?>[] {Instant.class});
     }
 
     // ORMLite looks this up reflectively when used via persisterClass.

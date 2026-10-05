@@ -1,19 +1,18 @@
 package com.bradenkennedy.punishment;
 
 import com.bradenkennedy.punishment.command.parser.DurationParser;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 public final class PluginConfig {
 
@@ -55,7 +54,10 @@ public final class PluginConfig {
     }
 
     public TagResolver remaining(@Nullable Instant expiry) {
-        return Placeholder.unparsed("remaining", expiry == null ? raw("permanent-duration")
-                : DurationParser.format(Duration.between(Instant.now(), expiry)));
+        return Placeholder.unparsed(
+                "remaining",
+                expiry == null
+                        ? raw("permanent-duration")
+                        : DurationParser.format(Duration.between(Instant.now(), expiry)));
     }
 }
