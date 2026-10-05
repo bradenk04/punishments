@@ -2,6 +2,7 @@ silent-prefix: "<gray>[S]</gray> "
 no-reason: "No reason"
 permanent-duration: "ever"
 exempt: "<red><name> cannot be punished"
+cancelled: "<red>The action on <name> was cancelled"
 mute:
   already-active: "<red><name> is already muted"
   announce: "<red><name> was muted by <staff> for <duration>: <reason>"

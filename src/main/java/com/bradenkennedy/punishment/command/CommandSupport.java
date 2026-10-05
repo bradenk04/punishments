@@ -1,13 +1,20 @@
 package com.bradenkennedy.punishment.command;
 
 import com.bradenkennedy.punishment.PunishmentPlugin;
+import com.bradenkennedy.punishment.api.events.PlayerPunishedEvent;
+import com.bradenkennedy.punishment.api.events.PlayerPunishmentRevokedEvent;
+import com.bradenkennedy.punishment.api.model.Punishment;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.incendo.cloud.context.CommandContext;
 
+import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -37,6 +44,30 @@ final class CommandSupport {
         PunishmentPlugin.getAdventure()
                 .filter(s -> !silent || s == ctx.sender() || s.hasPermission(NOTIFY_PERMISSION))
                 .sendMessage(silent ? config.message("silent-prefix").append(message) : message);
+    }
+
+    static boolean tryPunish(CommandContext<CommandSender> ctx, OfflinePlayer target, Punishment punishment) {
+        if (cancelled(ctx, target, new PlayerPunishedEvent(punishment))) {
+            return false;
+        }
+        PunishmentPlugin.getDataRepository().create(punishment);
+        return true;
+    }
+
+    static boolean tryRevoke(CommandContext<CommandSender> ctx, OfflinePlayer target, Punishment punishment) {
+        if (cancelled(ctx, target, new PlayerPunishmentRevokedEvent(punishment))) {
+            return false;
+        }
+        PunishmentPlugin.getDataRepository().revoke(punishment.id(), issuerId(ctx.sender()), null, Instant.now());
+        return true;
+    }
+
+    private static <T extends Event & Cancellable> boolean cancelled(CommandContext<CommandSender> ctx, OfflinePlayer target, T event) {
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            reply(ctx, "cancelled", target);
+        }
+        return event.isCancelled();
     }
 
     static String nameOf(OfflinePlayer player) {

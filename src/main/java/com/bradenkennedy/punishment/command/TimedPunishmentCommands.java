@@ -21,6 +21,8 @@ import static com.bradenkennedy.punishment.command.CommandSupport.announce;
 import static com.bradenkennedy.punishment.command.CommandSupport.isExempt;
 import static com.bradenkennedy.punishment.command.CommandSupport.issuerId;
 import static com.bradenkennedy.punishment.command.CommandSupport.reply;
+import static com.bradenkennedy.punishment.command.CommandSupport.tryPunish;
+import static com.bradenkennedy.punishment.command.CommandSupport.tryRevoke;
 import static com.bradenkennedy.punishment.command.parser.DurationParser.durationParser;
 import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser;
 import static org.incendo.cloud.parser.standard.StringParser.greedyFlagYieldingStringParser;
@@ -70,7 +72,9 @@ public final class TimedPunishmentCommands {
         var punishment = new Punishment(UUID.randomUUID(), target.getUniqueId(), type,
                 new PunishmentIssuer(issuerId(ctx.sender()), now), reason,
                 duration == null ? null : now.plus(duration), false);
-        repository.create(punishment);
+        if (!tryPunish(ctx, target, punishment)) {
+            return;
+        }
         var config = PunishmentPlugin.getPluginConfig();
         announce(ctx, name + ".announce", target,
                 Placeholder.unparsed("duration", duration == null ? config.raw("permanent-duration") : DurationParser.format(duration)),
@@ -84,8 +88,9 @@ public final class TimedPunishmentCommands {
         var repository = PunishmentPlugin.getDataRepository();
         repository.findActive(target.getUniqueId(), type).ifPresentOrElse(
                 active -> {
-                    repository.revoke(active.id(), issuerId(ctx.sender()), null, Instant.now());
-                    announce(ctx, name + ".announce", target);
+                    if (tryRevoke(ctx, target, active)) {
+                        announce(ctx, name + ".announce", target);
+                    }
                 },
                 () -> reply(ctx, name + ".not-active", target));
     }

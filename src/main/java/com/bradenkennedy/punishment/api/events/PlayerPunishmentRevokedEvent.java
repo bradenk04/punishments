@@ -1,23 +1,30 @@
 package com.bradenkennedy.punishment.api.events;
 
+import com.bradenkennedy.punishment.api.model.Punishment;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.bradenkennedy.punishment.api.model.Punishment;
-
 public class PlayerPunishmentRevokedEvent extends Event implements Cancellable {
-    private boolean cancelled = false;
-    private Punishment punishment;
-    public static final HandlerList handlers = new HandlerList();
+
+    private static final HandlerList HANDLERS = new HandlerList();
+
+    private final Punishment punishment;
+    private boolean cancelled;
 
     public PlayerPunishmentRevokedEvent(Punishment punishment) {
+        super(!Bukkit.isPrimaryThread());
         this.punishment = punishment;
     }
 
+    public Punishment getPunishment() {
+        return punishment;
+    }
+
     @Override
-    public HandlerList getHandlers() {
-        return handlers;
+    public boolean isCancelled() {
+        return cancelled;
     }
 
     @Override
@@ -26,7 +33,11 @@ public class PlayerPunishmentRevokedEvent extends Event implements Cancellable {
     }
 
     @Override
-    public boolean isCancelled() {
-        return this.cancelled;
+    public HandlerList getHandlers() {
+        return HANDLERS;
+    }
+
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
     }
 }

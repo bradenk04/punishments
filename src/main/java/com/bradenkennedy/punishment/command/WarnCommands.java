@@ -18,6 +18,8 @@ import java.util.UUID;
 import static com.bradenkennedy.punishment.command.CommandSupport.announce;
 import static com.bradenkennedy.punishment.command.CommandSupport.issuerId;
 import static com.bradenkennedy.punishment.command.CommandSupport.reply;
+import static com.bradenkennedy.punishment.command.CommandSupport.tryPunish;
+import static com.bradenkennedy.punishment.command.CommandSupport.tryRevoke;
 import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser;
 import static org.incendo.cloud.parser.standard.StringParser.greedyFlagYieldingStringParser;
 import static org.incendo.cloud.parser.standard.UUIDParser.uuidParser;
@@ -46,8 +48,11 @@ public final class WarnCommands {
     private static void warn(CommandContext<CommandSender> ctx) {
         OfflinePlayer target = ctx.get("player");
         String reason = ctx.get("reason");
-        PunishmentPlugin.getDataRepository().create(new Punishment(UUID.randomUUID(), target.getUniqueId(),
-                PunishmentType.WARN, new PunishmentIssuer(issuerId(ctx.sender()), Instant.now()), reason, null, false));
+        var warning = new Punishment(UUID.randomUUID(), target.getUniqueId(),
+                PunishmentType.WARN, new PunishmentIssuer(issuerId(ctx.sender()), Instant.now()), reason, null, false);
+        if (!tryPunish(ctx, target, warning)) {
+            return;
+        }
         announce(ctx, "warn.announce", target, PunishmentPlugin.getPluginConfig().reason(reason));
         if (target.getPlayer() != null) {
             WarnListener.deliverPending(target.getPlayer());
@@ -57,15 +62,15 @@ public final class WarnCommands {
     private static void unwarn(CommandContext<CommandSender> ctx) {
         OfflinePlayer target = ctx.get("player");
         Optional<UUID> id = ctx.optional("id");
-        var repository = PunishmentPlugin.getDataRepository();
-        repository.findHistory(target.getUniqueId()).stream()
+        PunishmentPlugin.getDataRepository().findHistory(target.getUniqueId()).stream()
                 .filter(p -> p.type() == PunishmentType.WARN && !p.revoked())
                 .filter(p -> id.map(p.id()::equals).orElse(true))
                 .max(Comparator.comparing(p -> p.issuer().issuedAt()))
                 .ifPresentOrElse(
                         warning -> {
-                            repository.revoke(warning.id(), issuerId(ctx.sender()), null, Instant.now());
-                            announce(ctx, "unwarn.announce", target);
+                            if (tryRevoke(ctx, target, warning)) {
+                                announce(ctx, "unwarn.announce", target);
+                            }
                         },
                         () -> reply(ctx, "unwarn.not-found", target));
     }
