@@ -1,6 +1,7 @@
 plugins {
   java
   id("com.gradleup.shadow") version "9.6.1"
+  id("xyz.jpenilla.run-paper") version "3.1.0"
 }
 
 repositories {
@@ -37,6 +38,15 @@ tasks.withType<JavaCompile> {
 
 tasks.test {
   useJUnitPlatform()
+}
+
+tasks.runServer {
+  minecraftVersion("26.2")
+  javaLauncher.set(javaToolchains.launcherFor {
+    languageVersion.set(JavaLanguageVersion.of(25))
+  })
+  jvmArgs("-Dcom.mojang.eula.agree=true")
+  pluginJars.setFrom(tasks.shadowJar.flatMap { it.archiveFile })
 }
 
 tasks.shadowJar {
