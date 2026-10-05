@@ -32,7 +32,8 @@ public final class PunishmentCommands {
                             Placeholder.unparsed("type", p.type().name()),
                             Placeholder.unparsed("id", p.id().toString()),
                             config.reason(p.reason()),
-                            Placeholder.unparsed("revoked", p.revoked() ? config.raw("history.revoked-suffix") : ""))));
+                            Placeholder.unparsed("revoked", p.revoked() ? config.raw("history.revoked-suffix")
+                                    : p.expired() ? config.raw("history.expired-suffix") : ""))));
                 }));
     }
 }

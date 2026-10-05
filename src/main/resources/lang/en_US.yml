@@ -18,3 +18,4 @@ history:
   empty: "<gray>No punishments found for <white><name>"
   entry: "<red><type></red> <dark_gray><id></dark_gray> <gray><reason><revoked>"
   revoked-suffix: " (revoked)"
+  expired-suffix: " (expired)"
