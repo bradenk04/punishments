@@ -40,6 +40,7 @@ public final class WarnCommands {
         manager.command(manager.commandBuilder("unwarn")
                 .required("player", offlinePlayerParser())
                 .optional("id", uuidParser())
+                .optional("reason", greedyFlagYieldingStringParser())
                 .flag(silent)
                 .permission("punishments.unwarn")
                 .handler(WarnCommands::unwarn));
@@ -53,7 +54,7 @@ public final class WarnCommands {
         if (!tryPunish(ctx, target, warning)) {
             return;
         }
-        announce(ctx, "warn.announce", target, PunishmentPlugin.getPluginConfig().reason(reason));
+        announce(ctx, "warn.announce", target);
         if (target.getPlayer() != null) {
             WarnListener.deliverPending(target.getPlayer());
         }

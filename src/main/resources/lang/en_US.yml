@@ -8,20 +8,20 @@ mute:
   announce: "<red><name> was muted by <staff> for <duration>: <reason>"
   notice: "<red>You are muted for <remaining>"
 unmute:
-  announce: "<green><name> was unmuted by <staff>"
+  announce: "<green><name> was unmuted by <staff>: <reason>"
   not-active: "<red><name> is not muted"
 ban:
   already-active: "<red><name> is already banned"
   announce: "<red><name> was banned by <staff> for <duration>: <reason>"
   screen: "<red>You are banned for <remaining><newline><gray><reason>"
 unban:
-  announce: "<green><name> was unbanned by <staff>"
+  announce: "<green><name> was unbanned by <staff>: <reason>"
   not-active: "<red><name> is not banned"
 warn:
   announce: "<yellow><name> was warned by <staff>: <reason>"
   notice: "<yellow>You have been warned: <reason>"
 unwarn:
-  announce: "<green>A warning for <name> was removed by <staff>"
+  announce: "<green>A warning for <name> was removed by <staff>: <reason>"
   not-found: "<red><name> has no matching warning"
 history:
   empty: "<gray>No punishments found for <white><name>"

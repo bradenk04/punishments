@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.incendo.cloud.context.CommandContext;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -34,12 +35,13 @@ final class CommandSupport {
 
     static void announce(CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target, TagResolver... extra) {
         boolean silent = ctx.flags().isPresent("silent");
+        var config = PunishmentPlugin.getPluginConfig();
         var resolver = TagResolver.builder()
                 .resolver(Placeholder.unparsed("name", nameOf(target)))
                 .resolver(Placeholder.unparsed("staff", ctx.sender().getName()))
+                .resolver(config.reason(reasonOf(ctx)))
                 .resolvers(extra)
                 .build();
-        var config = PunishmentPlugin.getPluginConfig();
         var message = config.message(messageKey, resolver);
         PunishmentPlugin.getAdventure()
                 .filter(s -> !silent || s == ctx.sender() || s.hasPermission(NOTIFY_PERMISSION))
@@ -58,7 +60,7 @@ final class CommandSupport {
         if (cancelled(ctx, target, new PlayerPunishmentRevokedEvent(punishment))) {
             return false;
         }
-        PunishmentPlugin.getDataRepository().revoke(punishment.id(), issuerId(ctx.sender()), null, Instant.now());
+        PunishmentPlugin.getDataRepository().revoke(punishment.id(), issuerId(ctx.sender()), reasonOf(ctx), Instant.now());
         return true;
     }
 
@@ -68,6 +70,10 @@ final class CommandSupport {
             reply(ctx, "cancelled", target);
         }
         return event.isCancelled();
+    }
+
+    static @Nullable String reasonOf(CommandContext<CommandSender> ctx) {
+        return ctx.<String>optional("reason").orElse(null);
     }
 
     static String nameOf(OfflinePlayer player) {

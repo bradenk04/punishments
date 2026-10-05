@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 import static com.bradenkennedy.punishment.command.CommandSupport.announce;
 import static com.bradenkennedy.punishment.command.CommandSupport.isExempt;
 import static com.bradenkennedy.punishment.command.CommandSupport.issuerId;
+import static com.bradenkennedy.punishment.command.CommandSupport.reasonOf;
 import static com.bradenkennedy.punishment.command.CommandSupport.reply;
 import static com.bradenkennedy.punishment.command.CommandSupport.tryPunish;
 import static com.bradenkennedy.punishment.command.CommandSupport.tryRevoke;
@@ -51,6 +52,7 @@ public final class TimedPunishmentCommands {
         manager.command(manager.commandBuilder("un" + name)
                 .required("player", offlinePlayerParser())
                 .flag(silent)
+                .optional("reason", greedyFlagYieldingStringParser())
                 .permission("punishments.un" + name)
                 .handler(ctx -> revoke(ctx, type)));
     }
@@ -68,17 +70,15 @@ public final class TimedPunishmentCommands {
             return;
         }
         Instant now = Instant.now();
-        String reason = ctx.<String>optional("reason").orElse(null);
         var punishment = new Punishment(UUID.randomUUID(), target.getUniqueId(), type,
-                new PunishmentIssuer(issuerId(ctx.sender()), now), reason,
+                new PunishmentIssuer(issuerId(ctx.sender()), now), reasonOf(ctx),
                 duration == null ? null : now.plus(duration), false);
         if (!tryPunish(ctx, target, punishment)) {
             return;
         }
         var config = PunishmentPlugin.getPluginConfig();
         announce(ctx, name + ".announce", target,
-                Placeholder.unparsed("duration", duration == null ? config.raw("permanent-duration") : DurationParser.format(duration)),
-                config.reason(reason));
+                Placeholder.unparsed("duration", duration == null ? config.raw("permanent-duration") : DurationParser.format(duration)));
         enforce.accept(punishment);
     }
 
