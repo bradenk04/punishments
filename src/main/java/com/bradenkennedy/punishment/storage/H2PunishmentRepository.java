@@ -47,6 +47,7 @@ public class H2PunishmentRepository implements PunishmentRepository {
             model.setIsRevoked(true);
             model.setRevokedBy(revokedBy);
             model.setRevokedReason(reason);
+            model.setRevokedAt(atTime);
 
             punishmentDao.update(model);
         } catch (SQLException e) {

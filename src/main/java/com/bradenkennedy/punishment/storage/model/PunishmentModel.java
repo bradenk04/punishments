@@ -168,6 +168,10 @@ public class PunishmentModel {
         this.revokedBy = revokedBy;
     }
 
+    public void setRevokedAt(Instant revokedAt) {
+        this.revokedAt = revokedAt;
+    }
+
     public Punishment toPunishment() {
         return new Punishment(this.id, this.target, this.type, new PunishmentIssuer(
                 this.issuerId,
