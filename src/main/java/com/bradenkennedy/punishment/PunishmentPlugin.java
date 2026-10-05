@@ -1,8 +1,10 @@
 package com.bradenkennedy.punishment;
 
-import com.bradenkennedy.punishment.command.MuteCommands;
+import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.bradenkennedy.punishment.command.PunishmentCommands;
+import com.bradenkennedy.punishment.command.TimedPunishmentCommands;
 import com.bradenkennedy.punishment.command.WarnCommands;
+import com.bradenkennedy.punishment.listener.BanListener;
 import com.bradenkennedy.punishment.listener.MuteListener;
 import com.bradenkennedy.punishment.listener.WarnListener;
 import com.bradenkennedy.punishment.storage.H2PunishmentRepository;
@@ -46,10 +48,12 @@ public class PunishmentPlugin extends JavaPlugin {
         PunishmentPlugin.pluginConfig = new PluginConfig(this);
         getServer().getPluginManager().registerEvents(new MuteListener(pluginConfig.blockedMuteCommands()), this);
         getServer().getPluginManager().registerEvents(new WarnListener(), this);
+        getServer().getPluginManager().registerEvents(new BanListener(), this);
 
         var commandManager = LegacyPaperCommandManager.createNative(this, ExecutionCoordinator.asyncCoordinator());
         PunishmentCommands.register(commandManager);
-        MuteCommands.register(commandManager);
+        TimedPunishmentCommands.register(commandManager, PunishmentType.MUTE, mute -> {});
+        TimedPunishmentCommands.register(commandManager, PunishmentType.BAN, BanListener::kick);
         WarnCommands.register(commandManager);
     }
 

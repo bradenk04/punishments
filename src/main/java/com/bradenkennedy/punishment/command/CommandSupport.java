@@ -15,6 +15,7 @@ final class CommandSupport {
 
     private static final UUID CONSOLE_ID = new UUID(0, 0);
     private static final String NOTIFY_PERMISSION = "punishments.notify";
+    private static final String EXEMPT_PERMISSION = "punishments.exempt";
 
     private CommandSupport() {
     }
@@ -40,6 +41,11 @@ final class CommandSupport {
 
     static String nameOf(OfflinePlayer player) {
         return Objects.requireNonNullElse(player.getName(), player.getUniqueId().toString());
+    }
+
+    static boolean isExempt(OfflinePlayer target) {
+        Player online = target.getPlayer();
+        return target.isOp() || (online != null && online.hasPermission(EXEMPT_PERMISSION));
     }
 
     static UUID issuerId(CommandSender sender) {

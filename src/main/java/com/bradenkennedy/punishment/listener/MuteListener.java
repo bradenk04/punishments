@@ -2,16 +2,12 @@ package com.bradenkennedy.punishment.listener;
 
 import com.bradenkennedy.punishment.PunishmentPlugin;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
-import com.bradenkennedy.punishment.command.parser.DurationParser;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,9 +36,7 @@ public final class MuteListener implements Listener {
         return PunishmentPlugin.getDataRepository().findActive(player.getUniqueId(), PunishmentType.MUTE)
                 .map(mute -> {
                     var config = PunishmentPlugin.getPluginConfig();
-                    String remaining = mute.expiry() == null ? config.raw("permanent-duration") : DurationParser.format(Duration.between(Instant.now(), mute.expiry()));
-                    PunishmentPlugin.getAdventure().player(player)
-                            .sendMessage(config.message("mute.notice", Placeholder.unparsed("remaining", remaining)));
+                    PunishmentPlugin.getAdventure().player(player).sendMessage(config.message("mute.notice", config.remaining(mute.expiry())));
                     return true;
                 })
                 .orElse(false);

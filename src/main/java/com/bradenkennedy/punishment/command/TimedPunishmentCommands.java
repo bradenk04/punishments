@@ -15,67 +15,78 @@ import org.jetbrains.annotations.Nullable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static com.bradenkennedy.punishment.command.CommandSupport.announce;
+import static com.bradenkennedy.punishment.command.CommandSupport.isExempt;
 import static com.bradenkennedy.punishment.command.CommandSupport.issuerId;
 import static com.bradenkennedy.punishment.command.CommandSupport.reply;
 import static com.bradenkennedy.punishment.command.parser.DurationParser.durationParser;
 import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser;
 import static org.incendo.cloud.parser.standard.StringParser.greedyFlagYieldingStringParser;
 
-public final class MuteCommands {
+public final class TimedPunishmentCommands {
 
-    private MuteCommands() {
+    private TimedPunishmentCommands() {
     }
 
-    public static void register(CommandManager<CommandSender> manager) {
+    public static void register(CommandManager<CommandSender> manager, PunishmentType type, Consumer<Punishment> enforce) {
+        String name = type.name().toLowerCase();
         var silent = manager.flagBuilder("silent").withAliases("s");
-        manager.command(manager.commandBuilder("mute")
+        manager.command(manager.commandBuilder(name)
                 .required("player", offlinePlayerParser())
                 .optional("reason", greedyFlagYieldingStringParser())
                 .flag(silent)
-                .permission("punishments.mute")
-                .handler(ctx -> mute(ctx, null)));
-        manager.command(manager.commandBuilder("tempmute")
+                .permission("punishments." + name)
+                .handler(ctx -> issue(ctx, type, null, enforce)));
+        manager.command(manager.commandBuilder("temp" + name)
                 .required("player", offlinePlayerParser())
                 .required("duration", durationParser())
                 .optional("reason", greedyFlagYieldingStringParser())
                 .flag(silent)
-                .permission("punishments.tempmute")
-                .handler(ctx -> mute(ctx, ctx.get("duration"))));
-        manager.command(manager.commandBuilder("unmute")
+                .permission("punishments.temp" + name)
+                .handler(ctx -> issue(ctx, type, ctx.get("duration"), enforce)));
+        manager.command(manager.commandBuilder("un" + name)
                 .required("player", offlinePlayerParser())
                 .flag(silent)
-                .permission("punishments.unmute")
-                .handler(MuteCommands::unmute));
+                .permission("punishments.un" + name)
+                .handler(ctx -> revoke(ctx, type)));
     }
 
-    private static void mute(CommandContext<CommandSender> ctx, @Nullable Duration duration) {
+    private static void issue(CommandContext<CommandSender> ctx, PunishmentType type, @Nullable Duration duration, Consumer<Punishment> enforce) {
         OfflinePlayer target = ctx.get("player");
+        String name = type.name().toLowerCase();
         var repository = PunishmentPlugin.getDataRepository();
-        if (repository.findActive(target.getUniqueId(), PunishmentType.MUTE).isPresent()) {
-            reply(ctx, "mute.already-muted", target);
+        if (isExempt(target)) {
+            reply(ctx, "exempt", target);
+            return;
+        }
+        if (repository.findActive(target.getUniqueId(), type).isPresent()) {
+            reply(ctx, name + ".already-active", target);
             return;
         }
         Instant now = Instant.now();
         String reason = ctx.<String>optional("reason").orElse(null);
-        repository.create(new Punishment(UUID.randomUUID(), target.getUniqueId(), PunishmentType.MUTE,
+        var punishment = new Punishment(UUID.randomUUID(), target.getUniqueId(), type,
                 new PunishmentIssuer(issuerId(ctx.sender()), now), reason,
-                duration == null ? null : now.plus(duration), false));
+                duration == null ? null : now.plus(duration), false);
+        repository.create(punishment);
         var config = PunishmentPlugin.getPluginConfig();
-        announce(ctx, "mute.announce", target,
+        announce(ctx, name + ".announce", target,
                 Placeholder.unparsed("duration", duration == null ? config.raw("permanent-duration") : DurationParser.format(duration)),
                 config.reason(reason));
+        enforce.accept(punishment);
     }
 
-    private static void unmute(CommandContext<CommandSender> ctx) {
+    private static void revoke(CommandContext<CommandSender> ctx, PunishmentType type) {
         OfflinePlayer target = ctx.get("player");
+        String name = "un" + type.name().toLowerCase();
         var repository = PunishmentPlugin.getDataRepository();
-        repository.findActive(target.getUniqueId(), PunishmentType.MUTE).ifPresentOrElse(
-                mute -> {
-                    repository.revoke(mute.id(), issuerId(ctx.sender()), null, Instant.now());
-                    announce(ctx, "unmute.announce", target);
+        repository.findActive(target.getUniqueId(), type).ifPresentOrElse(
+                active -> {
+                    repository.revoke(active.id(), issuerId(ctx.sender()), null, Instant.now());
+                    announce(ctx, name + ".announce", target);
                 },
-                () -> reply(ctx, "unmute.not-muted", target));
+                () -> reply(ctx, name + ".not-active", target));
     }
 }

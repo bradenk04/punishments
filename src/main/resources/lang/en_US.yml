@@ -1,13 +1,21 @@
 silent-prefix: "<gray>[S]</gray> "
 no-reason: "No reason"
 permanent-duration: "ever"
+exempt: "<red><name> cannot be punished"
 mute:
-  already-muted: "<red><name> is already muted"
+  already-active: "<red><name> is already muted"
   announce: "<red><name> was muted by <staff> for <duration>: <reason>"
   notice: "<red>You are muted for <remaining>"
 unmute:
   announce: "<green><name> was unmuted by <staff>"
-  not-muted: "<red><name> is not muted"
+  not-active: "<red><name> is not muted"
+ban:
+  already-active: "<red><name> is already banned"
+  announce: "<red><name> was banned by <staff> for <duration>: <reason>"
+  screen: "<red>You are banned for <remaining><newline><gray><reason>"
+unban:
+  announce: "<green><name> was unbanned by <staff>"
+  not-active: "<red><name> is not banned"
 warn:
   announce: "<yellow><name> was warned by <staff>: <reason>"
   notice: "<yellow>You have been warned: <reason>"
