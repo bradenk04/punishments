@@ -1,6 +1,7 @@
 package com.bradenkennedy.punishment;
 
 import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.bradenkennedy.punishment.command.KickCommands;
 import com.bradenkennedy.punishment.command.PunishmentCommands;
 import com.bradenkennedy.punishment.command.TimedPunishmentCommands;
 import com.bradenkennedy.punishment.command.WarnCommands;
@@ -55,6 +56,7 @@ public class PunishmentPlugin extends JavaPlugin {
         TimedPunishmentCommands.register(commandManager, PunishmentType.MUTE, mute -> {});
         TimedPunishmentCommands.register(commandManager, PunishmentType.BAN, BanListener::kick);
         WarnCommands.register(commandManager);
+        KickCommands.register(commandManager);
     }
 
     @Override

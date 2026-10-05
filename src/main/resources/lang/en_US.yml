@@ -17,6 +17,9 @@ ban:
 unban:
   announce: "<green><name> was unbanned by <staff>: <reason>"
   not-active: "<red><name> is not banned"
+kick:
+  announce: "<red><name> was kicked by <staff>: <reason>"
+  screen: "<red>You were kicked by <staff><newline><gray><reason><newline><dark_gray><id>"
 warn:
   announce: "<yellow><name> was warned by <staff>: <reason>"
   notice: "<yellow>You have been warned: <reason>"
