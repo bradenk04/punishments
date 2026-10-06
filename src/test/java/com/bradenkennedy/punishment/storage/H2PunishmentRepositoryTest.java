@@ -9,12 +9,20 @@ import com.bradenkennedy.punishment.api.model.PunishmentType;
 import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 class H2PunishmentRepositoryTest {
 
@@ -31,8 +39,8 @@ class H2PunishmentRepositoryTest {
         repository.connectionSource.close();
     }
 
-    private Punishment punish(PunishmentType type, Instant expiry) {
-        Punishment punishment = new Punishment(
+    private Punishment newPunishment(PunishmentType type, Instant expiry) {
+        return new Punishment(
                 UUID.randomUUID(),
                 player,
                 type,
@@ -40,8 +48,18 @@ class H2PunishmentRepositoryTest {
                 "reason",
                 expiry,
                 false);
+    }
+
+    private Punishment punish(PunishmentType type, Instant expiry) {
+        Punishment punishment = newPunishment(type, expiry);
         repository.create(punishment);
         return punishment;
+    }
+
+    private long activeCount(PunishmentType type) {
+        return repository.findHistory(player).stream()
+                .filter(p -> p.type() == type && !p.revoked() && !p.expired())
+                .count();
     }
 
     @Test
@@ -95,5 +113,48 @@ class H2PunishmentRepositoryTest {
     @Test
     void historyIsEmptyForUnknownPlayer() {
         assertTrue(repository.findHistory(UUID.randomUUID()).isEmpty());
+    }
+
+    @Test
+    void concurrentBansResultInExactlyOneActiveBan() throws Exception {
+        int threads = 16;
+        CountDownLatch start = new CountDownLatch(1);
+        List<Future<?>> futures = new ArrayList<>();
+
+        try (ExecutorService pool = Executors.newFixedThreadPool(threads)) {
+            for (int i = 0; i < threads; i++) {
+                futures.add(pool.submit(() -> {
+                    start.await();
+                    // Same check-then-create sequence as TimedPunishmentCommands.issue
+                    if (repository.findActive(player, PunishmentType.BAN).isEmpty()) {
+                        repository.create(newPunishment(PunishmentType.BAN, null));
+                    }
+                    return null;
+                }));
+            }
+            start.countDown();
+            for (Future<?> future : futures) {
+                future.get(10, TimeUnit.SECONDS);
+            }
+        }
+
+        assertEquals(1, activeCount(PunishmentType.BAN));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = PunishmentType.class,
+            names = {"BAN", "MUTE"})
+    void revokingLeavesNoActivePunishmentsOfThatType(PunishmentType type) {
+        punish(type, null);
+        punish(type, null);
+
+        // Same lookup-then-revoke sequence as TimedPunishmentCommands.revoke
+        repository
+                .findActive(player, type)
+                .ifPresent(active -> repository.revoke(active.id(), UUID.randomUUID(), "appeal", Instant.now()));
+
+        assertTrue(repository.findActive(player, type).isEmpty());
+        assertEquals(0, activeCount(type));
     }
 }

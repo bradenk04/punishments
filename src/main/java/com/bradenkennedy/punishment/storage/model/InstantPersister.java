@@ -7,7 +7,6 @@ import com.j256.ormlite.support.DatabaseResults;
 import java.sql.SQLException;
 import java.time.Instant;
 
-/** Stores {@link Instant} as epoch milliseconds in a BIGINT column. */
 public class InstantPersister extends BaseDataType {
     private static final InstantPersister INSTANCE = new InstantPersister();
 
@@ -15,7 +14,6 @@ public class InstantPersister extends BaseDataType {
         super(SqlType.LONG, new Class<?>[] {Instant.class});
     }
 
-    // ORMLite looks this up reflectively when used via persisterClass.
     public static InstantPersister getSingleton() {
         return INSTANCE;
     }
