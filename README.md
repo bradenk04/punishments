@@ -6,6 +6,8 @@
 
 Warn, kick, mute and ban players, permanently or for a set time, with a full history stored locally in H2.
 
+[![Discord](https://img.shields.io/badge/Discord-Join%20us-5865F2?logo=discord&logoColor=white)](https://discord.gg/qkr2jrX9jF)
+
 </div>
 
 ---
@@ -152,6 +154,10 @@ The plugin jar is written to `build/libs/`.
 |----------------------|--------------------------------------------------|
 | `./gradlew test`      | Run the JUnit test suite                         |
 | `./gradlew runServer` | Start a local 26.2 test server with the plugin (needs Java 25) |
+
+## Community
+
+Questions, feedback or just want to chat? Join our [Discord server](https://discord.gg/qkr2jrX9jF).
 
 ## Contributing
 
