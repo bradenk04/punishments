@@ -1,6 +1,13 @@
 package com.bradenkennedy.punishment;
 
+import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.bradenkennedy.punishment.command.KickCommands;
 import com.bradenkennedy.punishment.command.PunishmentCommands;
+import com.bradenkennedy.punishment.command.TimedPunishmentCommands;
+import com.bradenkennedy.punishment.command.WarnCommands;
+import com.bradenkennedy.punishment.listener.BanListener;
+import com.bradenkennedy.punishment.listener.MuteListener;
+import com.bradenkennedy.punishment.listener.WarnListener;
 import com.bradenkennedy.punishment.storage.H2PunishmentRepository;
 import com.bradenkennedy.punishment.storage.PunishmentRepository;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -15,6 +22,7 @@ public class PunishmentPlugin extends JavaPlugin {
 
     private static PunishmentPlugin instance;
     private static PunishmentRepository dataRepository;
+    private static PluginConfig pluginConfig;
 
     private BukkitAudiences adventure;
     private MiniMessage miniMessage;
@@ -38,7 +46,17 @@ public class PunishmentPlugin extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
-        PunishmentCommands.register(LegacyPaperCommandManager.createNative(this, ExecutionCoordinator.asyncCoordinator()));
+        PunishmentPlugin.pluginConfig = new PluginConfig(this);
+        getServer().getPluginManager().registerEvents(new MuteListener(pluginConfig.blockedMuteCommands()), this);
+        getServer().getPluginManager().registerEvents(new WarnListener(), this);
+        getServer().getPluginManager().registerEvents(new BanListener(), this);
+
+        var commandManager = LegacyPaperCommandManager.createNative(this, ExecutionCoordinator.asyncCoordinator());
+        PunishmentCommands.register(commandManager);
+        TimedPunishmentCommands.register(commandManager, PunishmentType.MUTE, mute -> {});
+        TimedPunishmentCommands.register(commandManager, PunishmentType.BAN, BanListener::kick);
+        WarnCommands.register(commandManager);
+        KickCommands.register(commandManager);
     }
 
     @Override
@@ -73,5 +91,7 @@ public class PunishmentPlugin extends JavaPlugin {
         return getInstance().miniMessage();
     }
 
-    public static PunishmentRepository getDataRepository() { return dataRepository; };
+    public static PunishmentRepository getDataRepository() { return dataRepository; }
+
+    public static PluginConfig getPluginConfig() { return pluginConfig; }
 }

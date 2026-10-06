@@ -1,0 +1,33 @@
+silent-prefix: "<gray>[S]</gray> "
+no-reason: "No reason"
+permanent-duration: "ever"
+exempt: "<red><name> cannot be punished"
+cancelled: "<red>The action on <name> was cancelled"
+mute:
+  already-active: "<red><name> is already muted"
+  announce: "<red><name> was muted by <staff> for <duration>: <reason>"
+  notice: "<red>You are muted for <remaining>"
+unmute:
+  announce: "<green><name> was unmuted by <staff>: <reason>"
+  not-active: "<red><name> is not muted"
+ban:
+  already-active: "<red><name> is already banned"
+  announce: "<red><name> was banned by <staff> for <duration>: <reason>"
+  screen: "<red>You are banned for <remaining><newline><gray><reason>"
+unban:
+  announce: "<green><name> was unbanned by <staff>: <reason>"
+  not-active: "<red><name> is not banned"
+kick:
+  announce: "<red><name> was kicked by <staff>: <reason>"
+  screen: "<red>You were kicked by <staff><newline><gray><reason><newline><dark_gray><id>"
+warn:
+  announce: "<yellow><name> was warned by <staff>: <reason>"
+  notice: "<yellow>You have been warned: <reason>"
+unwarn:
+  announce: "<green>A warning for <name> was removed by <staff>: <reason>"
+  not-found: "<red><name> has no matching warning"
+history:
+  empty: "<gray>No punishments found for <white><name>"
+  entry: "<red><type></red> <dark_gray><id></dark_gray> <gray><reason><revoked>"
+  revoked-suffix: " (revoked)"
+  expired-suffix: " (expired)"

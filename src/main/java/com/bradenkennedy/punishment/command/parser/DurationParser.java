@@ -18,9 +18,23 @@ public final class DurationParser<C> implements ArgumentParser<C, Duration>, Blo
     private static final Pattern FORMAT = Pattern.compile("(\\d+[smhdw])+");
     private static final Pattern SEGMENT = Pattern.compile("(\\d+)([smhdw])");
     private static final Map<String, Long> SECONDS = Map.of("s", 1L, "m", 60L, "h", 3600L, "d", 86400L, "w", 604800L);
+    private static final List<String> UNITS_DESCENDING = List.of("w", "d", "h", "m", "s");
 
     public static <C> ParserDescriptor<C, Duration> durationParser() {
         return ParserDescriptor.of(new DurationParser<>(), Duration.class);
+    }
+
+    public static String format(Duration duration) {
+        long remaining = duration.toSeconds();
+        StringBuilder out = new StringBuilder();
+        for (String unit : UNITS_DESCENDING) {
+            long size = SECONDS.get(unit);
+            if (remaining >= size) {
+                out.append(remaining / size).append(unit);
+                remaining %= size;
+            }
+        }
+        return out.isEmpty() ? "0s" : out.toString();
     }
 
     @Override

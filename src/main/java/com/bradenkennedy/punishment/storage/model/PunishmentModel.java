@@ -25,13 +25,13 @@ public class PunishmentModel {
     @DatabaseField
     private UUID issuerId;
 
-    @DatabaseField
+    @DatabaseField(persisterClass = InstantPersister.class)
     private Instant issuedAt;
 
     @DatabaseField
     private String reason;
 
-    @DatabaseField
+    @DatabaseField(persisterClass = InstantPersister.class)
     private Instant expiry;
 
     @DatabaseField
@@ -43,8 +43,11 @@ public class PunishmentModel {
     @DatabaseField
     private UUID revokedBy;
 
-    @DatabaseField
+    @DatabaseField(persisterClass = InstantPersister.class)
     private Instant revokedAt;
+
+    @DatabaseField
+    private boolean acknowledged;
 
     public PunishmentModel() {
     }
@@ -82,6 +85,7 @@ public class PunishmentModel {
                 null,
                 null,
                 null);
+        this.target = punishment.target();
     }
 
     public UUID getUuid() {
@@ -162,6 +166,10 @@ public class PunishmentModel {
 
     public void setRevokedBy(UUID revokedBy) {
         this.revokedBy = revokedBy;
+    }
+
+    public void setRevokedAt(Instant revokedAt) {
+        this.revokedAt = revokedAt;
     }
 
     public Punishment toPunishment() {

@@ -47,6 +47,7 @@ public class H2PunishmentRepository implements PunishmentRepository {
             model.setIsRevoked(true);
             model.setRevokedBy(revokedBy);
             model.setRevokedReason(reason);
+            model.setRevokedAt(atTime);
 
             punishmentDao.update(model);
         } catch (SQLException e) {
@@ -56,16 +57,52 @@ public class H2PunishmentRepository implements PunishmentRepository {
     @Override
     public Optional<Punishment> findActive(UUID player, PunishmentType type) {
         try {
-            PunishmentModel model = punishmentDao.queryBuilder()
+            Instant now = Instant.now();
+            return punishmentDao.queryBuilder()
                     .where()
                     .eq("target", player)
                     .and()
                     .eq("type", type)
-                    .queryForFirst();
-            if (model == null) return Optional.empty();
-            return Optional.of(model.toPunishment());
+                    .and()
+                    .eq("revoked", false)
+                    .query()
+                    .stream()
+                    .map(PunishmentModel::toPunishment)
+                    .filter(p -> p.expiry() == null || p.expiry().isAfter(now))
+                    .findFirst();
         } catch (SQLException e) {
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<Punishment> findUnacknowledgedWarnings(UUID player) {
+        try {
+            return punishmentDao.queryBuilder()
+                    .where()
+                    .eq("target", player)
+                    .and()
+                    .eq("type", PunishmentType.WARN)
+                    .and()
+                    .eq("revoked", false)
+                    .and()
+                    .eq("acknowledged", false)
+                    .query()
+                    .stream()
+                    .map(PunishmentModel::toPunishment)
+                    .toList();
+        } catch (SQLException e) {
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public void acknowledge(UUID punishmentId) {
+        try {
+            var update = punishmentDao.updateBuilder();
+            update.updateColumnValue("acknowledged", true).where().idEq(punishmentId);
+            update.update();
+        } catch (SQLException e) {
         }
     }
 

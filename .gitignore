@@ -12,3 +12,6 @@ build
 .classpath
 bin/
 .settings/
+
+# runServer working directory
+run/
