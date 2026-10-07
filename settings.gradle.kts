@@ -1,2 +1,2 @@
 rootProject.name = "punishments"
-include("api", "common", "paper")
+include("api", "common", "paper", "velocity")
