@@ -1,0 +1,88 @@
+name: Verify shaded plugin
+
+on:
+  push:
+    branches: [main, 'willpham123333/fix-shadow-relocations']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shadow-jar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Run tests and build shaded jar
+        run: bash ./gradlew clean test shadowJar
+
+      - name: Verify relocation and database startup from the distributable
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          jars=(build/libs/*-all.jar)
+          test "${#jars[@]}" -eq 1
+          jar="${jars[0]}"
+          cat > "$RUNNER_TEMP/VerifyShadowJar.java" <<'JAVA'
+          import com.bradenkennedy.punishment.storage.H2PunishmentRepository;
+          import java.nio.file.Files;
+          import java.sql.DriverManager;
+          import java.util.jar.JarFile;
+
+          class VerifyShadowJar {
+              public static void main(String[] args) throws Exception {
+                  try (var jar = new JarFile(args[0])) {
+                      if (jar.stream().anyMatch(e -> e.getName().startsWith("org/h2/")
+                              || e.getName().startsWith("com/j256/"))) {
+                          throw new AssertionError("Unrelocated database classes in distributable");
+                      }
+                      for (String entry : new String[] {
+                              "com/bradenkennedy/punishment/libs/h2/Driver.class",
+                              "com/bradenkennedy/punishment/libs/ormlite/jdbc/JdbcConnectionSource.class",
+                              "META-INF/services/java.sql.Driver"}) {
+                          if (jar.getJarEntry(entry) == null) {
+                              throw new AssertionError("Missing " + entry);
+                          }
+                      }
+                  }
+                  // No explicit driver registration: exercise the relocated JDBC service descriptor.
+                  try (var connection = DriverManager.getConnection("jdbc:h2:mem:shadow_smoke");
+                          var statement = connection.createStatement();
+                          var result = statement.executeQuery("SELECT 1")) {
+                      if (!result.next() || result.getInt(1) != 1) {
+                          throw new AssertionError("H2 query failed");
+                      }
+                      if (!DriverManager.getDriver("jdbc:h2:mem:shadow_smoke").getClass().getName()
+                              .equals("com.bradenkennedy.punishment.libs.h2.Driver")) {
+                          throw new AssertionError("Wrong JDBC driver loaded");
+                      }
+                  }
+                  // Exercise ORMLite's reflective database selection, table creation and InstantPersister.
+                  var repository = new H2PunishmentRepository(Files.createTempDirectory("shadow-db-").toFile());
+                  try {
+                      if (H2PunishmentRepository.punishmentDao.countOf() != 0) {
+                          throw new AssertionError("New database is not empty");
+                      }
+                  } finally {
+                      repository.connectionSource.close();
+                  }
+                  System.out.println("Relocation, JDBC service loading and repository startup passed");
+              }
+          }
+          JAVA
+          java --class-path "$jar" "$RUNNER_TEMP/VerifyShadowJar.java" "$jar"
+
+      - name: Upload distributable
+        uses: actions/upload-artifact@v7
+        with:
+          name: punishments-shaded
+          path: build/libs/*-all.jar
+          if-no-files-found: error
