@@ -1,63 +1,12 @@
-plugins {
-  java
-  id("com.gradleup.shadow") version "9.6.1"
-  id("xyz.jpenilla.run-paper") version "3.1.0"
+plugins { base }
+allprojects { group = "com.bradenkennedy"; version = "1.0.0" }
+tasks.named("clean") { dependsOn(":api:clean", ":common:clean", ":paper:clean") }
+tasks.register("test") { dependsOn(":common:test", ":paper:test") }
+tasks.register<Copy>("shadowJar") {
+    dependsOn(":paper:shadowJar")
+    from("paper/build/libs") { include("*-all.jar") }
+    into(layout.buildDirectory.dir("libs"))
 }
-
-repositories {
-  mavenCentral()
-  maven {
-    url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-  }
-  maven {
-    url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-  }
-}
-
-dependencies {
-  compileOnly("org.spigotmc:spigot-api:26.2-R0.1-SNAPSHOT")
-
-  implementation("net.kyori:adventure-api:4.26.1")
-  implementation("net.kyori:adventure-text-minimessage:4.26.1")
-  implementation("net.kyori:adventure-platform-bukkit:4.4.1")
-  implementation("com.h2database:h2:2.5.252")
-  implementation("com.j256.ormlite:ormlite-jdbc:6.1")
-  implementation("org.incendo:cloud-paper:2.0.1")
-
-  testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
-  testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")
-}
-
-java {
-  toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-}
-
-tasks.withType<JavaCompile> {
-  options.encoding = "UTF-8"
-}
-
-tasks.test {
-  useJUnitPlatform()
-}
-
-tasks.runServer {
-  minecraftVersion("26.2")
-  javaLauncher.set(javaToolchains.launcherFor {
-    languageVersion.set(JavaLanguageVersion.of(25))
-  })
-  jvmArgs("-Dcom.mojang.eula.agree=true")
-  pluginJars.setFrom(tasks.shadowJar.flatMap { it.archiveFile })
-}
-
-tasks.shadowJar {
-  // Keep JDBC service descriptors so the relocated H2 driver is discoverable.
-  filesMatching("META-INF/services/**") {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-  }
-  mergeServiceFiles()
-  relocate("org.h2", "com.bradenkennedy.punishment.libs.h2")
-  relocate("com.j256.ormlite", "com.bradenkennedy.punishment.libs.ormlite")
-  relocate("net.kyori", "com.bradenkennedy.punishment.libs.kyori")
-  relocate("org.incendo.cloud", "com.bradenkennedy.punishment.libs.cloud")
-}
+tasks.named("build") { dependsOn("test", "shadowJar") }
+tasks.register("runServer") { dependsOn(":paper:runServer") }
 
