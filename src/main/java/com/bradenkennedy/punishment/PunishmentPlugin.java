@@ -2,6 +2,7 @@ package com.bradenkennedy.punishment;
 
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.bradenkennedy.punishment.command.KickCommands;
+import com.bradenkennedy.punishment.command.ImportCommands;
 import com.bradenkennedy.punishment.command.PunishmentCommands;
 import com.bradenkennedy.punishment.command.TimedPunishmentCommands;
 import com.bradenkennedy.punishment.command.WarnCommands;
@@ -10,6 +11,7 @@ import com.bradenkennedy.punishment.listener.MuteListener;
 import com.bradenkennedy.punishment.listener.WarnListener;
 import com.bradenkennedy.punishment.storage.H2PunishmentRepository;
 import com.bradenkennedy.punishment.storage.PunishmentRepository;
+import com.bradenkennedy.punishment.storage.JdbcPunishmentRepository;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,13 +42,15 @@ public class PunishmentPlugin extends JavaPlugin {
         this.adventure = BukkitAudiences.create(this);
         this.miniMessage = MiniMessage.miniMessage();
 
+        PunishmentPlugin.pluginConfig = new PluginConfig(this);
         try {
-            PunishmentPlugin.dataRepository = new H2PunishmentRepository(this.getDataFolder());
+            String url = getConfig().getString("database.url", "");
+            PunishmentPlugin.dataRepository = url.isBlank() ? new H2PunishmentRepository(this.getDataFolder())
+                : new JdbcPunishmentRepository(url, getConfig().getString("database.username", ""), getConfig().getString("database.password", ""));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        PunishmentPlugin.pluginConfig = new PluginConfig(this);
         getServer().getPluginManager().registerEvents(new MuteListener(pluginConfig.blockedMuteCommands()), this);
         getServer().getPluginManager().registerEvents(new WarnListener(), this);
         getServer().getPluginManager().registerEvents(new BanListener(), this);
@@ -57,10 +61,14 @@ public class PunishmentPlugin extends JavaPlugin {
         TimedPunishmentCommands.register(commandManager, PunishmentType.BAN, BanListener::kick);
         WarnCommands.register(commandManager);
         KickCommands.register(commandManager);
+        ImportCommands.register(commandManager);
     }
 
     @Override
     public void onDisable() {
+        if (dataRepository instanceof AutoCloseable closeable) {
+            try { closeable.close(); } catch (Exception failure) { getLogger().warning("Database shutdown failed"); }
+        }
         if (this.adventure != null) {
             this.adventure.close();
             this.adventure = null;
@@ -95,3 +103,5 @@ public class PunishmentPlugin extends JavaPlugin {
 
     public static PluginConfig getPluginConfig() { return pluginConfig; }
 }
+
+
