@@ -13,13 +13,13 @@ unmute:
 ban:
   already-active: "<red><name> is already banned"
   announce: "<red><name> was banned by <staff> for <duration>: <reason>"
-  screen: "<red>You are banned for <remaining><newline><gray><reason>"
+  screen: "<red>You are banned for <remaining><newline><gray><reason><newline><dark_gray>ID: <id><newline>Issuer: <staff><newline>Issued: <date>"
 unban:
   announce: "<green><name> was unbanned by <staff>: <reason>"
   not-active: "<red><name> is not banned"
 kick:
   announce: "<red><name> was kicked by <staff>: <reason>"
-  screen: "<red>You were kicked by <staff><newline><gray><reason><newline><dark_gray><id>"
+  screen: "<red>You were kicked by <staff><newline><gray><reason><newline><dark_gray>ID: <id><newline>Issued: <date>"
 warn:
   announce: "<yellow><name> was warned by <staff>: <reason>"
   notice: "<yellow>You have been warned: <reason>"
