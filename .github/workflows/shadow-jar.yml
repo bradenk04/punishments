@@ -2,7 +2,7 @@ name: Verify shaded plugin
 
 on:
   push:
-    branches: [main, 'willpham123333/fix-shadow-relocations']
+    branches: [main, 'willpham123333']
   pull_request:
   workflow_dispatch:
 
