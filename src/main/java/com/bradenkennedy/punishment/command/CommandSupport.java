@@ -82,7 +82,7 @@ final class CommandSupport {
 
     static boolean isExempt(OfflinePlayer target) {
         Player online = target.getPlayer();
-        return target.isOp() || (online != null && online.hasPermission(EXEMPT_PERMISSION));
+        return online != null && online.hasPermission(EXEMPT_PERMISSION);
     }
 
     static UUID issuerId(CommandSender sender) {
