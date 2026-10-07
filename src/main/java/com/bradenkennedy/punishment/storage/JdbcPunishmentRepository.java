@@ -33,7 +33,7 @@ public class JdbcPunishmentRepository implements PunishmentRepository, AutoClose
     }
     public void rememberName(UUID id, String name) {
         if (name == null || name.isBlank()) return;
-        try { DaoManager.<PlayerName, UUID>createDao(connectionSource, PlayerName.class)
+        try { DaoManager.<Dao<PlayerName, UUID>, PlayerName>createDao(connectionSource, PlayerName.class)
                 .createOrUpdate(new PlayerName(id, name)); }
         catch (SQLException error) { throw failure(error); }
     }
@@ -43,7 +43,7 @@ public class JdbcPunishmentRepository implements PunishmentRepository, AutoClose
             return TransactionManager.callInTransaction(connectionSource, () -> {
                 if (dao.idExists(model.getUuid())) return false;
                 dao.create(model);
-                DaoManager.<ImportMetadata, UUID>createDao(connectionSource, ImportMetadata.class).create(metadata);
+                DaoManager.<Dao<ImportMetadata, UUID>, ImportMetadata>createDao(connectionSource, ImportMetadata.class).create(metadata);
                 rememberName(model.getTarget(), metadata.targetName);
                 change(model.getUuid(), model.getTarget(), "IMPORT");
                 return true;
@@ -110,15 +110,16 @@ public class JdbcPunishmentRepository implements PunishmentRepository, AutoClose
         catch (SQLException error) { throw failure(error); }
     }
     public List<NetworkChange> changesSince(long started) {
-        try { return DaoManager.<NetworkChange, UUID>createDao(connectionSource, NetworkChange.class)
+        try { return DaoManager.<Dao<NetworkChange, UUID>, NetworkChange>createDao(connectionSource, NetworkChange.class)
                 .queryBuilder().where().ge("created", started).query(); }
         catch (SQLException error) { throw failure(error); }
     }
     private void change(UUID id, UUID target, String action) throws SQLException {
-        DaoManager.<NetworkChange, UUID>createDao(connectionSource, NetworkChange.class)
+        DaoManager.<Dao<NetworkChange, UUID>, NetworkChange>createDao(connectionSource, NetworkChange.class)
                 .create(new NetworkChange(id, target, action));
     }
     private static IllegalStateException failure(SQLException cause) {
         return new IllegalStateException("Punishment database operation failed", cause);
     }
 }
+
