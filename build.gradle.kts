@@ -50,15 +50,14 @@ tasks.runServer {
 }
 
 tasks.shadowJar {
-  relocate("com.h2database", "com.bradenkennedy.punishment.libs.h2")
+  // Keep JDBC service descriptors so the relocated H2 driver is discoverable.
+  filesMatching("META-INF/services/**") {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+  }
+  mergeServiceFiles()
+  relocate("org.h2", "com.bradenkennedy.punishment.libs.h2")
+  relocate("com.j256.ormlite", "com.bradenkennedy.punishment.libs.ormlite")
   relocate("net.kyori", "com.bradenkennedy.punishment.libs.kyori")
   relocate("org.incendo.cloud", "com.bradenkennedy.punishment.libs.cloud")
 }
 
-tasks.jar {
-  archiveClassifier.set("")
-  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-  from({
-    configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
-  })
-}
