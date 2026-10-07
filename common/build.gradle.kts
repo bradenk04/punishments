@@ -3,6 +3,7 @@ repositories { mavenCentral() }
 java { toolchain.languageVersion.set(JavaLanguageVersion.of(21)) }
 sourceSets.main {
   java.setSrcDirs(listOf("../src/main/java"))
+  java.exclude("com/bradenkennedy/punishment/storage/PunishmentRepository.java")
   java.include("com/bradenkennedy/punishment/storage/**", "com/bradenkennedy/punishment/migration/**", "com/bradenkennedy/punishment/network/**")
 }
 dependencies {
@@ -19,3 +20,4 @@ dependencies {
   testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")
 }
 tasks.test { useJUnitPlatform() }
+
