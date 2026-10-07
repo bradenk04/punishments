@@ -1,10 +1,10 @@
 package com.bradenkennedy.punishment.command;
 
 import com.bradenkennedy.punishment.PunishmentPlugin;
+import com.bradenkennedy.punishment.PunishmentDetails;
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -53,8 +53,7 @@ public final class KickCommands {
         var config = PunishmentPlugin.getPluginConfig();
         String screen = LegacyComponentSerializer.legacySection().serialize(config.message("kick.screen",
                 config.reason(kick.reason()),
-                Placeholder.unparsed("staff", ctx.sender().getName()),
-                Placeholder.unparsed("id", kick.id().toString())));
+                PunishmentDetails.resolvers(kick, ctx.sender().getName())));
         Bukkit.getScheduler().runTask(PunishmentPlugin.getInstance(), () -> target.kickPlayer(screen));
     }
 }
