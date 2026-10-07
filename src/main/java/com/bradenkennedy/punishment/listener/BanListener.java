@@ -1,6 +1,7 @@
 package com.bradenkennedy.punishment.listener;
 
 import com.bradenkennedy.punishment.PunishmentPlugin;
+import com.bradenkennedy.punishment.PunishmentDetails;
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -30,6 +31,7 @@ public final class BanListener implements Listener {
     private static String screen(Punishment ban) {
         var config = PunishmentPlugin.getPluginConfig();
         return LegacyComponentSerializer.legacySection()
-                .serialize(config.message("ban.screen", config.reason(ban.reason()), config.remaining(ban.expiry())));
+                .serialize(config.message("ban.screen", config.reason(ban.reason()), config.remaining(ban.expiry()),
+                        PunishmentDetails.resolvers(ban)));
     }
 }
