@@ -13,6 +13,7 @@ import com.velocitypowered.api.scheduler.ScheduledTask;
 import com.bradenkennedy.punishment.api.model.*;
 import com.bradenkennedy.punishment.storage.JdbcPunishmentRepository;
 import com.bradenkennedy.punishment.network.NetworkCache;
+import com.bradenkennedy.punishment.network.PunishmentMessages;
 import net.kyori.adventure.text.Component;
 import org.slf4j.Logger;
 import java.nio.file.*;
@@ -92,9 +93,8 @@ public final class VelocityPunishments {
             }
         } catch(RuntimeException failure) { logger.warn("Punishment network refresh failed; will retry."); }
     }
-    private static Component screen(Punishment p) {
-        return Component.text(p.type()+": "+Objects.toString(p.reason(),"No reason")+"\nID: "+p.id()
-                +"\nIssuer: "+p.issuer().issuer()+"\nIssued: "+p.issuer().issuedAt());
+    private Component screen(Punishment p) {
+        return Component.text(PunishmentMessages.render(settings.getProperty("punishment-screen", "<type>: <reason>\nID: <id>\nIssuer: <staff>\nIssued: <date>\nExpires: <expiry>"), p));
     }
     @Subscribe public void shutdown(ProxyShutdownEvent event) throws Exception { if(task!=null) task.cancel(); if(repository!=null) repository.close(); }
     private final class NetworkCommand implements SimpleCommand {
@@ -148,3 +148,4 @@ public final class VelocityPunishments {
         }
     }
 }
+
