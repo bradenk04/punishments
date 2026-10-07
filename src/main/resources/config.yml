@@ -1,4 +1,31 @@
 language: en_US
+database:
+  # Empty URL selects local H2. For a network, configure the same MySQL/PostgreSQL database everywhere.
+  url: ''
+  username: ''
+  password: ''
+network:
+  poll-interval-ms: 1000
+imports:
+  vanilla:
+    directory: '.'
+  essentials:
+    directory: 'plugins/Essentials'
+  advancedban:
+    url: ''
+    username: ''
+    password: ''
+    prefix: ''
+  litebans:
+    url: ''
+    username: ''
+    password: ''
+    prefix: 'litebans_'
+  libertybans:
+    url: ''
+    username: ''
+    password: ''
+    prefix: 'libertybans_'
 mute:
   blocked-commands:
     - msg
