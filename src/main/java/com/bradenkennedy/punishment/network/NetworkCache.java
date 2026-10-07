@@ -10,8 +10,11 @@ public final class NetworkCache {
     private final JdbcPunishmentRepository repository;
     private final Map<UUID,List<Punishment>> cache = new ConcurrentHashMap<>();
     private final Set<UUID> seen = new HashSet<>();
-    private final long started = System.currentTimeMillis();
-    public NetworkCache(JdbcPunishmentRepository repository) { this.repository = repository; }
+    public NetworkCache(JdbcPunishmentRepository repository) {
+        this.repository = repository;
+        // Snapshot committed IDs, not timestamps: node clocks and commit order can differ.
+        repository.changesSince(0).forEach(change -> seen.add(change.id));
+    }
     public void load(UUID player) { cache.put(player, repository.findHistory(player)); }
     public void remove(UUID player) { cache.remove(player); }
     public Optional<Punishment> active(UUID player, PunishmentType type) {
@@ -20,7 +23,7 @@ public final class NetworkCache {
                 .max(Comparator.comparing(p -> p.issuer().issuedAt()));
     }
     public synchronized void poll(Consumer<NetworkChange> notify) {
-        for (var change : repository.changesSince(started)) {
+        for (var change : repository.changesSince(0)) {
             if (seen.contains(change.id)) continue;
             if (cache.containsKey(change.target)) load(change.target);
             notify.accept(change); seen.add(change.id);

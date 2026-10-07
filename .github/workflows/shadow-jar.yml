@@ -21,7 +21,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
 
       - name: Run tests and build shaded jar
-        run: bash ./gradlew clean test shadowJar
+        run: bash ./gradlew clean test shadowJar :velocity:shadowJar
 
       - name: Verify relocation and database startup from the distributable
         shell: bash
@@ -85,4 +85,11 @@ jobs:
         with:
           name: punishments-shaded
           path: build/libs/*-all.jar
+          if-no-files-found: error
+
+      - name: Upload proxy distributable
+        uses: actions/upload-artifact@v7
+        with:
+          name: punishments-velocity-shaded
+          path: velocity/build/libs/*-all.jar
           if-no-files-found: error

@@ -12,6 +12,8 @@ import com.bradenkennedy.punishment.listener.WarnListener;
 import com.bradenkennedy.punishment.storage.H2PunishmentRepository;
 import com.bradenkennedy.punishment.storage.PunishmentRepository;
 import com.bradenkennedy.punishment.storage.JdbcPunishmentRepository;
+import com.bradenkennedy.punishment.network.NetworkCache;
+import com.bradenkennedy.punishment.listener.NetworkListener;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,6 +30,8 @@ public class PunishmentPlugin extends JavaPlugin {
 
     private BukkitAudiences adventure;
     private MiniMessage miniMessage;
+    private NetworkCache networkCache;
+    public NetworkCache networkCache() { return networkCache; }
 
     public static PunishmentPlugin getInstance() {
         if (instance == null) {
@@ -46,11 +50,17 @@ public class PunishmentPlugin extends JavaPlugin {
         try {
             String url = getConfig().getString("database.url", "");
             PunishmentPlugin.dataRepository = url.isBlank() ? new H2PunishmentRepository(this.getDataFolder())
-                : new JdbcPunishmentRepository(url, getConfig().getString("database.username", ""), getConfig().getString("database.password", ""));
+                : new JdbcPunishmentRepository(url, getConfig().getString("database.username", ""),
+                    getConfig().getString("database.password", ""));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
+        networkCache = new NetworkCache((JdbcPunishmentRepository)dataRepository);
+        var network = new NetworkListener(this, networkCache, (JdbcPunishmentRepository)dataRepository);
+        getServer().getPluginManager().registerEvents(network, this);
+        long ticks = Math.max(1, getConfig().getLong("network.poll-interval-ms", 1000) / 50);
+        getServer().getScheduler().runTaskTimerAsynchronously(this, network::poll, 1, ticks);
         getServer().getPluginManager().registerEvents(new MuteListener(pluginConfig.blockedMuteCommands()), this);
         getServer().getPluginManager().registerEvents(new WarnListener(), this);
         getServer().getPluginManager().registerEvents(new BanListener(), this);
@@ -66,6 +76,7 @@ public class PunishmentPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        getServer().getScheduler().cancelTasks(this);
         if (dataRepository instanceof AutoCloseable closeable) {
             try { closeable.close(); } catch (Exception failure) { getLogger().warning("Database shutdown failed"); }
         }
@@ -103,5 +114,3 @@ public class PunishmentPlugin extends JavaPlugin {
 
     public static PluginConfig getPluginConfig() { return pluginConfig; }
 }
-
-

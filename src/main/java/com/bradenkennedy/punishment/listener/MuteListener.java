@@ -33,7 +33,7 @@ public final class MuteListener implements Listener {
     }
 
     private boolean isMuted(Player player) {
-        return PunishmentPlugin.getDataRepository().findActive(player.getUniqueId(), PunishmentType.MUTE)
+        return PunishmentPlugin.getInstance().networkCache().active(player.getUniqueId(), PunishmentType.MUTE)
                 .map(mute -> {
                     var config = PunishmentPlugin.getPluginConfig();
                     PunishmentPlugin.getAdventure().player(player).sendMessage(config.message("mute.notice", config.remaining(mute.expiry())));
