@@ -33,6 +33,9 @@ tasks.shadowJar {
   mergeServiceFiles()
   relocate("org.h2", "com.bradenkennedy.punishment.libs.h2")
   relocate("com.j256.ormlite", "com.bradenkennedy.punishment.libs.ormlite")
+  relocate("com.mysql", "com.bradenkennedy.punishment.libs.mysql")
+  relocate("org.postgresql", "com.bradenkennedy.punishment.libs.postgresql")
+  relocate("org.hsqldb", "com.bradenkennedy.punishment.libs.hsqldb")
   relocate("com.google.gson", "com.bradenkennedy.punishment.libs.gson")
   relocate("org.yaml.snakeyaml", "com.bradenkennedy.punishment.libs.yaml")
   relocate("net.kyori", "com.bradenkennedy.punishment.libs.kyori")
@@ -43,3 +46,4 @@ tasks.runServer {
   javaLauncher.set(javaToolchains.launcherFor { languageVersion.set(JavaLanguageVersion.of(25)) })
   pluginJars.setFrom(tasks.shadowJar.flatMap { it.archiveFile })
 }
+
