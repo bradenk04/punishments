@@ -6,8 +6,10 @@ import com.bradenkennedy.punishment.command.PunishmentCommands;
 import com.bradenkennedy.punishment.command.TimedPunishmentCommands;
 import com.bradenkennedy.punishment.command.WarnCommands;
 import com.bradenkennedy.punishment.listener.BanListener;
+import com.bradenkennedy.punishment.listener.CacheLoadListener;
 import com.bradenkennedy.punishment.listener.MuteListener;
 import com.bradenkennedy.punishment.listener.WarnListener;
+import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
 import com.bradenkennedy.punishment.storage.H2PunishmentRepository;
 import com.bradenkennedy.punishment.storage.PunishmentRepository;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -23,6 +25,7 @@ public class PunishmentPlugin extends JavaPlugin {
     private static PunishmentPlugin instance;
     private static PunishmentRepository dataRepository;
     private static PluginConfig pluginConfig;
+    private static ActivePunishmentCache activePunishmentCache;
 
     private BukkitAudiences adventure;
     private MiniMessage miniMessage;
@@ -47,7 +50,9 @@ public class PunishmentPlugin extends JavaPlugin {
         }
 
         PunishmentPlugin.pluginConfig = new PluginConfig(this);
-        getServer().getPluginManager().registerEvents(new MuteListener(pluginConfig.blockedMuteCommands()), this);
+        PunishmentPlugin.activePunishmentCache = new ActivePunishmentCache();
+        getServer().getPluginManager().registerEvents(new CacheLoadListener(dataRepository, activePunishmentCache), this);
+        getServer().getPluginManager().registerEvents(new MuteListener(activePunishmentCache, pluginConfig.blockedMuteCommands()), this);
         getServer().getPluginManager().registerEvents(new WarnListener(), this);
         getServer().getPluginManager().registerEvents(new BanListener(), this);
 
@@ -92,6 +97,8 @@ public class PunishmentPlugin extends JavaPlugin {
     }
 
     public static PunishmentRepository getDataRepository() { return dataRepository; }
+
+    public static ActivePunishmentCache getActivePunishmentCache() { return activePunishmentCache; }
 
     public static PluginConfig getPluginConfig() { return pluginConfig; }
 }

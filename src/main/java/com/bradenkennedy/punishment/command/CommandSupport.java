@@ -4,6 +4,7 @@ import com.bradenkennedy.punishment.PunishmentPlugin;
 import com.bradenkennedy.punishment.api.events.PlayerPunishedEvent;
 import com.bradenkennedy.punishment.api.events.PlayerPunishmentRevokedEvent;
 import com.bradenkennedy.punishment.api.model.Punishment;
+import com.bradenkennedy.punishment.api.model.PunishmentType;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
@@ -53,6 +54,9 @@ final class CommandSupport {
             return false;
         }
         PunishmentPlugin.getDataRepository().create(punishment);
+        if (punishment.type() == PunishmentType.MUTE) {
+            PunishmentPlugin.getActivePunishmentCache().put(punishment);
+        }
         return true;
     }
 
@@ -61,6 +65,9 @@ final class CommandSupport {
             return false;
         }
         PunishmentPlugin.getDataRepository().revoke(punishment.id(), issuerId(ctx.sender()), reasonOf(ctx), Instant.now());
+        if (punishment.type() == PunishmentType.MUTE) {
+            PunishmentPlugin.getActivePunishmentCache().remove(punishment.target(), punishment.type());
+        }
         return true;
     }
 

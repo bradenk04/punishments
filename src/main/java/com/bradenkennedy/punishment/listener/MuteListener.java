@@ -2,6 +2,7 @@ package com.bradenkennedy.punishment.listener;
 
 import com.bradenkennedy.punishment.PunishmentPlugin;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,9 +15,11 @@ import java.util.stream.Collectors;
 
 public final class MuteListener implements Listener {
 
+    private final ActivePunishmentCache cache;
     private final Set<String> blockedCommands;
 
-    public MuteListener(Collection<String> blockedCommands) {
+    public MuteListener(ActivePunishmentCache cache, Collection<String> blockedCommands) {
+        this.cache = cache;
         this.blockedCommands = blockedCommands.stream().map(String::toLowerCase).collect(Collectors.toUnmodifiableSet());
     }
 
@@ -33,7 +36,7 @@ public final class MuteListener implements Listener {
     }
 
     private boolean isMuted(Player player) {
-        return PunishmentPlugin.getDataRepository().findActive(player.getUniqueId(), PunishmentType.MUTE)
+        return cache.find(player.getUniqueId(), PunishmentType.MUTE)
                 .map(mute -> {
                     var config = PunishmentPlugin.getPluginConfig();
                     PunishmentPlugin.getAdventure().player(player).sendMessage(config.message("mute.notice", config.remaining(mute.expiry())));
