@@ -1,15 +1,13 @@
 package com.bradenkennedy.punishment.storage.model;
 
-import java.time.Instant;
-import java.util.UUID;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import java.time.Instant;
+import java.util.UUID;
+import org.jetbrains.annotations.Nullable;
 
 @DatabaseTable(tableName = "punishments")
 public class PunishmentModel {
@@ -49,8 +47,7 @@ public class PunishmentModel {
     @DatabaseField
     private boolean acknowledged;
 
-    public PunishmentModel() {
-    }
+    public PunishmentModel() {}
 
     public PunishmentModel(
             UUID id,
@@ -173,9 +170,13 @@ public class PunishmentModel {
     }
 
     public Punishment toPunishment() {
-        return new Punishment(this.id, this.target, this.type, new PunishmentIssuer(
-                this.issuerId,
-                this.issuedAt
-        ), this.reason, this.expiry, this.revoked);
+        return new Punishment(
+                this.id,
+                this.target,
+                this.type,
+                new PunishmentIssuer(this.issuerId, this.issuedAt),
+                this.reason,
+                this.expiry,
+                this.revoked);
     }
 }

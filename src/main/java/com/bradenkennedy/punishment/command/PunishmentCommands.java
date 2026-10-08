@@ -1,5 +1,8 @@
 package com.bradenkennedy.punishment.command;
 
+import static com.bradenkennedy.punishment.command.CommandSupport.nameOf;
+import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser;
+
 import com.bradenkennedy.punishment.PunishmentPlugin;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -7,13 +10,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.incendo.cloud.CommandManager;
 
-import static com.bradenkennedy.punishment.command.CommandSupport.nameOf;
-import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser;
-
 public final class PunishmentCommands {
 
-    private PunishmentCommands() {
-    }
+    private PunishmentCommands() {}
 
     public static void register(CommandManager<CommandSender> manager) {
         manager.command(manager.commandBuilder("punish")
@@ -26,14 +25,19 @@ public final class PunishmentCommands {
                     var history = PunishmentPlugin.getDataRepository().findHistory(target.getUniqueId());
                     var config = PunishmentPlugin.getPluginConfig();
                     if (history.isEmpty()) {
-                        audience.sendMessage(config.message("history.empty", Placeholder.unparsed("name", nameOf(target))));
+                        audience.sendMessage(
+                                config.message("history.empty", Placeholder.unparsed("name", nameOf(target))));
                     }
-                    history.forEach(p -> audience.sendMessage(config.message("history.entry",
+                    history.forEach(p -> audience.sendMessage(config.message(
+                            "history.entry",
                             Placeholder.unparsed("type", p.type().name()),
                             Placeholder.unparsed("id", p.id().toString()),
                             config.reason(p.reason()),
-                            Placeholder.unparsed("revoked", p.revoked() ? config.raw("history.revoked-suffix")
-                                    : p.expired() ? config.raw("history.expired-suffix") : ""))));
+                            Placeholder.unparsed(
+                                    "revoked",
+                                    p.revoked()
+                                            ? config.raw("history.revoked-suffix")
+                                            : p.expired() ? config.raw("history.expired-suffix") : ""))));
                 }));
     }
 }

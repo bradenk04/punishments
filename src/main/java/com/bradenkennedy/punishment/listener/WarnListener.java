@@ -17,7 +17,9 @@ public final class WarnListener implements Listener {
         var repository = PunishmentPlugin.getDataRepository();
         repository.findUnacknowledgedWarnings(player.getUniqueId()).forEach(warning -> {
             var config = PunishmentPlugin.getPluginConfig();
-            PunishmentPlugin.getAdventure().player(player).sendMessage(config.message("warn.notice", config.reason(warning.reason())));
+            PunishmentPlugin.getAdventure()
+                    .player(player)
+                    .sendMessage(config.message("warn.notice", config.reason(warning.reason())));
             repository.acknowledge(warning.id());
         });
     }
