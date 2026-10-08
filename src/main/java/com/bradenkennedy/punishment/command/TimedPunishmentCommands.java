@@ -1,6 +1,5 @@
 package com.bradenkennedy.punishment.command;
 
-import static com.bradenkennedy.punishment.command.CommandSupport.isExempt;
 import static com.bradenkennedy.punishment.command.CommandSupport.issuerId;
 import static com.bradenkennedy.punishment.command.CommandSupport.reasonOf;
 import static com.bradenkennedy.punishment.command.parser.DurationParser.durationParser;
@@ -67,7 +66,7 @@ public final class TimedPunishmentCommands {
             Consumer<Punishment> enforce) {
         OfflinePlayer target = ctx.get("player");
         String name = type.name().toLowerCase();
-        if (isExempt(target)) {
+        if (support.isExempt(target)) {
             support.reply(ctx, "exempt", target);
             return;
         }

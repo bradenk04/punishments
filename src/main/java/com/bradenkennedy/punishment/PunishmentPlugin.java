@@ -6,6 +6,8 @@ import com.bradenkennedy.punishment.command.KickCommands;
 import com.bradenkennedy.punishment.command.PunishmentCommands;
 import com.bradenkennedy.punishment.command.TimedPunishmentCommands;
 import com.bradenkennedy.punishment.command.WarnCommands;
+import com.bradenkennedy.punishment.exemption.ExemptionCheck;
+import com.bradenkennedy.punishment.exemption.OfflinePermissionLookups;
 import com.bradenkennedy.punishment.listener.BanListener;
 import com.bradenkennedy.punishment.listener.CacheLoadListener;
 import com.bradenkennedy.punishment.listener.MuteListener;
@@ -46,7 +48,8 @@ public class PunishmentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(warnListener, this);
         getServer().getPluginManager().registerEvents(banListener, this);
 
-        var support = new CommandSupport(repository, cache, config, adventure);
+        var support = new CommandSupport(
+                repository, cache, config, adventure, new ExemptionCheck(OfflinePermissionLookups.detect(getServer())));
         var commandManager = LegacyPaperCommandManager.createNative(this, ExecutionCoordinator.asyncCoordinator());
         new PunishmentCommands(adventure, repository, config).register(commandManager);
         var timedCommands = new TimedPunishmentCommands(support, repository, config);

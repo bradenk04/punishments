@@ -5,6 +5,7 @@ import com.bradenkennedy.punishment.api.events.PlayerPunishedEvent;
 import com.bradenkennedy.punishment.api.events.PlayerPunishmentRevokedEvent;
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.bradenkennedy.punishment.exemption.ExemptionCheck;
 import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
 import com.bradenkennedy.punishment.storage.PunishmentRepository;
 import java.time.Instant;
@@ -26,22 +27,24 @@ public final class CommandSupport {
 
     private static final UUID CONSOLE_ID = new UUID(0, 0);
     private static final String NOTIFY_PERMISSION = "punishments.notify";
-    private static final String EXEMPT_PERMISSION = "punishments.exempt";
 
     private final PunishmentRepository repository;
     private final ActivePunishmentCache cache;
     private final PluginConfig config;
     private final BukkitAudiences audiences;
+    private final ExemptionCheck exemptions;
 
     public CommandSupport(
             PunishmentRepository repository,
             ActivePunishmentCache cache,
             PluginConfig config,
-            BukkitAudiences audiences) {
+            BukkitAudiences audiences,
+            ExemptionCheck exemptions) {
         this.repository = repository;
         this.cache = cache;
         this.config = config;
         this.audiences = audiences;
+        this.exemptions = exemptions;
     }
 
     void reply(CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target) {
@@ -103,9 +106,8 @@ public final class CommandSupport {
         return Objects.requireNonNullElse(player.getName(), player.getUniqueId().toString());
     }
 
-    static boolean isExempt(OfflinePlayer target) {
-        Player online = target.getPlayer();
-        return target.isOp() || (online != null && online.hasPermission(EXEMPT_PERMISSION));
+    boolean isExempt(OfflinePlayer target) {
+        return exemptions.isExempt(target).join();
     }
 
     static UUID issuerId(CommandSender sender) {

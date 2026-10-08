@@ -50,6 +50,10 @@ public final class WarnCommands {
 
     private void warn(CommandContext<CommandSender> ctx) {
         OfflinePlayer target = ctx.get("player");
+        if (support.isExempt(target)) {
+            support.reply(ctx, "exempt", target);
+            return;
+        }
         String reason = ctx.get("reason");
         var warning = new Punishment(
                 UUID.randomUUID(),
