@@ -65,7 +65,8 @@ final class CommandSupport {
         if (cancelled(ctx, target, new PlayerPunishmentRevokedEvent(punishment))) {
             return false;
         }
-        PunishmentPlugin.getDataRepository().revoke(punishment.id(), issuerId(ctx.sender()), reasonOf(ctx), Instant.now());
+        PunishmentPlugin.getDataRepository()
+                .revoke(punishment.id(), issuerId(ctx.sender()), reasonOf(ctx), Instant.now());
         if (punishment.type() == PunishmentType.MUTE) {
             PunishmentPlugin.getActivePunishmentCache().remove(punishment.target(), punishment.type());
         }

@@ -50,8 +50,12 @@ public class PunishmentPlugin extends JavaPlugin {
 
         PunishmentPlugin.pluginConfig = new PluginConfig(this);
         PunishmentPlugin.activePunishmentCache = new ActivePunishmentCache();
-        getServer().getPluginManager().registerEvents(new CacheLoadListener(dataRepository, activePunishmentCache), this);
-        getServer().getPluginManager().registerEvents(new MuteListener(activePunishmentCache, pluginConfig.blockedMuteCommands()), this);
+        getServer()
+                .getPluginManager()
+                .registerEvents(new CacheLoadListener(dataRepository, activePunishmentCache), this);
+        getServer()
+                .getPluginManager()
+                .registerEvents(new MuteListener(activePunishmentCache, pluginConfig.blockedMuteCommands()), this);
         getServer().getPluginManager().registerEvents(new WarnListener(), this);
         getServer().getPluginManager().registerEvents(new BanListener(), this);
 
@@ -99,7 +103,11 @@ public class PunishmentPlugin extends JavaPlugin {
         return dataRepository;
     }
 
-    public static ActivePunishmentCache getActivePunishmentCache() { return activePunishmentCache; }
+    public static ActivePunishmentCache getActivePunishmentCache() {
+        return activePunishmentCache;
+    }
 
-    public static PluginConfig getPluginConfig() { return pluginConfig; }
+    public static PluginConfig getPluginConfig() {
+        return pluginConfig;
+    }
 }

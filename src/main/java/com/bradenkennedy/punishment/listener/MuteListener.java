@@ -19,7 +19,8 @@ public final class MuteListener implements Listener {
 
     public MuteListener(ActivePunishmentCache cache, Collection<String> blockedCommands) {
         this.cache = cache;
-        this.blockedCommands = blockedCommands.stream().map(String::toLowerCase).collect(Collectors.toUnmodifiableSet());
+        this.blockedCommands =
+                blockedCommands.stream().map(String::toLowerCase).collect(Collectors.toUnmodifiableSet());
     }
 
     @EventHandler(ignoreCancelled = true)

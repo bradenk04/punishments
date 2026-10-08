@@ -2,7 +2,6 @@ package com.bradenkennedy.punishment.storage;
 
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;

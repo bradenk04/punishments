@@ -1,16 +1,15 @@
 package com.bradenkennedy.punishment.storage;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
-import org.junit.jupiter.api.Test;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 class ActivePunishmentCacheTest {
 
@@ -55,7 +54,13 @@ class ActivePunishmentCacheTest {
     }
 
     private static Punishment mute(UUID target, Instant expiry) {
-        return new Punishment(UUID.randomUUID(), target, PunishmentType.MUTE,
-                new PunishmentIssuer(UUID.randomUUID(), Instant.now()), null, expiry, false);
+        return new Punishment(
+                UUID.randomUUID(),
+                target,
+                PunishmentType.MUTE,
+                new PunishmentIssuer(UUID.randomUUID(), Instant.now()),
+                null,
+                expiry,
+                false);
     }
 }
