@@ -3,15 +3,14 @@ package com.bradenkennedy.punishment.listener;
 import com.bradenkennedy.punishment.PunishmentPlugin;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
+import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-
-import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public final class MuteListener implements Listener {
 
@@ -39,7 +38,9 @@ public final class MuteListener implements Listener {
         return cache.find(player.getUniqueId(), PunishmentType.MUTE)
                 .map(mute -> {
                     var config = PunishmentPlugin.getPluginConfig();
-                    PunishmentPlugin.getAdventure().player(player).sendMessage(config.message("mute.notice", config.remaining(mute.expiry())));
+                    PunishmentPlugin.getAdventure()
+                            .player(player)
+                            .sendMessage(config.message("mute.notice", config.remaining(mute.expiry())));
                     return true;
                 })
                 .orElse(false);

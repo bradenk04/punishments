@@ -1,20 +1,5 @@
 package com.bradenkennedy.punishment.command;
 
-import com.bradenkennedy.punishment.PunishmentPlugin;
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
-import com.bradenkennedy.punishment.listener.WarnListener;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.incendo.cloud.CommandManager;
-import org.incendo.cloud.context.CommandContext;
-
-import java.time.Instant;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.UUID;
-
 import static com.bradenkennedy.punishment.command.CommandSupport.announce;
 import static com.bradenkennedy.punishment.command.CommandSupport.issuerId;
 import static com.bradenkennedy.punishment.command.CommandSupport.reply;
@@ -24,10 +9,23 @@ import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerP
 import static org.incendo.cloud.parser.standard.StringParser.greedyFlagYieldingStringParser;
 import static org.incendo.cloud.parser.standard.UUIDParser.uuidParser;
 
+import com.bradenkennedy.punishment.PunishmentPlugin;
+import com.bradenkennedy.punishment.api.model.Punishment;
+import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
+import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.bradenkennedy.punishment.listener.WarnListener;
+import java.time.Instant;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.UUID;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.context.CommandContext;
+
 public final class WarnCommands {
 
-    private WarnCommands() {
-    }
+    private WarnCommands() {}
 
     public static void register(CommandManager<CommandSender> manager) {
         var silent = manager.flagBuilder("silent").withAliases("s");
@@ -49,8 +47,14 @@ public final class WarnCommands {
     private static void warn(CommandContext<CommandSender> ctx) {
         OfflinePlayer target = ctx.get("player");
         String reason = ctx.get("reason");
-        var warning = new Punishment(UUID.randomUUID(), target.getUniqueId(),
-                PunishmentType.WARN, new PunishmentIssuer(issuerId(ctx.sender()), Instant.now()), reason, null, false);
+        var warning = new Punishment(
+                UUID.randomUUID(),
+                target.getUniqueId(),
+                PunishmentType.WARN,
+                new PunishmentIssuer(issuerId(ctx.sender()), Instant.now()),
+                reason,
+                null,
+                false);
         if (!tryPunish(ctx, target, warning)) {
             return;
         }

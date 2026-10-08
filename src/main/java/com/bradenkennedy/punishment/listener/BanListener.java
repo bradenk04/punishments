@@ -14,7 +14,8 @@ public final class BanListener implements Listener {
 
     @EventHandler
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
-        PunishmentPlugin.getDataRepository().findActive(event.getUniqueId(), PunishmentType.BAN)
+        PunishmentPlugin.getDataRepository()
+                .findActive(event.getUniqueId(), PunishmentType.BAN)
                 .ifPresent(ban -> event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, screen(ban)));
     }
 

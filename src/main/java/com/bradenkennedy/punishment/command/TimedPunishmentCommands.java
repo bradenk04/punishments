@@ -1,22 +1,5 @@
 package com.bradenkennedy.punishment.command;
 
-import com.bradenkennedy.punishment.PunishmentPlugin;
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
-import com.bradenkennedy.punishment.command.parser.DurationParser;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.incendo.cloud.CommandManager;
-import org.incendo.cloud.context.CommandContext;
-import org.jetbrains.annotations.Nullable;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.util.UUID;
-import java.util.function.Consumer;
-
 import static com.bradenkennedy.punishment.command.CommandSupport.announce;
 import static com.bradenkennedy.punishment.command.CommandSupport.isExempt;
 import static com.bradenkennedy.punishment.command.CommandSupport.issuerId;
@@ -28,12 +11,28 @@ import static com.bradenkennedy.punishment.command.parser.DurationParser.duratio
 import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser;
 import static org.incendo.cloud.parser.standard.StringParser.greedyFlagYieldingStringParser;
 
+import com.bradenkennedy.punishment.PunishmentPlugin;
+import com.bradenkennedy.punishment.api.model.Punishment;
+import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
+import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.bradenkennedy.punishment.command.parser.DurationParser;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.UUID;
+import java.util.function.Consumer;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.context.CommandContext;
+import org.jetbrains.annotations.Nullable;
+
 public final class TimedPunishmentCommands {
 
-    private TimedPunishmentCommands() {
-    }
+    private TimedPunishmentCommands() {}
 
-    public static void register(CommandManager<CommandSender> manager, PunishmentType type, Consumer<Punishment> enforce) {
+    public static void register(
+            CommandManager<CommandSender> manager, PunishmentType type, Consumer<Punishment> enforce) {
         String name = type.name().toLowerCase();
         var silent = manager.flagBuilder("silent").withAliases("s");
         manager.command(manager.commandBuilder(name)
@@ -57,7 +56,11 @@ public final class TimedPunishmentCommands {
                 .handler(ctx -> revoke(ctx, type)));
     }
 
-    private static void issue(CommandContext<CommandSender> ctx, PunishmentType type, @Nullable Duration duration, Consumer<Punishment> enforce) {
+    private static void issue(
+            CommandContext<CommandSender> ctx,
+            PunishmentType type,
+            @Nullable Duration duration,
+            Consumer<Punishment> enforce) {
         OfflinePlayer target = ctx.get("player");
         String name = type.name().toLowerCase();
         var repository = PunishmentPlugin.getDataRepository();
@@ -70,15 +73,25 @@ public final class TimedPunishmentCommands {
             return;
         }
         Instant now = Instant.now();
-        var punishment = new Punishment(UUID.randomUUID(), target.getUniqueId(), type,
-                new PunishmentIssuer(issuerId(ctx.sender()), now), reasonOf(ctx),
-                duration == null ? null : now.plus(duration), false);
+        var punishment = new Punishment(
+                UUID.randomUUID(),
+                target.getUniqueId(),
+                type,
+                new PunishmentIssuer(issuerId(ctx.sender()), now),
+                reasonOf(ctx),
+                duration == null ? null : now.plus(duration),
+                false);
         if (!tryPunish(ctx, target, punishment)) {
             return;
         }
         var config = PunishmentPlugin.getPluginConfig();
-        announce(ctx, name + ".announce", target,
-                Placeholder.unparsed("duration", duration == null ? config.raw("permanent-duration") : DurationParser.format(duration)));
+        announce(
+                ctx,
+                name + ".announce",
+                target,
+                Placeholder.unparsed(
+                        "duration",
+                        duration == null ? config.raw("permanent-duration") : DurationParser.format(duration)));
         enforce.accept(punishment);
     }
 
@@ -86,12 +99,14 @@ public final class TimedPunishmentCommands {
         OfflinePlayer target = ctx.get("player");
         String name = "un" + type.name().toLowerCase();
         var repository = PunishmentPlugin.getDataRepository();
-        repository.findActive(target.getUniqueId(), type).ifPresentOrElse(
-                active -> {
-                    if (tryRevoke(ctx, target, active)) {
-                        announce(ctx, name + ".announce", target);
-                    }
-                },
-                () -> reply(ctx, name + ".not-active", target));
+        repository
+                .findActive(target.getUniqueId(), type)
+                .ifPresentOrElse(
+                        active -> {
+                            if (tryRevoke(ctx, target, active)) {
+                                announce(ctx, name + ".announce", target);
+                            }
+                        },
+                        () -> reply(ctx, name + ".not-active", target));
     }
 }

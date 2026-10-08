@@ -1,12 +1,11 @@
 package com.bradenkennedy.punishment.storage;
 
+import com.bradenkennedy.punishment.api.model.Punishment;
+import com.bradenkennedy.punishment.api.model.PunishmentType;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
 
 public interface PunishmentRepository {
     void create(Punishment punishment);

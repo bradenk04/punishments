@@ -12,13 +12,12 @@ import com.bradenkennedy.punishment.listener.WarnListener;
 import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
 import com.bradenkennedy.punishment.storage.H2PunishmentRepository;
 import com.bradenkennedy.punishment.storage.PunishmentRepository;
+import java.sql.SQLException;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.LegacyPaperCommandManager;
-
-import java.sql.SQLException;
 
 public class PunishmentPlugin extends JavaPlugin {
 
@@ -96,7 +95,9 @@ public class PunishmentPlugin extends JavaPlugin {
         return getInstance().miniMessage();
     }
 
-    public static PunishmentRepository getDataRepository() { return dataRepository; }
+    public static PunishmentRepository getDataRepository() {
+        return dataRepository;
+    }
 
     public static ActivePunishmentCache getActivePunishmentCache() { return activePunishmentCache; }
 

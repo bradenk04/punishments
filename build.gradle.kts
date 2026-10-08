@@ -1,5 +1,7 @@
 plugins {
   java
+  jacoco
+  id("com.diffplug.spotless") version "8.10.3"
   id("com.gradleup.shadow") version "9.6.1"
   id("xyz.jpenilla.run-paper") version "3.1.0"
 }
@@ -34,10 +36,34 @@ java {
 
 tasks.withType<JavaCompile> {
   options.encoding = "UTF-8"
+  options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
 }
 
 tasks.test {
   useJUnitPlatform()
+  finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+  reports.xml.required.set(true)
+}
+
+spotless {
+  java {
+    palantirJavaFormat()
+    removeUnusedImports()
+    trimTrailingWhitespace()
+    endWithNewline()
+  }
+}
+
+tasks.runServer {
+  minecraftVersion("26.2")
+  javaLauncher.set(javaToolchains.launcherFor {
+    languageVersion.set(JavaLanguageVersion.of(25))
+  })
+  jvmArgs("-Dcom.mojang.eula.agree=true")
+  pluginJars.setFrom(tasks.shadowJar.flatMap { it.archiveFile })
 }
 
 tasks.runServer {

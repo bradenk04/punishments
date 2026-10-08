@@ -5,6 +5,9 @@ import com.bradenkennedy.punishment.api.events.PlayerPunishedEvent;
 import com.bradenkennedy.punishment.api.events.PlayerPunishmentRevokedEvent;
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
+import java.time.Instant;
+import java.util.Objects;
+import java.util.UUID;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
@@ -16,25 +19,23 @@ import org.bukkit.event.Event;
 import org.incendo.cloud.context.CommandContext;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.Instant;
-import java.util.Objects;
-import java.util.UUID;
-
 final class CommandSupport {
 
     private static final UUID CONSOLE_ID = new UUID(0, 0);
     private static final String NOTIFY_PERMISSION = "punishments.notify";
     private static final String EXEMPT_PERMISSION = "punishments.exempt";
 
-    private CommandSupport() {
-    }
+    private CommandSupport() {}
 
     static void reply(CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target) {
-        PunishmentPlugin.getAdventure().sender(ctx.sender())
-                .sendMessage(PunishmentPlugin.getPluginConfig().message(messageKey, Placeholder.unparsed("name", nameOf(target))));
+        PunishmentPlugin.getAdventure()
+                .sender(ctx.sender())
+                .sendMessage(PunishmentPlugin.getPluginConfig()
+                        .message(messageKey, Placeholder.unparsed("name", nameOf(target))));
     }
 
-    static void announce(CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target, TagResolver... extra) {
+    static void announce(
+            CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target, TagResolver... extra) {
         boolean silent = ctx.flags().isPresent("silent");
         var config = PunishmentPlugin.getPluginConfig();
         var resolver = TagResolver.builder()
@@ -71,7 +72,8 @@ final class CommandSupport {
         return true;
     }
 
-    private static <T extends Event & Cancellable> boolean cancelled(CommandContext<CommandSender> ctx, OfflinePlayer target, T event) {
+    private static <T extends Event & Cancellable> boolean cancelled(
+            CommandContext<CommandSender> ctx, OfflinePlayer target, T event) {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             reply(ctx, "cancelled", target);
