@@ -4,6 +4,8 @@ import com.bradenkennedy.punishment.PluginConfig;
 import com.bradenkennedy.punishment.api.events.PlayerPunishedEvent;
 import com.bradenkennedy.punishment.api.events.PlayerPunishmentRevokedEvent;
 import com.bradenkennedy.punishment.api.model.Punishment;
+import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
 import com.bradenkennedy.punishment.storage.PunishmentRepository;
 import java.time.Instant;
 import java.util.Objects;
@@ -27,11 +29,17 @@ public final class CommandSupport {
     private static final String EXEMPT_PERMISSION = "punishments.exempt";
 
     private final PunishmentRepository repository;
+    private final ActivePunishmentCache cache;
     private final PluginConfig config;
     private final BukkitAudiences audiences;
 
-    public CommandSupport(PunishmentRepository repository, PluginConfig config, BukkitAudiences audiences) {
+    public CommandSupport(
+            PunishmentRepository repository,
+            ActivePunishmentCache cache,
+            PluginConfig config,
+            BukkitAudiences audiences) {
         this.repository = repository;
+        this.cache = cache;
         this.config = config;
         this.audiences = audiences;
     }
@@ -61,6 +69,9 @@ public final class CommandSupport {
             return false;
         }
         repository.create(punishment);
+        if (punishment.type() == PunishmentType.MUTE) {
+            cache.put(punishment);
+        }
         return true;
     }
 
@@ -69,6 +80,9 @@ public final class CommandSupport {
             return false;
         }
         repository.revoke(punishment.id(), issuerId(ctx.sender()), reasonOf(ctx), Instant.now());
+        if (punishment.type() == PunishmentType.MUTE) {
+            cache.remove(punishment.target(), punishment.type());
+        }
         return true;
     }
 
