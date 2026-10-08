@@ -29,7 +29,7 @@ Warn, kick, mute and ban players, permanently or for a set time, with a full his
 | Component | Version             |
 |-----------|---------------------|
 | Server    | Spigot / Paper 26.2 |
-| Java      | 21 or newer         |
+| Java      | 25 or newer         |
 
 ## Installation
 
