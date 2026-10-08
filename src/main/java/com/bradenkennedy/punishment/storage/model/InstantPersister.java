@@ -1,8 +1,5 @@
 package com.bradenkennedy.punishment.storage.model;
 
-import java.sql.SQLException;
-import java.time.Instant;
-
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.types.BaseDataType;
@@ -14,7 +11,7 @@ public class InstantPersister extends BaseDataType {
     private static final InstantPersister INSTANCE = new InstantPersister();
 
     private InstantPersister() {
-        super(SqlType.LONG, new Class<?>[] { Instant.class });
+        super(SqlType.LONG, new Class<?>[] {Instant.class});
     }
 
     public static InstantPersister getSingleton() {

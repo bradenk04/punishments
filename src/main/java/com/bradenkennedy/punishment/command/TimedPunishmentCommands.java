@@ -1,21 +1,5 @@
 package com.bradenkennedy.punishment.command;
 
-import com.bradenkennedy.punishment.PunishmentPlugin;
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
-import com.bradenkennedy.punishment.command.parser.DurationParser;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.incendo.cloud.CommandManager;
-import org.incendo.cloud.context.CommandContext;
-import org.jetbrains.annotations.Nullable;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.util.UUID;
-import java.util.function.Consumer;
 import static com.bradenkennedy.punishment.command.CommandSupport.announce;
 import static com.bradenkennedy.punishment.command.CommandSupport.isExempt;
 import static com.bradenkennedy.punishment.command.CommandSupport.issuerId;
@@ -27,10 +11,25 @@ import static com.bradenkennedy.punishment.command.parser.DurationParser.duratio
 import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser;
 import static org.incendo.cloud.parser.standard.StringParser.greedyFlagYieldingStringParser;
 
+import com.bradenkennedy.punishment.PunishmentPlugin;
+import com.bradenkennedy.punishment.api.model.Punishment;
+import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
+import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.bradenkennedy.punishment.command.parser.DurationParser;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.UUID;
+import java.util.function.Consumer;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.context.CommandContext;
+import org.jetbrains.annotations.Nullable;
+
 public final class TimedPunishmentCommands {
 
-    private TimedPunishmentCommands() {
-    }
+    private TimedPunishmentCommands() {}
 
     public static void register(
             CommandManager<CommandSender> manager, PunishmentType type, Consumer<Punishment> enforce) {
@@ -57,7 +56,10 @@ public final class TimedPunishmentCommands {
                 .handler(ctx -> revoke(ctx, type)));
     }
 
-    private static void issue(CommandContext<CommandSender> ctx, PunishmentType type, @Nullable Duration duration,
+    private static void issue(
+            CommandContext<CommandSender> ctx,
+            PunishmentType type,
+            @Nullable Duration duration,
             Consumer<Punishment> enforce) {
         OfflinePlayer target = ctx.get("player");
         String name = type.name().toLowerCase();

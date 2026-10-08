@@ -42,8 +42,7 @@ public class H2PunishmentRepository implements PunishmentRepository {
     public void revoke(UUID punishmentId, UUID revokedBy, String reason, Instant atTime) {
         try {
             PunishmentModel model = punishmentDao.queryForId(punishmentId);
-            if (model == null)
-                return;
+            if (model == null) return;
             model.setIsRevoked(true);
             model.setRevokedBy(revokedBy);
             model.setRevokedReason(reason);
@@ -111,9 +110,9 @@ public class H2PunishmentRepository implements PunishmentRepository {
     @Override
     public List<Punishment> findHistory(UUID player) {
         try {
-            List<PunishmentModel> models = punishmentDao.queryBuilder().where().eq("target", player).query();
-            if (models == null || models.isEmpty())
-                return new ArrayList<>();
+            List<PunishmentModel> models =
+                    punishmentDao.queryBuilder().where().eq("target", player).query();
+            if (models == null || models.isEmpty()) return new ArrayList<>();
             return models.stream().map(PunishmentModel::toPunishment).toList();
         } catch (SQLException e) {
             return new ArrayList<>();

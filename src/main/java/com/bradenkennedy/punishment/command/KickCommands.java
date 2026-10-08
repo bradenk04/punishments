@@ -1,19 +1,5 @@
 package com.bradenkennedy.punishment.command;
 
-import com.bradenkennedy.punishment.PunishmentPlugin;
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.incendo.cloud.CommandManager;
-import org.incendo.cloud.context.CommandContext;
-
-import java.time.Instant;
-import java.util.UUID;
 import static com.bradenkennedy.punishment.command.CommandSupport.announce;
 import static com.bradenkennedy.punishment.command.CommandSupport.isExempt;
 import static com.bradenkennedy.punishment.command.CommandSupport.issuerId;
@@ -23,9 +9,22 @@ import static com.bradenkennedy.punishment.command.CommandSupport.tryPunish;
 import static org.incendo.cloud.bukkit.parser.PlayerParser.playerParser;
 import static org.incendo.cloud.parser.standard.StringParser.greedyFlagYieldingStringParser;
 
+import com.bradenkennedy.punishment.PunishmentPlugin;
+import com.bradenkennedy.punishment.api.model.Punishment;
+import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
+import com.bradenkennedy.punishment.api.model.PunishmentType;
+import java.time.Instant;
+import java.util.UUID;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.context.CommandContext;
+
 public final class KickCommands {
-    private KickCommands() {
-    }
+    private KickCommands() {}
 
     public static void register(CommandManager<CommandSender> manager) {
         manager.command(manager.commandBuilder("kick")
@@ -55,10 +54,12 @@ public final class KickCommands {
         }
         announce(ctx, "kick.announce", target);
         var config = PunishmentPlugin.getPluginConfig();
-        String screen = LegacyComponentSerializer.legacySection().serialize(config.message("kick.screen",
-                config.reason(kick.reason()),
-                Placeholder.unparsed("staff", ctx.sender().getName()),
-                Placeholder.unparsed("id", kick.id().toString())));
+        String screen = LegacyComponentSerializer.legacySection()
+                .serialize(config.message(
+                        "kick.screen",
+                        config.reason(kick.reason()),
+                        Placeholder.unparsed("staff", ctx.sender().getName()),
+                        Placeholder.unparsed("id", kick.id().toString())));
         Bukkit.getScheduler().runTask(PunishmentPlugin.getInstance(), () -> target.kickPlayer(screen));
     }
 }

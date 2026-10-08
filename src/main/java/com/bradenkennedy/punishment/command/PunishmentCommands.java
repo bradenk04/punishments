@@ -10,13 +10,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.incendo.cloud.CommandManager;
 
-import static com.bradenkennedy.punishment.command.CommandSupport.nameOf;
-import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser;
-
 public final class PunishmentCommands {
 
-    private PunishmentCommands() {
-    }
+    private PunishmentCommands() {}
 
     public static void register(CommandManager<CommandSender> manager) {
         manager.command(manager.commandBuilder("punish")

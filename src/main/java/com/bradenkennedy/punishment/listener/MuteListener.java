@@ -16,8 +16,8 @@ public final class MuteListener implements Listener {
     private final Set<String> blockedCommands;
 
     public MuteListener(Collection<String> blockedCommands) {
-        this.blockedCommands = blockedCommands.stream().map(String::toLowerCase)
-                .collect(Collectors.toUnmodifiableSet());
+        this.blockedCommands =
+                blockedCommands.stream().map(String::toLowerCase).collect(Collectors.toUnmodifiableSet());
     }
 
     @EventHandler(ignoreCancelled = true)

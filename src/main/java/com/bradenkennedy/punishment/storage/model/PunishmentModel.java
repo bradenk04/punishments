@@ -47,8 +47,7 @@ public class PunishmentModel {
     @DatabaseField
     private boolean acknowledged;
 
-    public PunishmentModel() {
-    }
+    public PunishmentModel() {}
 
     public PunishmentModel(
             UUID id,
