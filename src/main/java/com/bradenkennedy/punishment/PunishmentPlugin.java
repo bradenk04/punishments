@@ -52,8 +52,7 @@ public class PunishmentPlugin extends JavaPlugin {
 
         var commandManager = LegacyPaperCommandManager.createNative(this, ExecutionCoordinator.asyncCoordinator());
         PunishmentCommands.register(commandManager);
-        TimedPunishmentCommands.register(commandManager, PunishmentType.MUTE, mute -> {
-        });
+        TimedPunishmentCommands.register(commandManager, PunishmentType.MUTE, mute -> {});
         TimedPunishmentCommands.register(commandManager, PunishmentType.BAN, BanListener::kick);
         WarnCommands.register(commandManager);
         KickCommands.register(commandManager);
@@ -95,5 +94,7 @@ public class PunishmentPlugin extends JavaPlugin {
         return dataRepository;
     }
 
-    public static PluginConfig getPluginConfig() { return pluginConfig; }>>>>>>>685660 acb826c0e36aa6bdb355565c80f8fcc0ca
+    public static PluginConfig getPluginConfig() {
+        return pluginConfig;
+    }
 }

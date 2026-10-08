@@ -4,6 +4,9 @@ import com.bradenkennedy.punishment.PunishmentPlugin;
 import com.bradenkennedy.punishment.api.events.PlayerPunishedEvent;
 import com.bradenkennedy.punishment.api.events.PlayerPunishmentRevokedEvent;
 import com.bradenkennedy.punishment.api.model.Punishment;
+import java.time.Instant;
+import java.util.Objects;
+import java.util.UUID;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
@@ -14,9 +17,6 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.incendo.cloud.context.CommandContext;
 import org.jetbrains.annotations.Nullable;
-import java.time.Instant;
-import java.util.Objects;
-import java.util.UUID;
 
 final class CommandSupport {
 
@@ -24,8 +24,7 @@ final class CommandSupport {
     private static final String NOTIFY_PERMISSION = "punishments.notify";
     private static final String EXEMPT_PERMISSION = "punishments.exempt";
 
-    private CommandSupport() {
-    }
+    private CommandSupport() {}
 
     static void reply(CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target) {
         PunishmentPlugin.getAdventure()
@@ -62,7 +61,6 @@ final class CommandSupport {
         if (cancelled(ctx, target, new PlayerPunishmentRevokedEvent(punishment))) {
             return false;
         }
-<<<<<<< HEAD
         PunishmentPlugin.getDataRepository()
                 .revoke(punishment.id(), issuerId(ctx.sender()), reasonOf(ctx), Instant.now());
         return true;
@@ -70,13 +68,6 @@ final class CommandSupport {
 
     private static <T extends Event & Cancellable> boolean cancelled(
             CommandContext<CommandSender> ctx, OfflinePlayer target, T event) {
-=======
-        PunishmentPlugin.getDataRepository().revoke(punishment.id(), issuerId(ctx.sender()), reasonOf(ctx), Instant.now());
-        return true;
-    }
-
-    private static <T extends Event & Cancellable> boolean cancelled(CommandContext<CommandSender> ctx, OfflinePlayer target, T event) {
->>>>>>> 685660acb826c0e36aa6bdb355565c80f8fcc0ca
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             reply(ctx, "cancelled", target);
