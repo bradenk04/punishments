@@ -66,6 +66,15 @@ tasks.runServer {
   pluginJars.setFrom(tasks.shadowJar.flatMap { it.archiveFile })
 }
 
+tasks.runServer {
+  minecraftVersion("26.2")
+  javaLauncher.set(javaToolchains.launcherFor {
+    languageVersion.set(JavaLanguageVersion.of(25))
+  })
+  jvmArgs("-Dcom.mojang.eula.agree=true")
+  pluginJars.setFrom(tasks.shadowJar.flatMap { it.archiveFile })
+}
+
 tasks.shadowJar {
   relocate("com.h2database", "com.bradenkennedy.punishment.libs.h2")
   relocate("net.kyori", "com.bradenkennedy.punishment.libs.kyori")

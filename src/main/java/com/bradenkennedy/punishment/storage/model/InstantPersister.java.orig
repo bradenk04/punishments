@@ -1,22 +1,37 @@
 package com.bradenkennedy.punishment.storage.model;
 
+<<<<<<< HEAD
+=======
 import java.sql.SQLException;
 import java.time.Instant;
 
+>>>>>>> 685660acb826c0e36aa6bdb355565c80f8fcc0ca
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.types.BaseDataType;
 import com.j256.ormlite.support.DatabaseResults;
+<<<<<<< HEAD
 import java.sql.SQLException;
 import java.time.Instant;
 
+=======
+
+/** Stores {@link Instant} as epoch milliseconds in a BIGINT column. */
+>>>>>>> 685660acb826c0e36aa6bdb355565c80f8fcc0ca
 public class InstantPersister extends BaseDataType {
     private static final InstantPersister INSTANCE = new InstantPersister();
 
     private InstantPersister() {
+<<<<<<< HEAD
+        super(SqlType.LONG, new Class<?>[] {Instant.class});
+    }
+
+=======
         super(SqlType.LONG, new Class<?>[] { Instant.class });
     }
 
+    // ORMLite looks this up reflectively when used via persisterClass.
+>>>>>>> 685660acb826c0e36aa6bdb355565c80f8fcc0ca
     public static InstantPersister getSingleton() {
         return INSTANCE;
     }

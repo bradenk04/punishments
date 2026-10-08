@@ -2,22 +2,36 @@ package com.bradenkennedy.punishment.listener;
 
 import com.bradenkennedy.punishment.PunishmentPlugin;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
+<<<<<<< HEAD
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
+=======
+>>>>>>> 685660acb826c0e36aa6bdb355565c80f8fcc0ca
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
+<<<<<<< HEAD
+=======
+import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+>>>>>>> 685660acb826c0e36aa6bdb355565c80f8fcc0ca
 public final class MuteListener implements Listener {
 
     private final Set<String> blockedCommands;
 
     public MuteListener(Collection<String> blockedCommands) {
-        this.blockedCommands = blockedCommands.stream().map(String::toLowerCase)
-                .collect(Collectors.toUnmodifiableSet());
+<<<<<<< HEAD
+        this.blockedCommands =
+                blockedCommands.stream().map(String::toLowerCase).collect(Collectors.toUnmodifiableSet());
+=======
+        this.blockedCommands = blockedCommands.stream().map(String::toLowerCase).collect(Collectors.toUnmodifiableSet());
+>>>>>>> 685660acb826c0e36aa6bdb355565c80f8fcc0ca
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -33,6 +47,7 @@ public final class MuteListener implements Listener {
     }
 
     private boolean isMuted(Player player) {
+<<<<<<< HEAD
         return PunishmentPlugin.getDataRepository()
                 .findActive(player.getUniqueId(), PunishmentType.MUTE)
                 .map(mute -> {
@@ -40,6 +55,12 @@ public final class MuteListener implements Listener {
                     PunishmentPlugin.getAdventure()
                             .player(player)
                             .sendMessage(config.message("mute.notice", config.remaining(mute.expiry())));
+=======
+        return PunishmentPlugin.getDataRepository().findActive(player.getUniqueId(), PunishmentType.MUTE)
+                .map(mute -> {
+                    var config = PunishmentPlugin.getPluginConfig();
+                    PunishmentPlugin.getAdventure().player(player).sendMessage(config.message("mute.notice", config.remaining(mute.expiry())));
+>>>>>>> 685660acb826c0e36aa6bdb355565c80f8fcc0ca
                     return true;
                 })
                 .orElse(false);

@@ -4,6 +4,12 @@ import com.bradenkennedy.punishment.PunishmentPlugin;
 import com.bradenkennedy.punishment.api.events.PlayerPunishedEvent;
 import com.bradenkennedy.punishment.api.events.PlayerPunishmentRevokedEvent;
 import com.bradenkennedy.punishment.api.model.Punishment;
+<<<<<<< HEAD
+import java.time.Instant;
+import java.util.Objects;
+import java.util.UUID;
+=======
+>>>>>>> 685660acb826c0e36aa6bdb355565c80f8fcc0ca
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
@@ -14,18 +20,22 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.incendo.cloud.context.CommandContext;
 import org.jetbrains.annotations.Nullable;
+
+<<<<<<< HEAD
+=======
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
+>>>>>>> 685660acb826c0e36aa6bdb355565c80f8fcc0ca
 final class CommandSupport {
 
     private static final UUID CONSOLE_ID = new UUID(0, 0);
     private static final String NOTIFY_PERMISSION = "punishments.notify";
     private static final String EXEMPT_PERMISSION = "punishments.exempt";
 
-    private CommandSupport() {
-    }
+<<<<<<< HEAD
+    private CommandSupport() {}
 
     static void reply(CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target) {
         PunishmentPlugin.getAdventure()
@@ -36,6 +46,17 @@ final class CommandSupport {
 
     static void announce(
             CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target, TagResolver... extra) {
+=======
+    private CommandSupport() {
+    }
+
+    static void reply(CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target) {
+        PunishmentPlugin.getAdventure().sender(ctx.sender())
+                .sendMessage(PunishmentPlugin.getPluginConfig().message(messageKey, Placeholder.unparsed("name", nameOf(target))));
+    }
+
+    static void announce(CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target, TagResolver... extra) {
+>>>>>>> 685660acb826c0e36aa6bdb355565c80f8fcc0ca
         boolean silent = ctx.flags().isPresent("silent");
         var config = PunishmentPlugin.getPluginConfig();
         var resolver = TagResolver.builder()

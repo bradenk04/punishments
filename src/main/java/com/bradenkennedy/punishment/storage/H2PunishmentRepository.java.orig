@@ -42,8 +42,7 @@ public class H2PunishmentRepository implements PunishmentRepository {
     public void revoke(UUID punishmentId, UUID revokedBy, String reason, Instant atTime) {
         try {
             PunishmentModel model = punishmentDao.queryForId(punishmentId);
-            if (model == null)
-                return;
+            if (model == null) return;
             model.setIsRevoked(true);
             model.setRevokedBy(revokedBy);
             model.setRevokedReason(reason);
@@ -58,8 +57,12 @@ public class H2PunishmentRepository implements PunishmentRepository {
     public Optional<Punishment> findActive(UUID player, PunishmentType type) {
         try {
             Instant now = Instant.now();
+<<<<<<< HEAD
             return punishmentDao
                     .queryBuilder()
+=======
+            return punishmentDao.queryBuilder()
+>>>>>>> 685660acb826c0e36aa6bdb355565c80f8fcc0ca
                     .where()
                     .eq("target", player)
                     .and()
@@ -78,6 +81,40 @@ public class H2PunishmentRepository implements PunishmentRepository {
 
     @Override
     public List<Punishment> findUnacknowledgedWarnings(UUID player) {
+<<<<<<< HEAD
+=======
+        try {
+            return punishmentDao.queryBuilder()
+                    .where()
+                    .eq("target", player)
+                    .and()
+                    .eq("type", PunishmentType.WARN)
+                    .and()
+                    .eq("revoked", false)
+                    .and()
+                    .eq("acknowledged", false)
+                    .query()
+                    .stream()
+                    .map(PunishmentModel::toPunishment)
+                    .toList();
+        } catch (SQLException e) {
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public void acknowledge(UUID punishmentId) {
+        try {
+            var update = punishmentDao.updateBuilder();
+            update.updateColumnValue("acknowledged", true).where().idEq(punishmentId);
+            update.update();
+        } catch (SQLException e) {
+        }
+    }
+
+    @Override
+    public List<Punishment> findHistory(UUID player) {
+>>>>>>> 685660acb826c0e36aa6bdb355565c80f8fcc0ca
         try {
             return punishmentDao
                     .queryBuilder()
@@ -111,9 +148,9 @@ public class H2PunishmentRepository implements PunishmentRepository {
     @Override
     public List<Punishment> findHistory(UUID player) {
         try {
-            List<PunishmentModel> models = punishmentDao.queryBuilder().where().eq("target", player).query();
-            if (models == null || models.isEmpty())
-                return new ArrayList<>();
+            List<PunishmentModel> models =
+                    punishmentDao.queryBuilder().where().eq("target", player).query();
+            if (models == null || models.isEmpty()) return new ArrayList<>();
             return models.stream().map(PunishmentModel::toPunishment).toList();
         } catch (SQLException e) {
             return new ArrayList<>();

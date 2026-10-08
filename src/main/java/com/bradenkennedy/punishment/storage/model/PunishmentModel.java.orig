@@ -47,8 +47,12 @@ public class PunishmentModel {
     @DatabaseField
     private boolean acknowledged;
 
+<<<<<<< HEAD
+    public PunishmentModel() {}
+=======
     public PunishmentModel() {
     }
+>>>>>>> 685660acb826c0e36aa6bdb355565c80f8fcc0ca
 
     public PunishmentModel(
             UUID id,
