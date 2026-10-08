@@ -53,10 +53,4 @@ class DurationParserTest {
     void formatsDurations(long seconds, String expected) {
         assertEquals(expected, DurationParser.format(Duration.ofSeconds(seconds)));
     }
-
-    @ParameterizedTest
-    @CsvSource({"0, 0s", "59, 59s", "3600, 1h", "131400, 1d12h30m", "694861, 1w1d1h1m1s"})
-    void formatsDurations(long seconds, String expected) {
-        assertEquals(expected, DurationParser.format(Duration.ofSeconds(seconds)));
-    }
 }

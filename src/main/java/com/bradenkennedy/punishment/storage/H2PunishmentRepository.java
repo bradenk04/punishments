@@ -31,11 +31,20 @@ public class H2PunishmentRepository implements PunishmentRepository {
     }
 
     @Override
-    public void create(Punishment punishment) {
+    public synchronized void create(Punishment punishment) {
+        if (isExclusive(punishment.type())
+                && findActive(punishment.target(), punishment.type()).isPresent()) return;
         try {
             punishmentDao.create(new PunishmentModel(punishment));
         } catch (SQLException e) {
         }
+    }
+
+    private static boolean isExclusive(PunishmentType type) {
+        return switch (type) {
+            case BAN, MUTE -> true;
+            case WARN, KICK -> false;
+        };
     }
 
     @Override
