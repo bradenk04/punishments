@@ -3,6 +3,7 @@ package com.bradenkennedy.punishment;
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
 import com.bradenkennedy.punishment.storage.H2PunishmentRepository;
 import com.bradenkennedy.punishment.storage.model.PunishmentModel;
 import java.io.File;
@@ -28,6 +29,7 @@ public abstract class ServerTestBase {
     protected ServerMock server;
     protected PluginMock plugin;
     protected H2PunishmentRepository repository;
+    protected ActivePunishmentCache cache;
     protected BukkitAudiences audiences;
     protected PluginConfig config;
 
@@ -36,6 +38,7 @@ public abstract class ServerTestBase {
         server = MockBukkit.mock();
         plugin = MockBukkit.createMockPlugin();
         repository = new H2PunishmentRepository(dataFolder);
+        cache = new ActivePunishmentCache();
         audiences = BukkitAudiences.create(plugin);
         config = new PluginConfig(plugin, MiniMessage.miniMessage());
     }

@@ -7,8 +7,10 @@ import com.bradenkennedy.punishment.command.PunishmentCommands;
 import com.bradenkennedy.punishment.command.TimedPunishmentCommands;
 import com.bradenkennedy.punishment.command.WarnCommands;
 import com.bradenkennedy.punishment.listener.BanListener;
+import com.bradenkennedy.punishment.listener.CacheLoadListener;
 import com.bradenkennedy.punishment.listener.MuteListener;
 import com.bradenkennedy.punishment.listener.WarnListener;
+import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
 import com.bradenkennedy.punishment.storage.H2PunishmentRepository;
 import com.bradenkennedy.punishment.storage.PunishmentRepository;
 import java.sql.SQLException;
@@ -34,15 +36,17 @@ public class PunishmentPlugin extends JavaPlugin {
         }
 
         var config = new PluginConfig(this, MiniMessage.miniMessage());
+        var cache = new ActivePunishmentCache();
         var banListener = new BanListener(this, repository, config);
         var warnListener = new WarnListener(repository, config, adventure);
+        getServer().getPluginManager().registerEvents(new CacheLoadListener(repository, cache), this);
         getServer()
                 .getPluginManager()
-                .registerEvents(new MuteListener(config.blockedMuteCommands(), repository, config, adventure), this);
+                .registerEvents(new MuteListener(cache, config.blockedMuteCommands(), config, adventure), this);
         getServer().getPluginManager().registerEvents(warnListener, this);
         getServer().getPluginManager().registerEvents(banListener, this);
 
-        var support = new CommandSupport(repository, config, adventure);
+        var support = new CommandSupport(repository, cache, config, adventure);
         var commandManager = LegacyPaperCommandManager.createNative(this, ExecutionCoordinator.asyncCoordinator());
         new PunishmentCommands(adventure, repository, config).register(commandManager);
         var timedCommands = new TimedPunishmentCommands(support, repository, config);

@@ -2,7 +2,7 @@ package com.bradenkennedy.punishment.listener;
 
 import com.bradenkennedy.punishment.PluginConfig;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
-import com.bradenkennedy.punishment.storage.PunishmentRepository;
+import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -15,17 +15,17 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 public final class MuteListener implements Listener {
 
+    private final ActivePunishmentCache cache;
     private final Set<String> blockedCommands;
-    private final PunishmentRepository repository;
     private final PluginConfig config;
     private final BukkitAudiences audiences;
 
     public MuteListener(
+            ActivePunishmentCache cache,
             Collection<String> blockedCommands,
-            PunishmentRepository repository,
             PluginConfig config,
             BukkitAudiences audiences) {
-        this.repository = repository;
+        this.cache = cache;
         this.config = config;
         this.audiences = audiences;
         this.blockedCommands =
@@ -45,8 +45,7 @@ public final class MuteListener implements Listener {
     }
 
     private boolean isMuted(Player player) {
-        return repository
-                .findActive(player.getUniqueId(), PunishmentType.MUTE)
+        return cache.find(player.getUniqueId(), PunishmentType.MUTE)
                 .map(mute -> {
                     audiences
                             .player(player)
