@@ -1,6 +1,7 @@
 package com.bradenkennedy.punishment;
 
 import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.bradenkennedy.punishment.command.CommandSupport;
 import com.bradenkennedy.punishment.command.KickCommands;
 import com.bradenkennedy.punishment.command.PunishmentCommands;
 import com.bradenkennedy.punishment.command.TimedPunishmentCommands;
@@ -21,50 +22,38 @@ import org.incendo.cloud.paper.LegacyPaperCommandManager;
 
 public class PunishmentPlugin extends JavaPlugin {
 
-    private static PunishmentPlugin instance;
-    private static PunishmentRepository dataRepository;
-    private static PluginConfig pluginConfig;
-    private static ActivePunishmentCache activePunishmentCache;
-
     private BukkitAudiences adventure;
-    private MiniMessage miniMessage;
-
-    public static PunishmentPlugin getInstance() {
-        if (instance == null) {
-            throw new IllegalStateException("Punishments is not initialized yet!");
-        }
-        return instance;
-    }
 
     @Override
     public void onEnable() {
-        instance = this;
         this.adventure = BukkitAudiences.create(this);
-        this.miniMessage = MiniMessage.miniMessage();
 
+        PunishmentRepository repository;
         try {
-            PunishmentPlugin.dataRepository = new H2PunishmentRepository(this.getDataFolder());
+            repository = new H2PunishmentRepository(this.getDataFolder());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        PunishmentPlugin.pluginConfig = new PluginConfig(this);
-        PunishmentPlugin.activePunishmentCache = new ActivePunishmentCache();
+        var config = new PluginConfig(this, MiniMessage.miniMessage());
+        var cache = new ActivePunishmentCache();
+        var banListener = new BanListener(this, repository, config);
+        var warnListener = new WarnListener(repository, config, adventure);
+        getServer().getPluginManager().registerEvents(new CacheLoadListener(repository, cache), this);
         getServer()
                 .getPluginManager()
-                .registerEvents(new CacheLoadListener(dataRepository, activePunishmentCache), this);
-        getServer()
-                .getPluginManager()
-                .registerEvents(new MuteListener(activePunishmentCache, pluginConfig.blockedMuteCommands()), this);
-        getServer().getPluginManager().registerEvents(new WarnListener(), this);
-        getServer().getPluginManager().registerEvents(new BanListener(), this);
+                .registerEvents(new MuteListener(cache, config.blockedMuteCommands(), config, adventure), this);
+        getServer().getPluginManager().registerEvents(warnListener, this);
+        getServer().getPluginManager().registerEvents(banListener, this);
 
+        var support = new CommandSupport(repository, cache, config, adventure);
         var commandManager = LegacyPaperCommandManager.createNative(this, ExecutionCoordinator.asyncCoordinator());
-        PunishmentCommands.register(commandManager);
-        TimedPunishmentCommands.register(commandManager, PunishmentType.MUTE, mute -> {});
-        TimedPunishmentCommands.register(commandManager, PunishmentType.BAN, BanListener::kick);
-        WarnCommands.register(commandManager);
-        KickCommands.register(commandManager);
+        new PunishmentCommands(adventure, repository, config).register(commandManager);
+        var timedCommands = new TimedPunishmentCommands(support, repository, config);
+        timedCommands.register(commandManager, PunishmentType.MUTE, mute -> {});
+        timedCommands.register(commandManager, PunishmentType.BAN, banListener::kick);
+        new WarnCommands(support, repository, warnListener).register(commandManager);
+        new KickCommands(this, support, config).register(commandManager);
     }
 
     @Override
@@ -73,41 +62,5 @@ public class PunishmentPlugin extends JavaPlugin {
             this.adventure.close();
             this.adventure = null;
         }
-        this.miniMessage = null;
-        instance = null;
-    }
-
-    public BukkitAudiences adventure() {
-        if (this.adventure == null) {
-            throw new IllegalStateException("Tried to access BukkitAudiences when Punishments was disabled!");
-        }
-        return this.adventure;
-    }
-
-    public MiniMessage miniMessage() {
-        if (this.miniMessage == null) {
-            this.miniMessage = MiniMessage.miniMessage();
-        }
-        return this.miniMessage;
-    }
-
-    public static BukkitAudiences getAdventure() {
-        return getInstance().adventure();
-    }
-
-    public static MiniMessage getMiniMessage() {
-        return getInstance().miniMessage();
-    }
-
-    public static PunishmentRepository getDataRepository() {
-        return dataRepository;
-    }
-
-    public static ActivePunishmentCache getActivePunishmentCache() {
-        return activePunishmentCache;
-    }
-
-    public static PluginConfig getPluginConfig() {
-        return pluginConfig;
     }
 }

@@ -1,13 +1,16 @@
 package com.bradenkennedy.punishment.command;
 
-import com.bradenkennedy.punishment.PunishmentPlugin;
+import com.bradenkennedy.punishment.PluginConfig;
 import com.bradenkennedy.punishment.api.events.PlayerPunishedEvent;
 import com.bradenkennedy.punishment.api.events.PlayerPunishmentRevokedEvent;
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
+import com.bradenkennedy.punishment.storage.PunishmentRepository;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
@@ -19,25 +22,36 @@ import org.bukkit.event.Event;
 import org.incendo.cloud.context.CommandContext;
 import org.jetbrains.annotations.Nullable;
 
-final class CommandSupport {
+public final class CommandSupport {
 
     private static final UUID CONSOLE_ID = new UUID(0, 0);
     private static final String NOTIFY_PERMISSION = "punishments.notify";
     private static final String EXEMPT_PERMISSION = "punishments.exempt";
 
-    private CommandSupport() {}
+    private final PunishmentRepository repository;
+    private final ActivePunishmentCache cache;
+    private final PluginConfig config;
+    private final BukkitAudiences audiences;
 
-    static void reply(CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target) {
-        PunishmentPlugin.getAdventure()
-                .sender(ctx.sender())
-                .sendMessage(PunishmentPlugin.getPluginConfig()
-                        .message(messageKey, Placeholder.unparsed("name", nameOf(target))));
+    public CommandSupport(
+            PunishmentRepository repository,
+            ActivePunishmentCache cache,
+            PluginConfig config,
+            BukkitAudiences audiences) {
+        this.repository = repository;
+        this.cache = cache;
+        this.config = config;
+        this.audiences = audiences;
     }
 
-    static void announce(
-            CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target, TagResolver... extra) {
+    void reply(CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target) {
+        audiences
+                .sender(ctx.sender())
+                .sendMessage(config.message(messageKey, Placeholder.unparsed("name", nameOf(target))));
+    }
+
+    void announce(CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target, TagResolver... extra) {
         boolean silent = ctx.flags().isPresent("silent");
-        var config = PunishmentPlugin.getPluginConfig();
         var resolver = TagResolver.builder()
                 .resolver(Placeholder.unparsed("name", nameOf(target)))
                 .resolver(Placeholder.unparsed("staff", ctx.sender().getName()))
@@ -45,35 +59,34 @@ final class CommandSupport {
                 .resolvers(extra)
                 .build();
         var message = config.message(messageKey, resolver);
-        PunishmentPlugin.getAdventure()
+        audiences
                 .filter(s -> !silent || s == ctx.sender() || s.hasPermission(NOTIFY_PERMISSION))
                 .sendMessage(silent ? config.message("silent-prefix").append(message) : message);
     }
 
-    static boolean tryPunish(CommandContext<CommandSender> ctx, OfflinePlayer target, Punishment punishment) {
+    boolean tryPunish(CommandContext<CommandSender> ctx, OfflinePlayer target, Punishment punishment) {
         if (cancelled(ctx, target, new PlayerPunishedEvent(punishment))) {
             return false;
         }
-        PunishmentPlugin.getDataRepository().create(punishment);
+        repository.create(punishment);
         if (punishment.type() == PunishmentType.MUTE) {
-            PunishmentPlugin.getActivePunishmentCache().put(punishment);
+            cache.put(punishment);
         }
         return true;
     }
 
-    static boolean tryRevoke(CommandContext<CommandSender> ctx, OfflinePlayer target, Punishment punishment) {
+    boolean tryRevoke(CommandContext<CommandSender> ctx, OfflinePlayer target, Punishment punishment) {
         if (cancelled(ctx, target, new PlayerPunishmentRevokedEvent(punishment))) {
             return false;
         }
-        PunishmentPlugin.getDataRepository()
-                .revoke(punishment.id(), issuerId(ctx.sender()), reasonOf(ctx), Instant.now());
+        repository.revoke(punishment.id(), issuerId(ctx.sender()), reasonOf(ctx), Instant.now());
         if (punishment.type() == PunishmentType.MUTE) {
-            PunishmentPlugin.getActivePunishmentCache().remove(punishment.target(), punishment.type());
+            cache.remove(punishment.target(), punishment.type());
         }
         return true;
     }
 
-    private static <T extends Event & Cancellable> boolean cancelled(
+    private <T extends Event & Cancellable> boolean cancelled(
             CommandContext<CommandSender> ctx, OfflinePlayer target, T event) {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
