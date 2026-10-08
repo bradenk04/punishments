@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.bradenkennedy.punishment.listener.WarnListener;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,9 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-class CommandRegistrationTest {
+class CommandRegistrationTest extends CommandTestBase {
 
-    private final TestCommandManager manager = new TestCommandManager();
+    private WarnListener warnListener() {
+        return new WarnListener(repository, config, audiences);
+    }
 
     private Map<String, String> permissionsByPath() {
         return manager.commands().stream()
@@ -37,21 +40,21 @@ class CommandRegistrationTest {
 
     @Test
     void kickRegistersWithPermission() {
-        KickCommands.register(manager);
+        new KickCommands(plugin, support, config).register(manager);
 
         assertEquals(Map.of("kick", "punishments.kick"), permissionsByPath());
     }
 
     @Test
     void historyRegistersWithPermission() {
-        PunishmentCommands.register(manager);
+        new PunishmentCommands(audiences, repository, config).register(manager);
 
         assertEquals(Map.of("punish history", "punishments.history"), permissionsByPath());
     }
 
     @Test
     void warnRegistersWarnAndUnwarn() {
-        WarnCommands.register(manager);
+        new WarnCommands(support, repository, warnListener()).register(manager);
 
         assertEquals(Map.of("warn", "punishments.warn", "unwarn", "punishments.unwarn"), permissionsByPath());
     }
@@ -63,7 +66,7 @@ class CommandRegistrationTest {
     void timedPunishmentRegistersIssueTempAndRevoke(PunishmentType type) {
         String name = type.name().toLowerCase();
 
-        TimedPunishmentCommands.register(manager, type, punishment -> {});
+        new TimedPunishmentCommands(support, repository, config).register(manager, type, punishment -> {});
 
         assertEquals(
                 Map.of(
@@ -78,9 +81,10 @@ class CommandRegistrationTest {
 
     @Test
     void everyIssuingCommandHasSilentFlagWithAlias() {
-        KickCommands.register(manager);
-        WarnCommands.register(manager);
-        TimedPunishmentCommands.register(manager, PunishmentType.BAN, punishment -> {});
+        new KickCommands(plugin, support, config).register(manager);
+        new WarnCommands(support, repository, warnListener()).register(manager);
+        new TimedPunishmentCommands(support, repository, config)
+                .register(manager, PunishmentType.BAN, punishment -> {});
 
         List<String> roots = List.of("kick", "warn", "unwarn", "ban", "tempban", "unban");
         for (String root : roots) {

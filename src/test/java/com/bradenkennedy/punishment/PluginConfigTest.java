@@ -33,6 +33,10 @@ class PluginConfigTest {
         MockBukkit.unmock();
     }
 
+    private PluginConfig newConfig() {
+        return new PluginConfig(plugin, MiniMessage.miniMessage());
+    }
+
     private static String render(String template, TagResolver resolver) {
         return PlainTextComponentSerializer.plainText()
                 .serialize(MiniMessage.miniMessage().deserialize(template, resolver));
@@ -40,7 +44,7 @@ class PluginConfigTest {
 
     @Test
     void savesDefaultFilesToDataFolder() {
-        new PluginConfig(plugin);
+        newConfig();
 
         assertTrue(new File(plugin.getDataFolder(), "config.yml").exists());
         assertTrue(new File(plugin.getDataFolder(), "lang/en_US.yml").exists());
@@ -48,41 +52,41 @@ class PluginConfigTest {
 
     @Test
     void blockedMuteCommandsComeFromConfig() {
-        assertTrue(new PluginConfig(plugin).blockedMuteCommands().containsAll(List.of("msg", "tell", "me")));
+        assertTrue(newConfig().blockedMuteCommands().containsAll(List.of("msg", "tell", "me")));
     }
 
     @Test
     void rawReturnsMessageForKnownKey() {
-        assertEquals("No reason", new PluginConfig(plugin).raw("no-reason"));
+        assertEquals("No reason", newConfig().raw("no-reason"));
     }
 
     @Test
     void rawFallsBackToKeyForUnknownKey() {
-        assertEquals("missing.key", new PluginConfig(plugin).raw("missing.key"));
+        assertEquals("missing.key", newConfig().raw("missing.key"));
     }
 
     @Test
     void reasonFallsBackToDefaultWhenAbsent() {
-        PluginConfig config = new PluginConfig(plugin);
+        PluginConfig config = newConfig();
 
         assertEquals("No reason", render("<reason>", config.reason(null)));
     }
 
     @Test
     void reasonIsInsertedUnparsed() {
-        assertEquals("<red>griefing", render("<reason>", new PluginConfig(plugin).reason("<red>griefing")));
+        assertEquals("<red>griefing", render("<reason>", newConfig().reason("<red>griefing")));
     }
 
     @Test
     void remainingShowsPermanentTextWhenNoExpiry() {
-        PluginConfig config = new PluginConfig(plugin);
+        PluginConfig config = newConfig();
 
         assertEquals(config.raw("permanent-duration"), render("<remaining>", config.remaining(null)));
     }
 
     @Test
     void remainingShowsFormattedDurationForFutureExpiry() {
-        PluginConfig config = new PluginConfig(plugin);
+        PluginConfig config = newConfig();
 
         String rendered = render("<remaining>", config.remaining(Instant.now().plus(Duration.ofHours(1))));
 

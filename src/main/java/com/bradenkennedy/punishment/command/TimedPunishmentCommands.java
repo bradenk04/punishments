@@ -1,21 +1,18 @@
 package com.bradenkennedy.punishment.command;
 
-import static com.bradenkennedy.punishment.command.CommandSupport.announce;
 import static com.bradenkennedy.punishment.command.CommandSupport.isExempt;
 import static com.bradenkennedy.punishment.command.CommandSupport.issuerId;
 import static com.bradenkennedy.punishment.command.CommandSupport.reasonOf;
-import static com.bradenkennedy.punishment.command.CommandSupport.reply;
-import static com.bradenkennedy.punishment.command.CommandSupport.tryPunish;
-import static com.bradenkennedy.punishment.command.CommandSupport.tryRevoke;
 import static com.bradenkennedy.punishment.command.parser.DurationParser.durationParser;
 import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser;
 import static org.incendo.cloud.parser.standard.StringParser.greedyFlagYieldingStringParser;
 
-import com.bradenkennedy.punishment.PunishmentPlugin;
+import com.bradenkennedy.punishment.PluginConfig;
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.bradenkennedy.punishment.command.parser.DurationParser;
+import com.bradenkennedy.punishment.storage.PunishmentRepository;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
@@ -29,10 +26,17 @@ import org.jetbrains.annotations.Nullable;
 
 public final class TimedPunishmentCommands {
 
-    private TimedPunishmentCommands() {}
+    private final CommandSupport support;
+    private final PunishmentRepository repository;
+    private final PluginConfig config;
 
-    public static void register(
-            CommandManager<CommandSender> manager, PunishmentType type, Consumer<Punishment> enforce) {
+    public TimedPunishmentCommands(CommandSupport support, PunishmentRepository repository, PluginConfig config) {
+        this.support = support;
+        this.repository = repository;
+        this.config = config;
+    }
+
+    public void register(CommandManager<CommandSender> manager, PunishmentType type, Consumer<Punishment> enforce) {
         String name = type.name().toLowerCase();
         var silent = manager.flagBuilder("silent").withAliases("s");
         manager.command(manager.commandBuilder(name)
@@ -56,20 +60,19 @@ public final class TimedPunishmentCommands {
                 .handler(ctx -> revoke(ctx, type)));
     }
 
-    private static void issue(
+    private void issue(
             CommandContext<CommandSender> ctx,
             PunishmentType type,
             @Nullable Duration duration,
             Consumer<Punishment> enforce) {
         OfflinePlayer target = ctx.get("player");
         String name = type.name().toLowerCase();
-        var repository = PunishmentPlugin.getDataRepository();
         if (isExempt(target)) {
-            reply(ctx, "exempt", target);
+            support.reply(ctx, "exempt", target);
             return;
         }
         if (repository.findActive(target.getUniqueId(), type).isPresent()) {
-            reply(ctx, name + ".already-active", target);
+            support.reply(ctx, name + ".already-active", target);
             return;
         }
         Instant now = Instant.now();
@@ -81,11 +84,10 @@ public final class TimedPunishmentCommands {
                 reasonOf(ctx),
                 duration == null ? null : now.plus(duration),
                 false);
-        if (!tryPunish(ctx, target, punishment)) {
+        if (!support.tryPunish(ctx, target, punishment)) {
             return;
         }
-        var config = PunishmentPlugin.getPluginConfig();
-        announce(
+        support.announce(
                 ctx,
                 name + ".announce",
                 target,
@@ -95,18 +97,17 @@ public final class TimedPunishmentCommands {
         enforce.accept(punishment);
     }
 
-    private static void revoke(CommandContext<CommandSender> ctx, PunishmentType type) {
+    private void revoke(CommandContext<CommandSender> ctx, PunishmentType type) {
         OfflinePlayer target = ctx.get("player");
         String name = "un" + type.name().toLowerCase();
-        var repository = PunishmentPlugin.getDataRepository();
         repository
                 .findActive(target.getUniqueId(), type)
                 .ifPresentOrElse(
                         active -> {
-                            if (tryRevoke(ctx, target, active)) {
-                                announce(ctx, name + ".announce", target);
+                            if (support.tryRevoke(ctx, target, active)) {
+                                support.announce(ctx, name + ".announce", target);
                             }
                         },
-                        () -> reply(ctx, name + ".not-active", target));
+                        () -> support.reply(ctx, name + ".not-active", target));
     }
 }
