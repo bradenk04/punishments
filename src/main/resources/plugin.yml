@@ -3,6 +3,7 @@ version: '1.0'
 main: com.bradenkennedy.punishment.PunishmentPlugin
 description: Simple and effective punishment plugin
 api-version: '26.2'
+softdepend: [LuckPerms, Vault]
 permissions:
   punishments.ban:
     description: Issue permanent player bans.
@@ -41,7 +42,7 @@ permissions:
     description: Import punishment history from the server console.
     default: false
   punishments.exempt:
-    description: Exempt an online player from staff punishments; operators are not automatically exempt.
+    description: Exempt a player from staff punishments; operators are not automatically exempt.
     default: false
   punishments.moderator:
     description: Mute, warn, kick, view history and receive staff notifications.

@@ -9,6 +9,10 @@ plugins {
 repositories {
   mavenCentral()
   maven {
+    url = uri("https://jitpack.io")
+    content { includeGroup("com.github.MilkBowl") }
+  }
+  maven {
     url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
   }
   maven {
@@ -18,6 +22,8 @@ repositories {
 
 dependencies {
   compileOnly("org.spigotmc:spigot-api:26.2-R0.1-SNAPSHOT")
+  compileOnly("net.luckperms:api:5.5")
+  compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
   implementation("net.kyori:adventure-api:4.26.1")
   implementation("net.kyori:adventure-text-minimessage:4.26.1")
