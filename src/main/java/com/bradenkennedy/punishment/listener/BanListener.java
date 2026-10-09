@@ -1,6 +1,7 @@
 package com.bradenkennedy.punishment.listener;
 
 import com.bradenkennedy.punishment.PluginConfig;
+import com.bradenkennedy.punishment.PunishmentDetails;
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.bradenkennedy.punishment.storage.PunishmentRepository;
@@ -42,6 +43,10 @@ public final class BanListener implements Listener {
 
     private String screen(Punishment ban) {
         return LegacyComponentSerializer.legacySection()
-                .serialize(config.message("ban.screen", config.reason(ban.reason()), config.remaining(ban.expiry())));
+                .serialize(config.message(
+                        "ban.screen",
+                        config.reason(ban.reason()),
+                        config.remaining(ban.expiry()),
+                        PunishmentDetails.resolvers(ban)));
     }
 }

@@ -20,58 +20,49 @@ class ExemptionCheckTest {
     private final List<String> queried = new CopyOnWriteArrayList<>();
 
     private ExemptionCheck checkWith(boolean offlineAnswer) {
-        return new ExemptionCheck((id, permission) -> {
-            queried.add(id + ":" + permission);
-            return CompletableFuture.completedFuture(offlineAnswer);
-        });
-    }
-
-    @Test
-    void operatorIsExemptWithoutAskingLookup() {
-        assertTrue(checkWith(false).isExempt(PLAYER, true, Optional.empty()).join());
-        assertTrue(queried.isEmpty());
+        return new ExemptionCheck(
+                (id, permission) -> {
+                    queried.add(id + ":" + permission);
+                    return CompletableFuture.completedFuture(offlineAnswer);
+                },
+                Runnable::run);
     }
 
     @Test
     void onlinePlayerWithPermissionIsExemptWithoutAskingLookup() {
-        assertTrue(checkWith(false).isExempt(PLAYER, false, Optional.of(true)).join());
+        assertTrue(checkWith(false).isExempt(PLAYER, Optional.of(true)).join());
         assertTrue(queried.isEmpty());
     }
 
     @Test
     void onlinePlayerWithoutPermissionIsNotExemptEvenIfLookupWouldSayYes() {
-        assertFalse(checkWith(true).isExempt(PLAYER, false, Optional.of(false)).join());
+        assertFalse(checkWith(true).isExempt(PLAYER, Optional.of(false)).join());
         assertTrue(queried.isEmpty());
     }
 
     @Test
     void offlinePlayerUsesLookupForExemptPermission() {
-        assertTrue(checkWith(true).isExempt(PLAYER, false, Optional.empty()).join());
+        assertTrue(checkWith(true).isExempt(PLAYER, Optional.empty()).join());
         assertEquals(List.of(PLAYER + ":punishments.exempt"), queried);
     }
 
     @Test
     void offlinePlayerWithoutPermissionIsNotExempt() {
-        assertFalse(checkWith(false).isExempt(PLAYER, false, Optional.empty()).join());
+        assertFalse(checkWith(false).isExempt(PLAYER, Optional.empty()).join());
     }
 
     @Test
     void offlinePlayerIsNotExemptWhenNoLookupAvailable() {
-        var check = new ExemptionCheck(OfflinePermissionLookup.NONE);
-        assertFalse(check.isExempt(PLAYER, false, Optional.empty()).join());
-    }
-
-    @Test
-    void operatorIsStillExemptWhenNoLookupAvailable() {
-        var check = new ExemptionCheck(OfflinePermissionLookup.NONE);
-        assertTrue(check.isExempt(PLAYER, true, Optional.empty()).join());
+        var check = new ExemptionCheck(OfflinePermissionLookup.NONE, Runnable::run);
+        assertFalse(check.isExempt(PLAYER, Optional.empty()).join());
     }
 
     @Test
     void lookupFailureSurfacesInsteadOfAllowingPunishment() {
         var check = new ExemptionCheck(
-                (id, permission) -> CompletableFuture.failedFuture(new IllegalStateException("backend down")));
-        var future = check.isExempt(PLAYER, false, Optional.empty());
+                (id, permission) -> CompletableFuture.failedFuture(new IllegalStateException("backend down")),
+                Runnable::run);
+        var future = check.isExempt(PLAYER, Optional.empty());
         var thrown = assertThrows(CompletionException.class, future::join);
         assertTrue(thrown.getCause() instanceof IllegalStateException);
     }

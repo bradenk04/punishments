@@ -6,12 +6,12 @@ import static org.incendo.cloud.bukkit.parser.PlayerParser.playerParser;
 import static org.incendo.cloud.parser.standard.StringParser.greedyFlagYieldingStringParser;
 
 import com.bradenkennedy.punishment.PluginConfig;
+import com.bradenkennedy.punishment.PunishmentDetails;
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import java.time.Instant;
 import java.util.UUID;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -62,8 +62,7 @@ public final class KickCommands {
                 .serialize(config.message(
                         "kick.screen",
                         config.reason(kick.reason()),
-                        Placeholder.unparsed("staff", ctx.sender().getName()),
-                        Placeholder.unparsed("id", kick.id().toString())));
+                        PunishmentDetails.resolvers(kick, ctx.sender().getName())));
         Bukkit.getScheduler().runTask(plugin, () -> target.kickPlayer(screen));
     }
 }
