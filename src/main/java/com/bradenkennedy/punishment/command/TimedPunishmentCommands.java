@@ -44,20 +44,20 @@ public final class TimedPunishmentCommands {
                 .optional("reason", greedyFlagYieldingStringParser())
                 .flag(silent)
                 .permission("punishments." + name)
-                .handler(ctx -> issue(ctx, type, null, enforce)));
+                .handler(ctx -> support.execute(ctx, () -> issue(ctx, type, null, enforce))));
         manager.command(manager.commandBuilder("temp" + name)
                 .required("player", offlinePlayerParser())
                 .required("duration", durationParser())
                 .optional("reason", greedyFlagYieldingStringParser())
                 .flag(silent)
                 .permission("punishments.temp" + name)
-                .handler(ctx -> issue(ctx, type, ctx.get("duration"), enforce)));
+                .handler(ctx -> support.execute(ctx, () -> issue(ctx, type, ctx.get("duration"), enforce))));
         manager.command(manager.commandBuilder("un" + name)
                 .required("player", offlinePlayerParser())
                 .flag(silent)
                 .optional("reason", greedyFlagYieldingStringParser())
                 .permission("punishments.un" + name)
-                .handler(ctx -> revoke(ctx, type)));
+                .handler(ctx -> support.execute(ctx, () -> revoke(ctx, type))));
     }
 
     private void issue(

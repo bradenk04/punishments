@@ -31,3 +31,5 @@ history:
   entry: "<red><type></red> <dark_gray><id></dark_gray> <gray><reason><revoked>"
   revoked-suffix: " (revoked)"
   expired-suffix: " (expired)"
+storage-error: "<red>The database operation failed. No action was completed; contact an administrator."
+storage-unavailable: "<red>Punishment checks are unavailable. Please try joining again later."

@@ -7,9 +7,12 @@ import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
 import com.bradenkennedy.punishment.storage.PunishmentRepository;
+import com.bradenkennedy.punishment.storage.StorageException;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -32,16 +35,28 @@ public final class CommandSupport {
     private final ActivePunishmentCache cache;
     private final PluginConfig config;
     private final BukkitAudiences audiences;
+    private final Logger logger;
 
     public CommandSupport(
             PunishmentRepository repository,
             ActivePunishmentCache cache,
             PluginConfig config,
-            BukkitAudiences audiences) {
+            BukkitAudiences audiences,
+            Logger logger) {
         this.repository = repository;
         this.cache = cache;
         this.config = config;
         this.audiences = audiences;
+        this.logger = logger;
+    }
+
+    public void execute(CommandContext<CommandSender> ctx, Runnable action) {
+        try {
+            action.run();
+        } catch (StorageException e) {
+            logger.log(Level.SEVERE, "Punishment command failed", e);
+            audiences.sender(ctx.sender()).sendMessage(config.message("storage-error"));
+        }
     }
 
     void reply(CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target) {

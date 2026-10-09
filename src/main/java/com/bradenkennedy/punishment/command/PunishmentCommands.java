@@ -17,11 +17,14 @@ public final class PunishmentCommands {
     private final BukkitAudiences audiences;
     private final PunishmentRepository repository;
     private final PluginConfig config;
+    private final CommandSupport support;
 
-    public PunishmentCommands(BukkitAudiences audiences, PunishmentRepository repository, PluginConfig config) {
+    public PunishmentCommands(
+            BukkitAudiences audiences, PunishmentRepository repository, PluginConfig config, CommandSupport support) {
         this.audiences = audiences;
         this.repository = repository;
         this.config = config;
+        this.support = support;
     }
 
     public void register(CommandManager<CommandSender> manager) {
@@ -29,7 +32,7 @@ public final class PunishmentCommands {
                 .literal("history")
                 .required("player", offlinePlayerParser())
                 .permission("punishments.history")
-                .handler(ctx -> {
+                .handler(ctx -> support.execute(ctx, () -> {
                     OfflinePlayer target = ctx.get("player");
                     Audience audience = audiences.sender(ctx.sender());
                     var history = repository.findHistory(target.getUniqueId());
@@ -47,6 +50,6 @@ public final class PunishmentCommands {
                                     p.revoked()
                                             ? config.raw("history.revoked-suffix")
                                             : p.expired() ? config.raw("history.expired-suffix") : ""))));
-                }));
+                })));
     }
 }

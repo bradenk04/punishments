@@ -38,14 +38,14 @@ public final class WarnCommands {
                 .required("reason", greedyFlagYieldingStringParser())
                 .flag(silent)
                 .permission("punishments.warn")
-                .handler(this::warn));
+                .handler(ctx -> support.execute(ctx, () -> warn(ctx))));
         manager.command(manager.commandBuilder("unwarn")
                 .required("player", offlinePlayerParser())
                 .optional("id", uuidParser())
                 .optional("reason", greedyFlagYieldingStringParser())
                 .flag(silent)
                 .permission("punishments.unwarn")
-                .handler(this::unwarn));
+                .handler(ctx -> support.execute(ctx, () -> unwarn(ctx))));
     }
 
     private void warn(CommandContext<CommandSender> ctx) {

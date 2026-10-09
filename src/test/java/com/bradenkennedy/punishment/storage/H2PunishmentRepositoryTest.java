@@ -1,12 +1,15 @@
 package com.bradenkennedy.punishment.storage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import java.io.File;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -60,6 +63,36 @@ class H2PunishmentRepositoryTest {
         return repository.findHistory(player).stream()
                 .filter(p -> p.type() == type && !p.revoked() && !p.expired())
                 .count();
+    }
+
+    @Test
+    void closedConnectionSurfacesEveryOperationFailure() throws Exception {
+        Punishment warning = punish(PunishmentType.WARN, null);
+        repository.connectionSource.close();
+        List<Runnable> operations = List.of(
+                () -> repository.create(newPunishment(PunishmentType.WARN, null)),
+                () -> repository.revoke(warning.id(), UUID.randomUUID(), "appeal", Instant.now()),
+                () -> repository.findActive(player, PunishmentType.BAN),
+                () -> repository.findUnacknowledgedWarnings(player),
+                () -> repository.acknowledge(warning.id()),
+                () -> repository.findHistory(player));
+        for (Runnable operation : operations) {
+            StorageException failure = assertThrows(StorageException.class, operation::run);
+            assertInstanceOf(SQLException.class, failure.getCause());
+        }
+    }
+
+    @Test
+    void repositoriesKeepTheirOwnDatabase(@TempDir File otherFolder) throws Exception {
+        var other = new H2PunishmentRepository(otherFolder);
+        try {
+            punish(PunishmentType.WARN, null);
+            assertTrue(other.findHistory(player).isEmpty());
+            assertEquals(1, repository.findHistory(player).size());
+        } finally {
+            other.connectionSource.close();
+        }
+        assertEquals(1, repository.findHistory(player).size());
     }
 
     @Test
