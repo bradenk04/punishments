@@ -12,9 +12,13 @@ public record Punishment(
         @NotNull PunishmentIssuer issuer,
         @Nullable String reason,
         @Nullable Instant expiry,
-        @NotNull boolean revoked) {
+        @Nullable Revocation revocation) {
 
     public boolean expired() {
         return expiry != null && expiry.isBefore(Instant.now());
+    }
+
+    public boolean revoked() {
+        return revocation != null;
     }
 }

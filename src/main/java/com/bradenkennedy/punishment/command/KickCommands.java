@@ -53,7 +53,7 @@ public final class KickCommands {
                 new PunishmentIssuer(issuerId(ctx.sender()), Instant.now()),
                 reasonOf(ctx),
                 null,
-                false);
+                null);
         if (!support.tryPunish(ctx, target, kick)) {
             return;
         }

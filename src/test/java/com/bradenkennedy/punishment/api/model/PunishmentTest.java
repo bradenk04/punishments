@@ -16,8 +16,10 @@ class PunishmentTest {
     private final UUID target = UUID.randomUUID();
     private final PunishmentIssuer issuer = new PunishmentIssuer(UUID.randomUUID(), Instant.now());
 
+    private final Revocation revocation = new Revocation(UUID.randomUUID(), "mistake", Instant.now());
+
     private Punishment punishment(Instant expiry, boolean revoked) {
-        return new Punishment(id, target, PunishmentType.BAN, issuer, "reason", expiry, revoked);
+        return new Punishment(id, target, PunishmentType.BAN, issuer, "reason", expiry, revoked ? revocation : null);
     }
 
     @Test

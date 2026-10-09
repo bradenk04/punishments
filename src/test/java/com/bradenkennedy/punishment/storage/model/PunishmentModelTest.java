@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.bradenkennedy.punishment.api.model.Revocation;
 import java.time.Instant;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -23,8 +24,17 @@ class PunishmentModelTest {
     private final UUID target = UUID.randomUUID();
     private final UUID issuer = UUID.randomUUID();
 
+    private final Revocation revocation = new Revocation(UUID.randomUUID(), "mistake", ISSUED_AT.plusSeconds(10));
+
     private Punishment punishment(PunishmentType type, boolean revoked) {
-        return new Punishment(id, target, type, new PunishmentIssuer(issuer, ISSUED_AT), "reason", EXPIRY, revoked);
+        return new Punishment(
+                id,
+                target,
+                type,
+                new PunishmentIssuer(issuer, ISSUED_AT),
+                "reason",
+                EXPIRY,
+                revoked ? revocation : null);
     }
 
     @ParameterizedTest
@@ -36,14 +46,14 @@ class PunishmentModelTest {
     }
 
     @Test
-    void revokedFlagSurvivesRoundTrip() {
+    void revocationSurvivesRoundTrip() {
         Punishment original = punishment(PunishmentType.values()[0], true);
 
-        assertTrue(new PunishmentModel(original).toPunishment().revoked());
+        assertEquals(original, new PunishmentModel(original).toPunishment());
     }
 
     @Test
-    void punishmentConstructorCopiesFieldsAndLeavesRevocationDetailsEmpty() {
+    void punishmentConstructorCopiesFieldsAndRevocationDetails() {
         PunishmentType type = PunishmentType.values()[0];
 
         PunishmentModel model = new PunishmentModel(punishment(type, true));
@@ -56,8 +66,9 @@ class PunishmentModelTest {
         assertEquals("reason", model.getReason());
         assertEquals(EXPIRY, model.getExpiry());
         assertTrue(model.isRevoked());
-        assertNull(model.getRevokedReason());
-        assertNull(model.getRevokedBy());
+        assertEquals(revocation.reason(), model.getRevokedReason());
+        assertEquals(revocation.by(), model.getRevokedBy());
+        assertEquals(revocation.at(), model.getRevokedAt());
     }
 
     @Test

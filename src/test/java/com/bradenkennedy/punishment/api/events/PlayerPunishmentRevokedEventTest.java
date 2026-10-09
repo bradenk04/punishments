@@ -29,7 +29,7 @@ class PlayerPunishmentRevokedEventTest {
             new PunishmentIssuer(UUID.randomUUID(), Instant.now()),
             "reason",
             null,
-            false);
+            null);
 
     private ServerMock server;
 

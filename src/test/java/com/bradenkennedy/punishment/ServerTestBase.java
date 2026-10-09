@@ -80,7 +80,7 @@ public abstract class ServerTestBase {
                 new PunishmentIssuer(UUID.randomUUID(), Instant.now()),
                 "griefing",
                 expiry,
-                false);
+                null);
         repository.create(punishment);
         return punishment;
     }

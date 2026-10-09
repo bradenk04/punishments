@@ -19,7 +19,7 @@ class PunishmentDetailsTest {
             new PunishmentIssuer(new UUID(0, 0), Instant.parse("2026-01-02T03:04:05Z")),
             null,
             null,
-            false);
+            null);
 
     @Test
     void suppliesAllAppealReferencesAndConsoleIssuer() {

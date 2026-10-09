@@ -61,6 +61,6 @@ class ActivePunishmentCacheTest {
                 new PunishmentIssuer(UUID.randomUUID(), Instant.now()),
                 null,
                 expiry,
-                false);
+                null);
     }
 }
