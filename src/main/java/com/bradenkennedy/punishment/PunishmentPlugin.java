@@ -12,6 +12,8 @@ import com.bradenkennedy.punishment.listener.BanListener;
 import com.bradenkennedy.punishment.listener.CacheLoadListener;
 import com.bradenkennedy.punishment.listener.MuteListener;
 import com.bradenkennedy.punishment.listener.WarnListener;
+import com.bradenkennedy.punishment.metrics.PluginMetrics;
+import com.bradenkennedy.punishment.metrics.PunishmentCounter;
 import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
 import com.bradenkennedy.punishment.storage.H2PunishmentRepository;
 import com.bradenkennedy.punishment.storage.PunishmentRepository;
@@ -49,13 +51,17 @@ public class PunishmentPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(warnListener, this);
         getServer().getPluginManager().registerEvents(banListener, this);
 
+        var counter = new PunishmentCounter();
+        PluginMetrics.start(this, counter, "H2", "standalone");
+
         Executor mainThread = task -> getServer().getScheduler().runTask(this, task);
         var support = new CommandSupport(
                 repository,
                 cache,
                 config,
                 adventure,
-                new ExemptionCheck(OfflinePermissionLookups.detect(getServer(), mainThread), mainThread));
+                new ExemptionCheck(OfflinePermissionLookups.detect(getServer(), mainThread), mainThread),
+                counter);
         var commandManager = LegacyPaperCommandManager.createNative(this, ExecutionCoordinator.asyncCoordinator());
         new PunishmentCommands(adventure, repository, config).register(commandManager);
         var timedCommands = new TimedPunishmentCommands(support, repository, config);

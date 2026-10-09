@@ -2,6 +2,7 @@ package com.bradenkennedy.punishment.command;
 
 import com.bradenkennedy.punishment.ServerTestBase;
 import com.bradenkennedy.punishment.exemption.ExemptionCheck;
+import com.bradenkennedy.punishment.metrics.PunishmentCounter;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -13,6 +14,7 @@ abstract class CommandTestBase extends ServerTestBase {
 
     protected final TestCommandManager manager = new TestCommandManager();
     protected final Set<UUID> offlineExempt = new HashSet<>();
+    protected final PunishmentCounter counter = new PunishmentCounter();
     protected CommandSupport support;
 
     @BeforeEach
@@ -24,7 +26,8 @@ abstract class CommandTestBase extends ServerTestBase {
                 audiences,
                 new ExemptionCheck(
                         (id, permission) -> CompletableFuture.completedFuture(offlineExempt.contains(id)),
-                        Runnable::run));
+                        Runnable::run),
+                counter);
     }
 
     protected void run(CommandSender sender, String input) {
