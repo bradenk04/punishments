@@ -79,18 +79,21 @@ public final class CommandSupport {
                 .sendMessage(silent ? config.message("silent-prefix").append(message) : message);
     }
 
-    boolean tryPunish(CommandContext<CommandSender> ctx, OfflinePlayer target, Punishment punishment) {
+    synchronized boolean tryPunish(CommandContext<CommandSender> ctx, OfflinePlayer target, Punishment punishment) {
         if (cancelled(ctx, target, new PlayerPunishedEvent(punishment))) {
             return false;
         }
-        repository.create(punishment);
+        if (!repository.create(punishment)) {
+            reply(ctx, punishment.type().name().toLowerCase(java.util.Locale.ROOT) + ".already-active", target);
+            return false;
+        }
         if (punishment.type() == PunishmentType.MUTE) {
             cache.put(punishment);
         }
         return true;
     }
 
-    boolean tryRevoke(CommandContext<CommandSender> ctx, OfflinePlayer target, Punishment punishment) {
+    synchronized boolean tryRevoke(CommandContext<CommandSender> ctx, OfflinePlayer target, Punishment punishment) {
         if (cancelled(ctx, target, new PlayerPunishmentRevokedEvent(punishment))) {
             return false;
         }

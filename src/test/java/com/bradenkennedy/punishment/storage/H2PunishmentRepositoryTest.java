@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.bradenkennedy.punishment.storage.model.PunishmentModel;
+import com.j256.ormlite.dao.DaoManager;
 import java.io.File;
 import java.sql.SQLException;
 import java.time.Duration;
@@ -148,30 +150,59 @@ class H2PunishmentRepositoryTest {
         assertTrue(repository.findHistory(UUID.randomUUID()).isEmpty());
     }
 
-    @Test
-    void concurrentBansResultInExactlyOneActiveBan() throws Exception {
+    @ParameterizedTest
+    @EnumSource(
+            value = PunishmentType.class,
+            names = {"BAN", "MUTE"})
+    void concurrentCommandsReportExactlyOneSuccessfulCreation(PunishmentType type) throws Exception {
         int threads = 16;
         CountDownLatch start = new CountDownLatch(1);
-        List<Future<?>> futures = new ArrayList<>();
-
+        List<Future<Boolean>> futures = new ArrayList<>();
+        int created = 0;
         try (ExecutorService pool = Executors.newFixedThreadPool(threads)) {
             for (int i = 0; i < threads; i++) {
                 futures.add(pool.submit(() -> {
                     start.await();
-                    // Same check-then-create sequence as TimedPunishmentCommands.issue
-                    if (repository.findActive(player, PunishmentType.BAN).isEmpty()) {
-                        repository.create(newPunishment(PunishmentType.BAN, null));
-                    }
-                    return null;
+                    return repository.create(newPunishment(type, null));
                 }));
             }
             start.countDown();
-            for (Future<?> future : futures) {
-                future.get(10, TimeUnit.SECONDS);
+            for (Future<Boolean> future : futures) {
+                if (future.get(10, TimeUnit.SECONDS)) {
+                    created++;
+                }
             }
         }
+        assertEquals(1, created);
+        assertEquals(1, activeCount(type));
+    }
 
-        assertEquals(1, activeCount(PunishmentType.BAN));
+    @ParameterizedTest
+    @EnumSource(
+            value = PunishmentType.class,
+            names = {"BAN", "MUTE"})
+    void revocationClearsLegacyDuplicatesButPreservesOtherTypes(PunishmentType type) throws Exception {
+        var dao = DaoManager.createDao(repository.connectionSource, PunishmentModel.class);
+        Punishment first = newPunishment(type, null);
+        dao.create(new PunishmentModel(first));
+        dao.create(new PunishmentModel(newPunishment(type, null)));
+        PunishmentType other = type == PunishmentType.BAN ? PunishmentType.MUTE : PunishmentType.BAN;
+        punish(other, null);
+        assertEquals(2, activeCount(type));
+        repository.revoke(first.id(), UUID.randomUUID(), "appeal", Instant.now());
+        assertEquals(0, activeCount(type));
+        assertEquals(1, activeCount(other));
+        assertTrue(repository.create(newPunishment(type, null)));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = PunishmentType.class,
+            names = {"WARN", "KICK"})
+    void repeatablePunishmentsRemainRepeatable(PunishmentType type) {
+        assertTrue(repository.create(newPunishment(type, null)));
+        assertTrue(repository.create(newPunishment(type, null)));
+        assertEquals(2, activeCount(type));
     }
 
     @ParameterizedTest

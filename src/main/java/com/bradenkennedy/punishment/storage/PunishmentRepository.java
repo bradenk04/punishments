@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface PunishmentRepository {
-    void create(Punishment punishment);
+    boolean create(Punishment punishment);
 
     void revoke(UUID punishmentId, UUID revokedBy, String reason, Instant atTime);
 
