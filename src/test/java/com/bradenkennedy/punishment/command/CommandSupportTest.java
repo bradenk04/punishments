@@ -44,29 +44,29 @@ class CommandSupportTest extends CommandTestBase {
     }
 
     @Test
-    void operatorIsExempt() {
-        PlayerMock player = server.addPlayer();
-        player.setOp(true);
-
-        assertTrue(CommandSupport.isExempt(player));
-    }
-
-    @Test
     void playerWithExemptPermissionIsExempt() {
         PlayerMock player = server.addPlayer();
         player.addAttachment(plugin, "punishments.exempt", true);
 
-        assertTrue(CommandSupport.isExempt(player));
+        assertTrue(support.isExempt(player));
     }
 
     @Test
     void ordinaryPlayerIsNotExempt() {
-        assertFalse(CommandSupport.isExempt(server.addPlayer()));
+        assertFalse(support.isExempt(server.addPlayer()));
     }
 
     @Test
-    void offlinePlayerWithoutOpIsNotExempt() {
-        assertFalse(CommandSupport.isExempt(server.getOfflinePlayer(UUID.randomUUID())));
+    void offlinePlayerWithExemptPermissionIsExempt() {
+        UUID id = UUID.randomUUID();
+        offlineExempt.add(id);
+
+        assertTrue(support.isExempt(server.getOfflinePlayer(id)));
+    }
+
+    @Test
+    void offlinePlayerWithoutExemptPermissionIsNotExempt() {
+        assertFalse(support.isExempt(server.getOfflinePlayer(UUID.randomUUID())));
     }
 
     @Test
