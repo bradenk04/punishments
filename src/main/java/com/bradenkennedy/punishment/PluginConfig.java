@@ -44,6 +44,10 @@ public final class PluginConfig {
         return plugin.getConfig().getStringList("mute.blocked-commands");
     }
 
+    public int historyPageSize() {
+        return Math.max(1, plugin.getConfig().getInt("history.page-size", 10));
+    }
+
     public String raw(String key) {
         return messages.getString(key, key);
     }

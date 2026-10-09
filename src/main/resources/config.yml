@@ -9,3 +9,5 @@ mute:
     - reply
     - me
     - teammsg
+history:
+  page-size: 10
