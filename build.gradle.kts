@@ -76,15 +76,26 @@ tasks.runServer {
 }
 
 tasks.shadowJar {
-  relocate("com.h2database", "com.bradenkennedy.punishment.libs.h2")
+  filesMatching("META-INF/services/**") {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+  }
+  mergeServiceFiles()
+  relocate("com.j256.ormlite", "com.bradenkennedy.punishment.libs.ormlite")
+  relocate("org.h2", "com.bradenkennedy.punishment.libs.h2")
   relocate("net.kyori", "com.bradenkennedy.punishment.libs.kyori")
   relocate("org.incendo.cloud", "com.bradenkennedy.punishment.libs.cloud")
 }
 
-tasks.jar {
-  archiveClassifier.set("")
-  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-  from({
-    configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+val verifyShadowJar = tasks.register<JavaExec>("verifyShadowJar") {
+  dependsOn(tasks.shadowJar)
+  javaLauncher.set(javaToolchains.launcherFor {
+    languageVersion.set(JavaLanguageVersion.of(21))
   })
+  classpath = files(tasks.shadowJar.flatMap { it.archiveFile })
+  mainClass.set(file("src/shadowTest/java/VerifyShadowJar.java").absolutePath)
+  args(tasks.shadowJar.get().archiveFile.get().asFile.absolutePath)
+}
+
+tasks.check {
+  dependsOn(verifyShadowJar)
 }
