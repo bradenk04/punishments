@@ -47,7 +47,7 @@ class CommandRegistrationTest extends CommandTestBase {
 
     @Test
     void historyRegistersWithPermission() {
-        new PunishmentCommands(audiences, repository, config).register(manager);
+        new PunishmentCommands(audiences, repository, config, support).register(manager);
 
         assertEquals(Map.of("punish history", "punishments.history"), permissionsByPath());
     }

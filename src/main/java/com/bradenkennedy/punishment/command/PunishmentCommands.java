@@ -36,11 +36,14 @@ public final class PunishmentCommands {
     private final BukkitAudiences audiences;
     private final PunishmentRepository repository;
     private final PluginConfig config;
+    private final CommandSupport support;
 
-    public PunishmentCommands(BukkitAudiences audiences, PunishmentRepository repository, PluginConfig config) {
+    public PunishmentCommands(
+            BukkitAudiences audiences, PunishmentRepository repository, PluginConfig config, CommandSupport support) {
         this.audiences = audiences;
         this.repository = repository;
         this.config = config;
+        this.support = support;
     }
 
     public void register(CommandManager<CommandSender> manager) {
@@ -50,7 +53,7 @@ public final class PunishmentCommands {
                 .optional("page", pageParser())
                 .flag(manager.flagBuilder("type").withAliases("t").withComponent(enumParser(PunishmentType.class)))
                 .permission("punishments.history")
-                .handler(this::history));
+                .handler(ctx -> support.execute(ctx, () -> history(ctx))));
     }
 
     static int pageCount(int total, int pageSize) {

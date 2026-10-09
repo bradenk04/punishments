@@ -6,6 +6,8 @@ import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
 import com.bradenkennedy.punishment.storage.H2PunishmentRepository;
 import com.bradenkennedy.punishment.storage.model.PunishmentModel;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import java.io.File;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -69,7 +71,8 @@ public abstract class ServerTestBase {
     }
 
     protected PunishmentModel storedModel(UUID punishmentId) throws SQLException {
-        return H2PunishmentRepository.punishmentDao.queryForId(punishmentId);
+        Dao<PunishmentModel, UUID> dao = DaoManager.createDao(repository.connectionSource, PunishmentModel.class);
+        return dao.queryForId(punishmentId);
     }
 
     protected Punishment store(UUID target, PunishmentType type, Instant expiry) {
