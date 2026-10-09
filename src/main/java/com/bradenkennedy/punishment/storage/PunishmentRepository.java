@@ -1,5 +1,6 @@
 package com.bradenkennedy.punishment.storage;
 
+import com.bradenkennedy.punishment.api.model.HistoryPage;
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import java.time.Instant;
@@ -15,6 +16,8 @@ public interface PunishmentRepository {
     Optional<Punishment> findActive(UUID player, PunishmentType type);
 
     List<Punishment> findHistory(UUID player);
+
+    HistoryPage findHistory(UUID player, Optional<PunishmentType> type, int offset, int limit);
 
     List<Punishment> findUnacknowledgedWarnings(UUID player);
 

@@ -82,7 +82,7 @@ public final class TimedPunishmentCommands {
                 new PunishmentIssuer(issuerId(ctx.sender()), now),
                 reasonOf(ctx),
                 duration == null ? null : now.plus(duration),
-                false);
+                null);
         if (!support.tryPunish(ctx, target, punishment)) {
             return;
         }

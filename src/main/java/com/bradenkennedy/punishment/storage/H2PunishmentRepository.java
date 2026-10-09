@@ -1,11 +1,13 @@
 package com.bradenkennedy.punishment.storage;
 
+import com.bradenkennedy.punishment.api.model.HistoryPage;
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.bradenkennedy.punishment.storage.model.PunishmentModel;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import java.io.File;
@@ -126,5 +128,32 @@ public class H2PunishmentRepository implements PunishmentRepository {
         } catch (SQLException e) {
             return new ArrayList<>();
         }
+    }
+
+    @Override
+    public HistoryPage findHistory(UUID player, Optional<PunishmentType> type, int offset, int limit) {
+        if (offset < 0 || limit < 1) throw new IllegalArgumentException("offset must be >= 0 and limit >= 1");
+        try {
+            QueryBuilder<PunishmentModel, UUID> count =
+                    punishmentDao.queryBuilder().setCountOf(true);
+            filterHistory(count, player, type);
+            QueryBuilder<PunishmentModel, UUID> page = punishmentDao.queryBuilder();
+            filterHistory(page, player, type);
+            page.orderBy("issuedAt", false)
+                    .orderBy("id", false)
+                    .offset((long) offset)
+                    .limit((long) limit);
+            return new HistoryPage(
+                    page.query().stream().map(PunishmentModel::toPunishment).toList(),
+                    Math.toIntExact(punishmentDao.countOf(count.prepare())));
+        } catch (SQLException e) {
+            return HistoryPage.empty();
+        }
+    }
+
+    private static void filterHistory(
+            QueryBuilder<PunishmentModel, UUID> query, UUID player, Optional<PunishmentType> type) throws SQLException {
+        var where = query.where().eq("target", player);
+        if (type.isPresent()) where.and().eq("type", type.get());
     }
 }

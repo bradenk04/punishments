@@ -33,7 +33,7 @@ class PunishmentCommandsTest extends CommandTestBase {
                 new PunishmentIssuer(staff.getUniqueId(), Instant.now()),
                 "reason",
                 expiry,
-                false);
+                null);
         repository.create(punishment);
         return punishment;
     }

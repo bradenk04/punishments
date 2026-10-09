@@ -62,7 +62,7 @@ public final class WarnCommands {
                 new PunishmentIssuer(issuerId(ctx.sender()), Instant.now()),
                 reason,
                 null,
-                false);
+                null);
         if (!support.tryPunish(ctx, target, warning)) {
             return;
         }

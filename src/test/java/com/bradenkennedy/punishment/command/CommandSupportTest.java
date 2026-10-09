@@ -102,7 +102,7 @@ class CommandSupportTest extends CommandTestBase {
                 new PunishmentIssuer(UUID.randomUUID(), Instant.now()),
                 "reason",
                 null,
-                false);
+                null);
     }
 
     @Test
