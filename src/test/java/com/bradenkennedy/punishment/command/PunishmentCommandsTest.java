@@ -10,6 +10,7 @@ import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
@@ -86,7 +87,7 @@ class PunishmentCommandsTest extends CommandTestBase {
     }
 
     private String text(int page) {
-        return commands.historyMessages(target, page).stream()
+        return commands.historyMessages(target, page, Optional.empty()).stream()
                 .map(PlainTextComponentSerializer.plainText()::serialize)
                 .collect(Collectors.joining("\n"));
     }
