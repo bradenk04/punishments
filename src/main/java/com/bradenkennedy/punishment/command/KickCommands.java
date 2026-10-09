@@ -38,7 +38,7 @@ public final class KickCommands {
                 .optional("reason", greedyFlagYieldingStringParser())
                 .flag(manager.flagBuilder("silent").withAliases("s"))
                 .permission("punishments.kick")
-                .handler(this::kick));
+                .handler(ctx -> support.execute(ctx, () -> kick(ctx))));
     }
 
     private void kick(CommandContext<CommandSender> ctx) {

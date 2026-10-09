@@ -6,6 +6,7 @@ import com.bradenkennedy.punishment.storage.model.PunishmentModel;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import java.io.File;
@@ -17,26 +18,35 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class H2PunishmentRepository implements PunishmentRepository {
-    public ConnectionSource connectionSource;
-    public static Dao<PunishmentModel, UUID> punishmentDao;
+    public final ConnectionSource connectionSource;
+    private final Dao<PunishmentModel, UUID> punishmentDao;
 
     public H2PunishmentRepository(File dataFolder) throws SQLException {
         String dbPath = new File(dataFolder, "punishments").getAbsolutePath();
         String url = "jdbc:h2:" + dbPath;
 
         this.connectionSource = new JdbcConnectionSource(url);
-        H2PunishmentRepository.punishmentDao = DaoManager.createDao(connectionSource, PunishmentModel.class);
+        this.punishmentDao = DaoManager.createDao(connectionSource, PunishmentModel.class);
 
         TableUtils.createTableIfNotExists(connectionSource, PunishmentModel.class);
     }
 
     @Override
-    public synchronized void create(Punishment punishment) {
+    public synchronized boolean create(Punishment punishment) {
         if (isExclusive(punishment.type())
-                && findActive(punishment.target(), punishment.type()).isPresent()) return;
+                && findActive(punishment.target(), punishment.type()).isPresent()) return false;
         try {
+            requireOpen();
             punishmentDao.create(new PunishmentModel(punishment));
+            return true;
         } catch (SQLException e) {
+            throw new StorageException("create punishment", e);
+        }
+    }
+
+    private void requireOpen() throws SQLException {
+        if (!connectionSource.isOpen("punishments")) {
+            throw new SQLException("Database connection is closed");
         }
     }
 
@@ -48,23 +58,47 @@ public class H2PunishmentRepository implements PunishmentRepository {
     }
 
     @Override
-    public void revoke(UUID punishmentId, UUID revokedBy, String reason, Instant atTime) {
+    public synchronized void revoke(UUID punishmentId, UUID revokedBy, String reason, Instant atTime) {
         try {
+            requireOpen();
             PunishmentModel model = punishmentDao.queryForId(punishmentId);
             if (model == null) return;
-            model.setIsRevoked(true);
-            model.setRevokedBy(revokedBy);
-            model.setRevokedReason(reason);
-            model.setRevokedAt(atTime);
-
-            punishmentDao.update(model);
+            TransactionManager.callInTransaction(connectionSource, () -> {
+                List<PunishmentModel> active = isExclusive(model.toPunishment().type())
+                        ? punishmentDao
+                                .queryBuilder()
+                                .where()
+                                .eq("target", model.toPunishment().target())
+                                .and()
+                                .eq("type", model.toPunishment().type())
+                                .and()
+                                .eq("revoked", false)
+                                .query()
+                        : List.of(model);
+                for (PunishmentModel candidate : active) {
+                    Punishment punishment = candidate.toPunishment();
+                    if (isExclusive(punishment.type())
+                            && punishment.expiry() != null
+                            && !punishment.expiry().isAfter(atTime)) {
+                        continue;
+                    }
+                    candidate.setIsRevoked(true);
+                    candidate.setRevokedBy(revokedBy);
+                    candidate.setRevokedReason(reason);
+                    candidate.setRevokedAt(atTime);
+                    punishmentDao.update(candidate);
+                }
+                return null;
+            });
         } catch (SQLException e) {
+            throw new StorageException("revoke punishment", e);
         }
     }
 
     @Override
     public Optional<Punishment> findActive(UUID player, PunishmentType type) {
         try {
+            requireOpen();
             Instant now = Instant.now();
             return punishmentDao
                     .queryBuilder()
@@ -80,13 +114,14 @@ public class H2PunishmentRepository implements PunishmentRepository {
                     .filter(p -> p.expiry() == null || p.expiry().isAfter(now))
                     .findFirst();
         } catch (SQLException e) {
-            return Optional.empty();
+            throw new StorageException("read active punishments", e);
         }
     }
 
     @Override
     public List<Punishment> findUnacknowledgedWarnings(UUID player) {
         try {
+            requireOpen();
             return punishmentDao
                     .queryBuilder()
                     .where()
@@ -102,29 +137,32 @@ public class H2PunishmentRepository implements PunishmentRepository {
                     .map(PunishmentModel::toPunishment)
                     .toList();
         } catch (SQLException e) {
-            return new ArrayList<>();
+            throw new StorageException("read pending warnings", e);
         }
     }
 
     @Override
     public void acknowledge(UUID punishmentId) {
         try {
+            requireOpen();
             var update = punishmentDao.updateBuilder();
             update.updateColumnValue("acknowledged", true).where().idEq(punishmentId);
             update.update();
         } catch (SQLException e) {
+            throw new StorageException("acknowledge warning", e);
         }
     }
 
     @Override
     public List<Punishment> findHistory(UUID player) {
         try {
+            requireOpen();
             List<PunishmentModel> models =
                     punishmentDao.queryBuilder().where().eq("target", player).query();
             if (models == null || models.isEmpty()) return new ArrayList<>();
             return models.stream().map(PunishmentModel::toPunishment).toList();
         } catch (SQLException e) {
-            return new ArrayList<>();
+            throw new StorageException("read punishment history", e);
         }
     }
 }

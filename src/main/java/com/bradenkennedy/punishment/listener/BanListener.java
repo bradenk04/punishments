@@ -4,6 +4,8 @@ import com.bradenkennedy.punishment.PluginConfig;
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.bradenkennedy.punishment.storage.PunishmentRepository;
+import com.bradenkennedy.punishment.storage.StorageException;
+import java.util.logging.Level;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -26,9 +28,16 @@ public final class BanListener implements Listener {
 
     @EventHandler
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
-        repository
-                .findActive(event.getUniqueId(), PunishmentType.BAN)
-                .ifPresent(ban -> event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, screen(ban)));
+        try {
+            repository
+                    .findActive(event.getUniqueId(), PunishmentType.BAN)
+                    .ifPresent(ban -> event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, screen(ban)));
+        } catch (StorageException e) {
+            plugin.getLogger().log(Level.SEVERE, "Could not check login ban", e);
+            event.disallow(
+                    AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
+                    LegacyComponentSerializer.legacySection().serialize(config.message("storage-unavailable")));
+        }
     }
 
     public void kick(Punishment ban) {

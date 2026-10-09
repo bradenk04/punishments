@@ -39,16 +39,16 @@ public class PunishmentPlugin extends JavaPlugin {
         var cache = new ActivePunishmentCache();
         var banListener = new BanListener(this, repository, config);
         var warnListener = new WarnListener(repository, config, adventure);
-        getServer().getPluginManager().registerEvents(new CacheLoadListener(repository, cache), this);
+        getServer().getPluginManager().registerEvents(new CacheLoadListener(this, repository, cache, config), this);
         getServer()
                 .getPluginManager()
                 .registerEvents(new MuteListener(cache, config.blockedMuteCommands(), config, adventure), this);
         getServer().getPluginManager().registerEvents(warnListener, this);
         getServer().getPluginManager().registerEvents(banListener, this);
 
-        var support = new CommandSupport(repository, cache, config, adventure);
+        var support = new CommandSupport(repository, cache, config, adventure, getLogger());
         var commandManager = LegacyPaperCommandManager.createNative(this, ExecutionCoordinator.asyncCoordinator());
-        new PunishmentCommands(adventure, repository, config).register(commandManager);
+        new PunishmentCommands(adventure, repository, config, support).register(commandManager);
         var timedCommands = new TimedPunishmentCommands(support, repository, config);
         timedCommands.register(commandManager, PunishmentType.MUTE, mute -> {});
         timedCommands.register(commandManager, PunishmentType.BAN, banListener::kick);
