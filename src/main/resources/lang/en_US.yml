@@ -28,6 +28,11 @@ unwarn:
   not-found: "<red><name> has no matching warning"
 history:
   empty: "<gray>No punishments found for <white><name>"
-  entry: "<red><type></red> <dark_gray><id></dark_gray> <gray><reason><revoked>"
-  revoked-suffix: " (revoked)"
-  expired-suffix: " (expired)"
+  header: "<gold>History for <white><name></white> <gray>(page <page>/<pages>)"
+  entry: "<red><type></red> <gray><date> by <white><staff></white> for <duration> (<status>, <remaining> left)<newline><dark_gray><id></dark_gray> <gray><reason>"
+  footer: "<gray>Page <page>/<pages>"
+  no-remaining: "-"
+  status:
+    active: "active"
+    expired: "expired"
+    revoked: "revoked"

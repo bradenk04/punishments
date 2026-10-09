@@ -56,6 +56,18 @@ class PluginConfigTest {
     }
 
     @Test
+    void historyPageSizeDefaultsToTen() {
+        assertEquals(10, newConfig().historyPageSize());
+    }
+
+    @Test
+    void historyPageSizeIsAtLeastOne() {
+        plugin.getConfig().set("history.page-size", 0);
+
+        assertEquals(1, newConfig().historyPageSize());
+    }
+
+    @Test
     void rawReturnsMessageForKnownKey() {
         assertEquals("No reason", newConfig().raw("no-reason"));
     }
