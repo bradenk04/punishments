@@ -2,7 +2,6 @@ package com.bradenkennedy.punishment.api.model;
 
 import java.time.Instant;
 import java.util.UUID;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
