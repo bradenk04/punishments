@@ -1,5 +1,7 @@
 plugins {
   java
+  jacoco
+  id("com.diffplug.spotless") version "8.10.3"
   id("com.gradleup.shadow") version "9.6.1"
   id("xyz.jpenilla.run-paper") version "3.1.0"
 }
@@ -34,10 +36,34 @@ java {
 
 tasks.withType<JavaCompile> {
   options.encoding = "UTF-8"
+  options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
 }
 
 tasks.test {
   useJUnitPlatform()
+  finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+  reports.xml.required.set(true)
+}
+
+spotless {
+  java {
+    palantirJavaFormat()
+    removeUnusedImports()
+    trimTrailingWhitespace()
+    endWithNewline()
+  }
+}
+
+tasks.runServer {
+  minecraftVersion("26.2")
+  javaLauncher.set(javaToolchains.launcherFor {
+    languageVersion.set(JavaLanguageVersion.of(25))
+  })
+  jvmArgs("-Dcom.mojang.eula.agree=true")
+  pluginJars.setFrom(tasks.shadowJar.flatMap { it.archiveFile })
 }
 
 tasks.runServer {
@@ -50,14 +76,15 @@ tasks.runServer {
 }
 
 tasks.shadowJar {
-  // Keep JDBC service descriptors so the relocated H2 driver is discoverable.
-  filesMatching("META-INF/services/**") {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-  }
-  mergeServiceFiles()
-  relocate("org.h2", "com.bradenkennedy.punishment.libs.h2")
-  relocate("com.j256.ormlite", "com.bradenkennedy.punishment.libs.ormlite")
+  relocate("com.h2database", "com.bradenkennedy.punishment.libs.h2")
   relocate("net.kyori", "com.bradenkennedy.punishment.libs.kyori")
   relocate("org.incendo.cloud", "com.bradenkennedy.punishment.libs.cloud")
 }
 
+tasks.jar {
+  archiveClassifier.set("")
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+  from({
+    configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+  })
+}

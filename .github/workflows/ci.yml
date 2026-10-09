@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Format & lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+
+      # Fails if code isn't formatted. Fix locally with: ./gradlew spotlessApply
+      - name: Check formatting
+        run: ./gradlew spotlessCheck
+
+      # -Xlint:all -Werror is set in build.gradle.kts, so any compiler warning fails here.
+      - name: Compile with warnings as errors
+        run: ./gradlew compileJava compileTestJava
+
+  test:
+    name: Test & coverage
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+
+      # Also generates the JaCoCo report (test is finalizedBy jacocoTestReport).
+      - name: Run tests
+        run: ./gradlew test
+
+      - name: Publish test results
+        if: ${{ !cancelled() }}
+        uses: mikepenz/action-junit-report@v6
+        with:
+          report_paths: build/test-results/test/TEST-*.xml
+          check_name: JUnit results
+          comment: ${{ github.event_name == 'pull_request' }}
+          include_passed: false
+          detailed_summary: true
+
+      - name: Comment coverage on PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: madrapps/jacoco-report@v1.8.0
+        with:
+          paths: build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: Code coverage
+
+      - name: Upload reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: reports
+          path: |
+            build/reports/tests/test/
+            build/reports/jacoco/test/html/
+          retention-days: 7
+
+  build:
+    name: Build plugin jar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Build shaded jar
+        run: ./gradlew shadowJar
+
+      - name: Upload jar
+        uses: actions/upload-artifact@v7
+        with:
+          name: punishments-${{ github.sha }}
+          path: build/libs/*-all.jar
+          if-no-files-found: error
