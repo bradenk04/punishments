@@ -77,6 +77,14 @@ class H2PunishmentRepositoryTest {
     }
 
     @Test
+    void findsActiveTimedPunishmentBeforeExpiry() {
+        Punishment ban = punish(PunishmentType.BAN, Instant.now().plus(Duration.ofHours(1)));
+        assertEquals(
+                ban.id(),
+                repository.findActive(player, PunishmentType.BAN).orElseThrow().id());
+    }
+
+    @Test
     void ignoresPunishmentOfOtherType() {
         punish(PunishmentType.MUTE, null);
         assertTrue(repository.findActive(player, PunishmentType.BAN).isEmpty());
@@ -89,6 +97,17 @@ class H2PunishmentRepositoryTest {
 
         assertTrue(repository.findActive(player, PunishmentType.BAN).isEmpty());
         assertTrue(repository.findHistory(player).getFirst().revoked());
+    }
+
+    @Test
+    void revokingUnknownPunishmentChangesNothing() {
+        Punishment ban = punish(PunishmentType.BAN, null);
+        repository.revoke(UUID.randomUUID(), UUID.randomUUID(), "appeal", Instant.now());
+
+        assertEquals(
+                List.of(ban.id()),
+                repository.findHistory(player).stream().map(Punishment::id).toList());
+        assertTrue(repository.findActive(player, PunishmentType.BAN).isPresent());
     }
 
     @Test

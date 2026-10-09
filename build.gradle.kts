@@ -16,6 +16,12 @@ repositories {
     url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
   }
   maven {
+    url = uri("https://repo.papermc.io/repository/maven-public/")
+  }
+  maven {
+    url = uri("https://libraries.minecraft.net")
+  }
+  maven {
     url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
   }
 }
@@ -25,6 +31,8 @@ dependencies {
   compileOnly("net.luckperms:api:5.5")
   compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
+  compileOnly("com.mojang:brigadier:1.0.18")
+
   implementation("net.kyori:adventure-api:4.26.1")
   implementation("net.kyori:adventure-text-minimessage:4.26.1")
   implementation("net.kyori:adventure-platform-bukkit:4.4.1")
@@ -33,11 +41,13 @@ dependencies {
   implementation("org.incendo:cloud-paper:2.0.1")
 
   testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
+  testImplementation("io.papermc.paper:paper-api:26.2.build.132-stable")
+  testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v26.2:4.117.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")
 }
 
 java {
-  toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+  toolchain.languageVersion.set(JavaLanguageVersion.of(25))
 }
 
 tasks.withType<JavaCompile> {
