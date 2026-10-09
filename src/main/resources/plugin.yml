@@ -3,3 +3,71 @@ version: '1.0'
 main: com.bradenkennedy.punishment.PunishmentPlugin
 description: Simple and effective punishment plugin
 api-version: '26.2'
+softdepend: [LuckPerms, Vault]
+permissions:
+  punishments.ban:
+    description: Issue permanent player bans.
+    default: op
+  punishments.tempban:
+    description: Issue temporary player bans.
+    default: op
+  punishments.unban:
+    description: Revoke player bans.
+    default: op
+  punishments.mute:
+    description: Issue permanent player mutes.
+    default: op
+  punishments.tempmute:
+    description: Issue temporary player mutes.
+    default: op
+  punishments.unmute:
+    description: Revoke player mutes.
+    default: op
+  punishments.warn:
+    description: Issue player warnings.
+    default: op
+  punishments.unwarn:
+    description: Revoke player warnings.
+    default: op
+  punishments.kick:
+    description: Kick players and record the punishment.
+    default: op
+  punishments.history:
+    description: View a player's punishment history.
+    default: op
+  punishments.notify:
+    description: Receive silent punishment announcements.
+    default: op
+  punishments.import:
+    description: Import punishment history from the server console.
+    default: false
+  punishments.exempt:
+    description: Exempt a player from staff punishments; operators are not automatically exempt.
+    default: false
+  punishments.moderator:
+    description: Mute, warn, kick, view history and receive staff notifications.
+    default: false
+    children:
+      punishments.mute: true
+      punishments.tempmute: true
+      punishments.unmute: true
+      punishments.warn: true
+      punishments.unwarn: true
+      punishments.kick: true
+      punishments.history: true
+      punishments.notify: true
+  punishments.admin:
+    description: All moderation and migration commands, without exemption.
+    default: false
+    children:
+      punishments.moderator: true
+      punishments.ban: true
+      punishments.tempban: true
+      punishments.unban: true
+      punishments.import: true
+  punishments.*:
+    description: All punishment permissions, including explicit exemption.
+    default: false
+    children:
+      punishments.admin: true
+      punishments.exempt: true

@@ -1,6 +1,5 @@
 package com.bradenkennedy.punishment.command;
 
-import static com.bradenkennedy.punishment.command.CommandSupport.isExempt;
 import static com.bradenkennedy.punishment.command.CommandSupport.issuerId;
 import static com.bradenkennedy.punishment.command.CommandSupport.reasonOf;
 import static org.incendo.cloud.bukkit.parser.PlayerParser.playerParser;
@@ -43,7 +42,7 @@ public final class KickCommands {
 
     private void kick(CommandContext<CommandSender> ctx) {
         Player target = ctx.get("player");
-        if (isExempt(target)) {
+        if (support.isExempt(target)) {
             support.reply(ctx, "exempt", target);
             return;
         }
