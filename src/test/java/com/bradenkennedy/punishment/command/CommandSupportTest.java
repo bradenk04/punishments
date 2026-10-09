@@ -116,6 +116,25 @@ class CommandSupportTest extends CommandTestBase {
     }
 
     @Test
+    void tryPunishCountsTheIssuedPunishment() {
+        PlayerMock target = server.addPlayer();
+
+        support.tryPunish(context(server.getConsoleSender()), target, punishment(target.getUniqueId()));
+
+        assertEquals(1, counter.drain());
+    }
+
+    @Test
+    void tryPunishDoesNotCountCancelledPunishment() {
+        cancelEvents(PlayerPunishedEvent.class);
+        PlayerMock target = server.addPlayer();
+
+        support.tryPunish(context(server.getConsoleSender()), target, punishment(target.getUniqueId()));
+
+        assertEquals(0, counter.drain());
+    }
+
+    @Test
     void tryPunishReturnsFalseAndStoresNothingWhenCancelled() {
         PlayerMock target = server.addPlayer();
         cancelEvents(PlayerPunishedEvent.class);

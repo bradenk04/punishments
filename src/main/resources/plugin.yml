@@ -1,5 +1,5 @@
 name: Punishment
-version: '1.0'
+version: '${version}'
 main: com.bradenkennedy.punishment.PunishmentPlugin
 description: Simple and effective punishment plugin
 api-version: '26.2'

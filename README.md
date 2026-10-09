@@ -163,4 +163,4 @@ Questions, feedback or just want to chat? Join our [Discord server](https://disc
 
 Bug reports and feature requests are welcome. Please use the [issue templates](.github/ISSUE_TEMPLATE) and follow the [pull request template](.github/PULL_REQUEST_TEMPLATE.md) when opening a PR.
 
-Offline exemptions use LuckPerms when installed, or an available Vault permissions provider. Without either provider, only online permission checks are available. Lookup failures stop the command rather than treating the player as unprotected. Operator status does not automatically grant exemption; assign punishments.exempt explicitly.
+

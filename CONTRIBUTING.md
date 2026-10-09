@@ -30,6 +30,22 @@ Slugs are all lowercase and hyphen-seperated
 - Never swallow exceptions.
 - No I/O on the main thread.
 
+## Releasing
+
+Maintainers publish a release by pushing a tag named `v<version>`, for example `v1.2.0`. The release workflow then:
+
+1. Builds the plugin with the tag as its version and runs the full build and tests.
+2. Creates a GitHub Release with the jar and generated notes.
+3. Publishes that same jar and changelog to Modrinth and Hangar.
+
+A tag containing a hyphen (for example `v1.3.0-rc.1`) is published as a pre-release: a GitHub pre-release, a Modrinth `beta` version and a Hangar `Snapshot` version.
+
+The workflow reads these repository secrets: `MODRINTH_TOKEN`, `MODRINTH_PROJECT_ID`, `HANGAR_API_TOKEN` and `HANGAR_PROJECT_ID` (the Hangar project slug). Builds without them still work; publishing is simply inactive.
+
+SpigotMC has no upload API. After a release, upload the jar from the GitHub Release to the SpigotMC resource by hand.
+
+To rehearse a Modrinth upload without publishing, run `MODRINTH_TOKEN=x MODRINTH_PROJECT_ID=x MODRINTH_DEBUG=1 ./gradlew modrinth --no-configuration-cache` locally; it prints the request instead of sending it.
+
 ## AI-Assisted Contributions
 AI tools are fine, unreviewed AI output is absolutely not.
 - Read and understand every line the AI wrote before committing anything.

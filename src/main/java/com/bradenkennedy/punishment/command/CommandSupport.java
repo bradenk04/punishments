@@ -6,6 +6,7 @@ import com.bradenkennedy.punishment.api.events.PlayerPunishmentRevokedEvent;
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.bradenkennedy.punishment.exemption.ExemptionCheck;
+import com.bradenkennedy.punishment.metrics.PunishmentCounter;
 import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
 import com.bradenkennedy.punishment.storage.PunishmentRepository;
 import java.time.Instant;
@@ -33,18 +34,21 @@ public final class CommandSupport {
     private final PluginConfig config;
     private final BukkitAudiences audiences;
     private final ExemptionCheck exemptions;
+    private final PunishmentCounter counter;
 
     public CommandSupport(
             PunishmentRepository repository,
             ActivePunishmentCache cache,
             PluginConfig config,
             BukkitAudiences audiences,
-            ExemptionCheck exemptions) {
+            ExemptionCheck exemptions,
+            PunishmentCounter counter) {
         this.repository = repository;
         this.cache = cache;
         this.config = config;
         this.audiences = audiences;
         this.exemptions = exemptions;
+        this.counter = counter;
     }
 
     void reply(CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target) {
@@ -72,6 +76,7 @@ public final class CommandSupport {
             return false;
         }
         repository.create(punishment);
+        counter.increment();
         if (punishment.type() == PunishmentType.MUTE) {
             cache.put(punishment);
         }
