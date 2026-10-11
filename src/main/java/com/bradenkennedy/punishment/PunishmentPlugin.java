@@ -2,6 +2,7 @@ package com.bradenkennedy.punishment;
 
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.bradenkennedy.punishment.command.CommandSupport;
+import com.bradenkennedy.punishment.command.ImportCommands;
 import com.bradenkennedy.punishment.command.KickCommands;
 import com.bradenkennedy.punishment.command.PunishmentCommands;
 import com.bradenkennedy.punishment.command.TimedPunishmentCommands;
@@ -69,6 +70,19 @@ public class PunishmentPlugin extends JavaPlugin {
         timedCommands.register(commandManager, PunishmentType.BAN, banListener::kick);
         new WarnCommands(support, repository, warnListener).register(commandManager);
         new KickCommands(this, support, config).register(commandManager);
+        new ImportCommands(
+                        getConfig(),
+                        getDataFolder().toPath(),
+                        mainThread,
+                        config,
+                        (sender, message) -> adventure.sender(sender).sendMessage(message),
+                        punishment -> {
+                            if (punishment.type() == PunishmentType.BAN || punishment.type() == PunishmentType.MUTE) {
+                                cache.put(punishment);
+                            }
+                            if (punishment.type() == PunishmentType.BAN) banListener.kick(punishment);
+                        })
+                .register(commandManager);
     }
 
     @Override

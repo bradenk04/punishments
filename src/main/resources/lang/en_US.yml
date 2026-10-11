@@ -42,3 +42,10 @@ history:
     active: "active"
     expired: "expired"
     revoked: "revoked"
+imports:
+  console-only: "<red>Imports may only be run from the server console."
+  unknown-source: "<red>Choose vanilla, essentials, advancedban, litebans, or libertybans."
+  running: "<red>An import is already running."
+  progress: "<gray>Import: <imported> imported, <skipped> skipped, <failed> failed."
+  preview: "<gray>Dry run: <imported> would import, <skipped> skipped, <failed> failed."
+  failed: "<red>Import stopped. Check the source format and database access. Committed records can be rerun safely."

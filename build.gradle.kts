@@ -47,6 +47,11 @@ dependencies {
   implementation("com.j256.ormlite:ormlite-jdbc:6.1")
   implementation("org.incendo:cloud-paper:2.0.1")
   implementation("org.bstats:bstats-bukkit:3.2.1")
+  implementation("com.google.code.gson:gson:2.13.1")
+  implementation("org.yaml:snakeyaml:2.4")
+  runtimeOnly("com.mysql:mysql-connector-j:9.4.0")
+  runtimeOnly("org.postgresql:postgresql:42.7.7")
+  runtimeOnly("org.hsqldb:hsqldb:2.7.4")
 
   testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
   testImplementation("io.papermc.paper:paper-api:26.2.build.132-stable")
@@ -106,6 +111,15 @@ tasks.runServer {
 }
 
 tasks.shadowJar {
+  filesMatching("META-INF/services/**") {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+  }
+  mergeServiceFiles()
+  relocate("com.google.gson", "com.bradenkennedy.punishment.libs.gson")
+  relocate("org.yaml.snakeyaml", "com.bradenkennedy.punishment.libs.yaml")
+  relocate("com.mysql", "com.bradenkennedy.punishment.libs.mysql")
+  relocate("org.postgresql", "com.bradenkennedy.punishment.libs.postgresql")
+  relocate("org.hsqldb", "com.bradenkennedy.punishment.libs.hsqldb")
   relocate("com.h2database", "com.bradenkennedy.punishment.libs.h2")
   relocate("net.kyori", "com.bradenkennedy.punishment.libs.kyori")
   relocate("org.incendo.cloud", "com.bradenkennedy.punishment.libs.cloud")

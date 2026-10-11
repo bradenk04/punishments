@@ -67,7 +67,7 @@ class TimedPunishmentCommandsTest extends CommandTestBase {
             value = PunishmentType.class,
             names = {"BAN", "MUTE"})
     void temporaryPunishmentExpiresAfterDuration(PunishmentType type) {
-        Instant before = Instant.now();
+        Instant before = Instant.now().truncatedTo(java.time.temporal.ChronoUnit.MILLIS);
 
         run(staff, "temp" + name(type) + " Target 1h spamming");
 
