@@ -166,7 +166,15 @@ class PunishmentCommandsTest extends CommandTestBase {
 
     @Test
     void entryShowsStaffDurationAndStatus() {
-        store(PunishmentType.BAN, Instant.now().plus(Duration.ofHours(2)));
+        Instant issuedAt = Instant.now();
+        repository.create(new Punishment(
+                UUID.randomUUID(),
+                target.getUniqueId(),
+                PunishmentType.BAN,
+                new PunishmentIssuer(staff.getUniqueId(), issuedAt),
+                "reason",
+                issuedAt.plus(Duration.ofHours(2)),
+                null));
 
         String text = text(1);
         assertTrue(text.contains("by Staff"));

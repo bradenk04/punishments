@@ -11,3 +11,10 @@ mute:
     - teammsg
 history:
   page-size: 10
+
+database:
+  url: ''
+  username: ''
+  password: ''
+network:
+  poll-interval-ms: 1000

@@ -161,3 +161,5 @@ tasks.jar {
     configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
   })
 }
+
+tasks.shadowJar { dependsOn(":velocity:shadowJar") }

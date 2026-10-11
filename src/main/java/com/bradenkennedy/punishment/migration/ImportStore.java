@@ -8,12 +8,20 @@ import java.util.UUID;
 
 public final class ImportStore implements AutoCloseable {
     private final Connection connection;
+    private final boolean h2;
+    private final boolean mysql;
 
     public ImportStore(String url, boolean dryRun) throws SQLException {
-        connection = DriverManager.getConnection(url);
+        this(url, "", "", dryRun);
+    }
+
+    public ImportStore(String url, String username, String password, boolean dryRun) throws SQLException {
+        h2 = url.startsWith("jdbc:h2:");
+        mysql = url.startsWith("jdbc:mysql:");
+        connection = DriverManager.getConnection(url, username, password);
         try {
             if (!dryRun) {
-                try (var statement = connection.prepareStatement("""
+                try (var statement = prepare("""
                         CREATE TABLE IF NOT EXISTS punishment_imports (
                           id VARCHAR(36) PRIMARY KEY, source VARCHAR(32) NOT NULL,
                           original_id VARCHAR(255) NOT NULL, issuer_name VARCHAR(255), target_name VARCHAR(255),
@@ -44,7 +52,7 @@ public final class ImportStore implements AutoCloseable {
         try {
             if (contains(punishment.id())) return false;
             if (dryRun) return true;
-            try (var insert = connection.prepareStatement("""
+            try (var insert = prepare("""
                     INSERT INTO "PUNISHMENTS" ("ID", "TARGET", "TYPE", "ISSUERID", "ISSUEDAT", "REASON",
                       "EXPIRY", "REVOKED", "REVOKEDBY", "REVOKEDAT", "REVOKEDREASON", "ACKNOWLEDGED")
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -66,7 +74,7 @@ public final class ImportStore implements AutoCloseable {
                 insert.setBoolean(12, false);
                 insert.executeUpdate();
             }
-            try (var insert = connection.prepareStatement("""
+            try (var insert = prepare("""
                     INSERT INTO punishment_imports (id, source, original_id, issuer_name, target_name)
                     VALUES (?, ?, ?, ?, ?)
                     """)) {
@@ -89,8 +97,27 @@ public final class ImportStore implements AutoCloseable {
         }
     }
 
+    private java.sql.PreparedStatement prepare(String sql) throws SQLException {
+        String delimiter = mysql ? "`" : "\"";
+        String translated = java.util.regex.Pattern.compile("\"([^\"]+)\"")
+                .matcher(sql)
+                .replaceAll(match -> {
+                    String name =
+                            switch (match.group(1)) {
+                                case "ISSUERID" -> "issuerId";
+                                case "ISSUEDAT" -> "issuedAt";
+                                case "REVOKEDBY" -> "revokedBy";
+                                case "REVOKEDAT" -> "revokedAt";
+                                case "REVOKEDREASON" -> "revokedReason";
+                                default -> match.group(1).toLowerCase(java.util.Locale.ROOT);
+                            };
+                    return delimiter + (h2 ? match.group(1) : name) + delimiter;
+                });
+        return connection.prepareStatement(translated);
+    }
+
     private boolean contains(UUID id) throws SQLException {
-        try (var query = connection.prepareStatement("SELECT 1 FROM \"PUNISHMENTS\" WHERE \"ID\" = ?")) {
+        try (var query = prepare("SELECT 1 FROM \"PUNISHMENTS\" WHERE \"ID\" = ?")) {
             query.setString(1, id.toString());
             try (var result = query.executeQuery()) {
                 return result.next();

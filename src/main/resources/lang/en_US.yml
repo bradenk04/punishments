@@ -49,3 +49,8 @@ imports:
   progress: "<gray>Import: <imported> imported, <skipped> skipped, <failed> failed."
   preview: "<gray>Dry run: <imported> would import, <skipped> skipped, <failed> failed."
   failed: "<red>Import stopped. Check the source format and database access. Committed records can be rerun safely."
+
+network:
+  unavailable: "<red>Punishment database unavailable. Please try again."
+  change: "<gray>[Punishments] <action> <type> <target> ID <id>"
+  kick: "<red>Kicked: <reason><newline>ID: <id>"

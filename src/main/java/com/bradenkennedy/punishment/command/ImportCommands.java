@@ -26,6 +26,8 @@ public final class ImportCommands {
     private final AtomicBoolean running = new AtomicBoolean();
     private final Map<String, ImportService.Options> sources;
     private final String destination;
+    private final String username;
+    private final String password;
     private final Executor mainThread;
     private final PluginConfig messages;
     private final BiConsumer<CommandSender, Component> delivery;
@@ -42,7 +44,12 @@ public final class ImportCommands {
         this.messages = messages;
         this.delivery = delivery;
         this.applied = applied;
-        destination = "jdbc:h2:" + dataDirectory.resolve("punishments").toAbsolutePath();
+        String configured = settings.getString("database.url", "");
+        destination = configured.isBlank()
+                ? "jdbc:h2:" + dataDirectory.resolve("punishments").toAbsolutePath()
+                : configured;
+        username = settings.getString("database.username", "");
+        password = settings.getString("database.password", "");
         var options = new HashMap<String, ImportService.Options>();
         for (String source : Set.of("vanilla", "essentials", "advancedban", "litebans", "libertybans")) {
             String base = "imports." + source + ".";
@@ -80,7 +87,7 @@ public final class ImportCommands {
                         return;
                     }
                     boolean dryRun = context.flags().isPresent("dry-run");
-                    try (var store = new ImportStore(destination, dryRun)) {
+                    try (var store = new ImportStore(destination, username, password, dryRun)) {
                         new ImportService(
                                         store,
                                         dryRun,

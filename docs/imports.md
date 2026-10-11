@@ -2,7 +2,7 @@
 
 Run `punish import <source> --dry-run` from the server console. Check imported/skipped/failed counts, then repeat without `--dry-run`. The preview reports records that would be imported. Supported sources are `vanilla`, `essentials`, `advancedban`, `litebans`, and `libertybans`. Only one import runs at a time.
 
-Imports use the existing local H2 punishment database and the existing single plugin build. They do not add shared SQL storage, platform modules, network polling, or a published developer API.
+Imports use the server's configured destination: local H2 by default, or the MySQL/PostgreSQL database selected by `database.url`, `database.username`, and `database.password`. The source credentials below are separate from these destination credentials. Run imports from one server at a time when sharing a destination.
 
 ## Files and source databases
 
