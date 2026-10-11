@@ -1,15 +1,15 @@
 package com.bradenkennedy.punishment.storage.model;
 
-import java.time.Instant;
-import java.util.UUID;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.bradenkennedy.punishment.api.model.Punishment;
 import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
 import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.bradenkennedy.punishment.api.model.Revocation;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import java.time.Instant;
+import java.util.UUID;
+import java.util.function.Function;
+import org.jetbrains.annotations.Nullable;
 
 @DatabaseTable(tableName = "punishments")
 public class PunishmentModel {
@@ -49,8 +49,7 @@ public class PunishmentModel {
     @DatabaseField
     private boolean acknowledged;
 
-    public PunishmentModel() {
-    }
+    public PunishmentModel() {}
 
     public PunishmentModel(
             UUID id,
@@ -82,10 +81,14 @@ public class PunishmentModel {
                 punishment.reason(),
                 punishment.expiry(),
                 punishment.revoked(),
-                null,
-                null,
-                null);
+                revocation(punishment, Revocation::reason),
+                revocation(punishment, Revocation::by),
+                revocation(punishment, Revocation::at));
         this.target = punishment.target();
+    }
+
+    private static <T> @Nullable T revocation(Punishment punishment, Function<Revocation, T> field) {
+        return punishment.revoked() ? field.apply(punishment.revocation()) : null;
     }
 
     public UUID getUuid() {
@@ -168,14 +171,22 @@ public class PunishmentModel {
         this.revokedBy = revokedBy;
     }
 
+    public Instant getRevokedAt() {
+        return this.revokedAt;
+    }
+
     public void setRevokedAt(Instant revokedAt) {
         this.revokedAt = revokedAt;
     }
 
     public Punishment toPunishment() {
-        return new Punishment(this.id, this.target, this.type, new PunishmentIssuer(
-                this.issuerId,
-                this.issuedAt
-        ), this.reason, this.expiry, this.revoked);
+        return new Punishment(
+                this.id,
+                this.target,
+                this.type,
+                new PunishmentIssuer(this.issuerId, this.issuedAt),
+                this.reason,
+                this.expiry,
+                this.revoked ? new Revocation(this.revokedBy, this.revokedReason, this.revokedAt) : null);
     }
 }

@@ -37,6 +37,6 @@ jobs:
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 21
+          java-version: 25
       - uses: gradle/actions/setup-gradle@v6
-      - run: bash ./gradlew :common:test --tests '*ExternalDatabaseTest'
+      - run: bash ./gradlew test --tests '*ExternalDatabaseTest'
