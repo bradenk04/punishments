@@ -79,3 +79,14 @@ func TestStaffVisibilityIsExplicit(t *testing.T) {
 		t.Fatal(out.Code, out.Body.String())
 	}
 }
+
+func TestDetailIgnoresListPaginationAndSearch(t *testing.T) {
+	store := &fakeStore{}
+	panel := Panel{Store: store, Types: []string{"BAN"}}
+	out := httptest.NewRecorder()
+	id := "12345678-1234-1234-1234-123456789abc"
+	panel.handler().ServeHTTP(out, httptest.NewRequest(http.MethodGet, "/api/punishments/"+id+"?page=2&search=unrelated", nil))
+	if out.Code != 200 || store.filter.ID != id || store.filter.Page != 0 || store.filter.Search != "" {
+		t.Fatal(out.Code, store.filter)
+	}
+}

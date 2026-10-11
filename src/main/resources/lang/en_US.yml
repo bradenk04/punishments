@@ -28,6 +28,29 @@ unwarn:
   not-found: "<red><name> has no matching warning"
 history:
   empty: "<gray>No punishments found for <white><name>"
-  entry: "<red><type></red> <dark_gray><id></dark_gray> <gray><reason><revoked>"
-  revoked-suffix: " (revoked)"
-  expired-suffix: " (expired)"
+  header: "<gold>History for <white><name></white> <gray>(page <page>/<pages>)"
+  entry: "<red><type></red> <gray><date> by <white><staff></white> for <duration> (<status>, <remaining> left)<newline><dark_gray><id></dark_gray> <gray><reason>"
+  hover: "<gold><type> <gray>(<status>)<newline>Issued: <white><date><newline><gray>Staff: <white><staff><newline><gray>Duration: <white><duration><newline><gray>Reason: <white><reason><newline><dark_gray><id><revocation>"
+  hover-revoked: "<newline><gray>Revoked by: <white><revoked-by><newline><gray>Revoke reason: <white><reason><newline><gray>Revoked at: <white><revoked-at>"
+  footer: "<previous> <gray>Page <page>/<pages> <next>"
+  previous: "<yellow>[<]</yellow>"
+  previous-disabled: "<dark_gray>[<]"
+  next: "<yellow>[>]</yellow>"
+  next-disabled: "<dark_gray>[>]"
+  no-remaining: "-"
+  status:
+    active: "active"
+    expired: "expired"
+    revoked: "revoked"
+imports:
+  console-only: "<red>Imports may only be run from the server console."
+  unknown-source: "<red>Choose vanilla, essentials, advancedban, litebans, or libertybans."
+  running: "<red>An import is already running."
+  progress: "<gray>Import: <imported> imported, <skipped> skipped, <failed> failed."
+  preview: "<gray>Dry run: <imported> would import, <skipped> skipped, <failed> failed."
+  failed: "<red>Import stopped. Check the source format and database access. Committed records can be rerun safely."
+
+network:
+  unavailable: "<red>Punishment database unavailable. Please try again."
+  change: "<gray>[Punishments] <action> <type> <target> ID <id>"
+  kick: "<red>Kicked: <reason><newline>ID: <id>"

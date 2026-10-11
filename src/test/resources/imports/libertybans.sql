@@ -1,0 +1,10 @@
+CREATE TABLE libertybans_punishments(id INT,type INT,start BIGINT,end BIGINT,operator BINARY(16),reason VARCHAR);
+CREATE TABLE libertybans_victims(id INT,type INT,data BINARY(16));
+CREATE TABLE libertybans_history(id INT,victim INT);
+CREATE TABLE libertybans_bans(id INT,victim INT);
+CREATE TABLE libertybans_mutes(id INT,victim INT);
+CREATE TABLE libertybans_warns(id INT,victim INT);
+INSERT INTO libertybans_victims VALUES(1,0,X'12345678123412341234123456789abc');
+INSERT INTO libertybans_punishments VALUES(2,0,1700000000,0,X'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','Test');
+INSERT INTO libertybans_history VALUES(2,1);
+INSERT INTO libertybans_bans VALUES(2,1);

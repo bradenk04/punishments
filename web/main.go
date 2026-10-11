@@ -140,6 +140,9 @@ func (p Panel) handler() http.Handler {
 	})
 	list := func(w http.ResponseWriter, r *http.Request) {
 		filter := Filter{Search: r.URL.Query().Get("search"), Player: r.PathValue("player"), ID: r.PathValue("id")}
+		if filter.ID != "" {
+			filter.Search = ""
+		}
 		if filter.Search != "" && len(filter.Search) > 100 {
 			http.Error(w, "Search is too long", 400)
 			return
@@ -151,7 +154,7 @@ func (p Panel) handler() http.Handler {
 		filter.Player = strings.ToLower(filter.Player)
 		filter.ID = strings.ToLower(filter.ID)
 		var err error
-		if value := r.URL.Query().Get("page"); value != "" {
+		if value := r.URL.Query().Get("page"); value != "" && filter.ID == "" {
 			filter.Page, err = strconv.Atoi(value)
 		}
 		if err != nil || filter.Page < 0 || filter.Page > 10000 {

@@ -1,0 +1,4 @@
+[
+  {"uuid":"12345678-1234-1234-1234-123456789abc","name":"Player","created":"2026-01-02 03:04:05 +0000","expires":"forever","reason":"Test","source":"Staff"},
+  {"uuid":"not-a-uuid","created":"bad","expires":"forever"}
+]
