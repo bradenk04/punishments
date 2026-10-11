@@ -1,17 +1,16 @@
 package com.bradenkennedy.punishment.command.parser;
 
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
-
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public final class DurationParser<C> implements ArgumentParser<C, Duration>, BlockingSuggestionProvider.Strings<C> {
 
@@ -46,7 +45,8 @@ public final class DurationParser<C> implements ArgumentParser<C, Duration>, Blo
         try {
             long seconds = 0;
             for (Matcher m = SEGMENT.matcher(token); m.find(); ) {
-                seconds = Math.addExact(seconds, Math.multiplyExact(Long.parseLong(m.group(1)), SECONDS.get(m.group(2))));
+                seconds =
+                        Math.addExact(seconds, Math.multiplyExact(Long.parseLong(m.group(1)), SECONDS.get(m.group(2))));
             }
             input.readString();
             return ArgumentParseResult.success(Duration.ofSeconds(seconds));

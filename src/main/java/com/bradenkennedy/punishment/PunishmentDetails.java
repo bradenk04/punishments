@@ -6,7 +6,6 @@ import java.util.UUID;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
-/** Stable appeal references; safe to render on asynchronous login threads. */
 public final class PunishmentDetails {
     private static final UUID CONSOLE = new UUID(0, 0);
 
@@ -21,6 +20,8 @@ public final class PunishmentDetails {
         return TagResolver.resolver(
                 Placeholder.unparsed("id", punishment.id().toString()),
                 Placeholder.unparsed("staff", staff),
-                Placeholder.unparsed("date", DateTimeFormatter.ISO_INSTANT.format(punishment.issuer().issuedAt())));
+                Placeholder.unparsed(
+                        "date",
+                        DateTimeFormatter.ISO_INSTANT.format(punishment.issuer().issuedAt())));
     }
 }
