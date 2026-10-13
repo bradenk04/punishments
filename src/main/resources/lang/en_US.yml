@@ -44,3 +44,8 @@ history:
     revoked: "revoked"
 storage-error: "<red>The database operation failed. Contact an administrator."
 storage-unavailable: "<red>Punishment checks are unavailable. Please try joining again later."
+import:
+  read-failed: "<red>Could not read the source data. See the console log."
+  progress: "<gray>Import progress: <processed>/<total>"
+  report: "<green>Import finished: <imported> imported, <skipped> skipped, <failed> failed"
+  dry-run-report: "<yellow>Dry run: <imported> would be imported, <skipped> skipped, <failed> failed"

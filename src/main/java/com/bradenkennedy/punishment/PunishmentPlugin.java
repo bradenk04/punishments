@@ -2,12 +2,14 @@ package com.bradenkennedy.punishment;
 
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.bradenkennedy.punishment.command.CommandSupport;
+import com.bradenkennedy.punishment.command.ImportCommands;
 import com.bradenkennedy.punishment.command.KickCommands;
 import com.bradenkennedy.punishment.command.PunishmentCommands;
 import com.bradenkennedy.punishment.command.TimedPunishmentCommands;
 import com.bradenkennedy.punishment.command.WarnCommands;
 import com.bradenkennedy.punishment.exemption.ExemptionCheck;
 import com.bradenkennedy.punishment.exemption.OfflinePermissionLookups;
+import com.bradenkennedy.punishment.importer.PunishmentImporter;
 import com.bradenkennedy.punishment.listener.BanListener;
 import com.bradenkennedy.punishment.listener.CacheLoadListener;
 import com.bradenkennedy.punishment.listener.MuteListener;
@@ -70,6 +72,16 @@ public class PunishmentPlugin extends JavaPlugin {
         timedCommands.register(commandManager, PunishmentType.BAN, banListener::kick);
         new WarnCommands(support, repository, warnListener).register(commandManager);
         new KickCommands(this, support, config).register(commandManager);
+        var importer = new PunishmentImporter(
+                repository,
+                punishment -> {
+                    if (punishment.type() == PunishmentType.BAN && !punishment.expired()) {
+                        banListener.kick(punishment);
+                    }
+                },
+                getLogger());
+        new ImportCommands(adventure, config, support, importer, getServer().getWorldContainer(), getLogger())
+                .register(commandManager);
     }
 
     @Override

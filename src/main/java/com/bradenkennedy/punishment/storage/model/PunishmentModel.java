@@ -49,6 +49,12 @@ public class PunishmentModel {
     @DatabaseField
     private boolean acknowledged;
 
+    @DatabaseField(uniqueIndexName = "punishments_import")
+    private String importSource;
+
+    @DatabaseField(uniqueIndexName = "punishments_import")
+    private String importId;
+
     public PunishmentModel() {}
 
     public PunishmentModel(
@@ -177,6 +183,11 @@ public class PunishmentModel {
 
     public void setRevokedAt(Instant revokedAt) {
         this.revokedAt = revokedAt;
+    }
+
+    public void setImportOrigin(String importSource, String importId) {
+        this.importSource = importSource;
+        this.importId = importId;
     }
 
     public Punishment toPunishment() {

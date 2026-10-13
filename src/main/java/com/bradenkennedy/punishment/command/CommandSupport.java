@@ -57,7 +57,7 @@ public final class CommandSupport {
         this.logger = logger;
     }
 
-    public void execute(CommandContext<CommandSender> ctx, Runnable action) {
+    public void execute(CommandContext<? extends CommandSender> ctx, Runnable action) {
         try {
             action.run();
         } catch (StorageException e) {
