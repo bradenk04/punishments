@@ -92,7 +92,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
 
       - name: Build shaded jar
-        run: ./gradlew shadowJar
+        run: ./gradlew shadowJar verifyShadowJar
 
       - name: Upload jar
         uses: actions/upload-artifact@v7
