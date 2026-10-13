@@ -22,7 +22,7 @@ Warn, kick, mute and ban players, permanently or for a set time, with a full his
 - **MiniMessage formatting.** Every message lives in a language file and can be restyled.
 - **Developer API.** Cancellable events fire whenever a punishment is issued or revoked.
 
-![Ban screen preview](https://placehold.co/800x450/1e1e2e/cdd6f4/png?text=Ban+screen+screenshot)
+![Ban screen preview](.github/assets/ban_screen_img.png)
 
 ## Requirements
 
@@ -64,7 +64,7 @@ Durations combine a number with a unit: `s` (seconds), `m` (minutes), `h` (hours
 /ban Herobrine -s Ban evasion
 ```
 
-![Punishment history preview](https://placehold.co/800x300/1e1e2e/cdd6f4/png?text=/punish+history+screenshot)
+![Punishment history preview](.github/assets/punish_history_img.png)
 
 ### Other permissions
 
@@ -113,7 +113,7 @@ ban:
 | `<remaining>` | Time left on an active mute or ban              |
 | `<id>`        | The punishment's unique ID                      |
 
-![Chat announcement preview](https://placehold.co/800x200/1e1e2e/f38ba8/png?text=Chat+announcement+screenshot)
+![Chat announcement preview](.github/assets/chat_announcement_img.png)
 
 ## Developer API
 
