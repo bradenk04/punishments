@@ -10,6 +10,8 @@ INSERT INTO PunishmentHistory (name, uuid, reason, operator, punishmentType, sta
 INSERT INTO PunishmentHistory (name, uuid, reason, operator, punishmentType, start, end) VALUES ('Hal', '77777777777777777777777777777777', 'Note', 'Staff', 'NOTE', 1700000000000, -1);
 INSERT INTO PunishmentHistory (name, uuid, reason, operator, punishmentType, start, end) VALUES ('Staff', '99999999999999999999999999999999', 'Test', 'CONSOLE', 'WARNING', 1700000000000, -1);
 INSERT INTO PunishmentHistory (name, uuid, reason, operator, punishmentType, start, end) VALUES ('Zed', '88888888888888888888888888888888', 'Odd', 'Staff', 'BOGUS', 1700000000000, -1);
+INSERT INTO PunishmentHistory (name, uuid, reason, operator, punishmentType, start, end) VALUES ('Ivy', 'aaaa0000bbbb1111cccc2222dddd3333', 'Hello', 'Remote', 'WARNING', 1700000000000, -1);
+INSERT INTO PunishmentHistory (name, uuid, reason, operator, punishmentType, start, end) VALUES ('Jay', 'bbbb0000cccc1111dddd2222eeee3333', 'Hi', 'Ghost', 'WARNING', 1700000000000, -1);
 INSERT INTO Punishments (name, uuid, reason, operator, punishmentType, start, end) VALUES ('Alice', 'aaaaaaaabbbbccccddddeeeeeeeeeeee', 'Griefing', 'Staff', 'BAN', 1700000000000, -1);
 INSERT INTO Punishments (name, uuid, reason, operator, punishmentType, start, end) VALUES ('Carol', '33333333333333333333333333333333', 'Rude', 'CONSOLE', 'MUTE', 1700000000000, -1);
 INSERT INTO Punishments (name, uuid, reason, operator, punishmentType, start, end) VALUES ('Staff', '99999999999999999999999999999999', 'Test', 'CONSOLE', 'WARNING', 1700000000000, -1);

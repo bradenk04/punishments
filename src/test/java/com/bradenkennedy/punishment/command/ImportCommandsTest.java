@@ -11,6 +11,7 @@ import com.bradenkennedy.punishment.importer.PunishmentImporter;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,7 @@ class ImportCommandsTest extends CommandTestBase {
                 folder,
                 folder,
                 new LegacyH2(folder.toPath(), LegacyH2.MAVEN_CENTRAL, LegacyH2.SHA256),
+                Map::of,
                 plugin.getLogger());
         new ImportCommands(audiences, config, support, importer, sources, plugin.getLogger()).register(target);
     }

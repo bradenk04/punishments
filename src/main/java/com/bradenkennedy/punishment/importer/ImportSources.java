@@ -9,6 +9,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 public final class ImportSources {
@@ -16,12 +19,19 @@ public final class ImportSources {
     private final File serverFolder;
     private final File pluginsFolder;
     private final LegacyH2 legacyH2;
+    private final Supplier<Map<String, UUID>> knownPlayers;
     private final Logger logger;
 
-    public ImportSources(File serverFolder, File pluginsFolder, LegacyH2 legacyH2, Logger logger) {
+    public ImportSources(
+            File serverFolder,
+            File pluginsFolder,
+            LegacyH2 legacyH2,
+            Supplier<Map<String, UUID>> knownPlayers,
+            Logger logger) {
         this.serverFolder = serverFolder;
         this.pluginsFolder = pluginsFolder;
         this.legacyH2 = legacyH2;
+        this.knownPlayers = knownPlayers;
         this.logger = logger;
     }
 
@@ -49,7 +59,7 @@ public final class ImportSources {
 
     private ImportBatch advancedBan() throws SQLException {
         try (Connection connection = AdvancedBanConnection.open(new File(pluginsFolder, "AdvancedBan"))) {
-            return AdvancedBanReader.read(connection, Instant.now(), logger);
+            return AdvancedBanReader.read(connection, Instant.now(), knownPlayers.get(), logger);
         }
     }
 

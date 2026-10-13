@@ -13,6 +13,7 @@ import com.bradenkennedy.punishment.importer.ImportEnforcement;
 import com.bradenkennedy.punishment.importer.ImportSources;
 import com.bradenkennedy.punishment.importer.LegacyH2;
 import com.bradenkennedy.punishment.importer.PunishmentImporter;
+import com.bradenkennedy.punishment.importer.ServerKnownPlayers;
 import com.bradenkennedy.punishment.listener.BanListener;
 import com.bradenkennedy.punishment.listener.CacheLoadListener;
 import com.bradenkennedy.punishment.listener.MuteListener;
@@ -81,6 +82,7 @@ public class PunishmentPlugin extends JavaPlugin {
                 getServer().getWorldContainer(),
                 getDataFolder().getParentFile(),
                 new LegacyH2(getDataFolder().toPath().resolve("lib"), LegacyH2.MAVEN_CENTRAL, LegacyH2.SHA256),
+                new ServerKnownPlayers(this),
                 getLogger());
         new ImportCommands(adventure, config, support, importer, importSources, getLogger()).register(commandManager);
     }

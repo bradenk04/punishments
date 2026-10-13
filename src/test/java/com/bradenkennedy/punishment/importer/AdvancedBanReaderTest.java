@@ -13,8 +13,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.Test;
@@ -39,9 +45,13 @@ class AdvancedBanReaderTest {
     }
 
     private static ImportBatch read() throws Exception {
+        return read(Map.of(), Logger.getAnonymousLogger());
+    }
+
+    private static ImportBatch read(Map<String, UUID> knownPlayers, Logger logger) throws Exception {
         try (Connection connection = DriverManager.getConnection("jdbc:hsqldb:mem:" + UUID.randomUUID(), "SA", "")) {
             createSchema(connection);
-            return AdvancedBanReader.read(connection, NOW, Logger.getAnonymousLogger());
+            return AdvancedBanReader.read(connection, NOW, knownPlayers, logger);
         }
     }
 
@@ -57,7 +67,7 @@ class AdvancedBanReaderTest {
     void countsSkippedAndFailedRows() throws Exception {
         ImportBatch batch = read();
 
-        assertEquals(7, batch.records().size());
+        assertEquals(9, batch.records().size());
         assertEquals(2, batch.skipped());
         assertEquals(1, batch.failed());
     }
@@ -128,8 +138,8 @@ class AdvancedBanReaderTest {
 
         try (Connection connection = AdvancedBanConnection.open(pluginFolder)) {
             assertEquals(
-                    7,
-                    AdvancedBanReader.read(connection, NOW, Logger.getAnonymousLogger())
+                    9,
+                    AdvancedBanReader.read(connection, NOW, Map.of(), Logger.getAnonymousLogger())
                             .records()
                             .size());
         }
@@ -145,5 +155,55 @@ class AdvancedBanReaderTest {
         settings.set("MySQL.Properties", "useSSL=false");
 
         assertEquals("jdbc:mysql://db.example:3307/bans?useSSL=false", AdvancedBanConnection.mysqlUrl(settings));
+    }
+
+    @Test
+    void operatorMissingFromTablesIsResolvedFromKnownPlayers() throws Exception {
+        UUID remote = UUID.randomUUID();
+
+        ImportBatch batch = read(Map.of("remote", remote), Logger.getAnonymousLogger());
+
+        assertEquals(remote, byTarget(batch, "aaaa0000-bbbb").issuer().issuer());
+    }
+
+    @Test
+    void namesFromTablesTakePrecedenceOverKnownPlayers() throws Exception {
+        ImportBatch batch = read(Map.of("staff", UUID.randomUUID()), Logger.getAnonymousLogger());
+
+        assertEquals(STAFF, byTarget(batch, "aaaaaaaa-bbbb").issuer().issuer());
+    }
+
+    @Test
+    void unresolvedOperatorsAreLoggedOnceAndConsoleIsNotReported() throws Exception {
+        List<LogRecord> logged = new ArrayList<>();
+        Logger logger = Logger.getAnonymousLogger();
+        logger.setUseParentHandlers(false);
+        logger.addHandler(new Handler() {
+            @Override
+            public void publish(LogRecord record) {
+                logged.add(record);
+            }
+
+            @Override
+            public void flush() {}
+
+            @Override
+            public void close() {}
+        });
+
+        ImportBatch batch = read(Map.of("remote", UUID.randomUUID()), logger);
+
+        assertEquals(
+                VanillaBanParser.CONSOLE_ID,
+                byTarget(batch, "bbbb0000-cccc").issuer().issuer());
+        assertEquals(
+                1,
+                logged.stream()
+                        .filter(r ->
+                                r.getLevel() == Level.WARNING && r.getMessage().contains("Ghost"))
+                        .count());
+        assertTrue(logged.stream()
+                .noneMatch(r ->
+                        r.getMessage().contains("CONSOLE") && r.getMessage().contains("operators")));
     }
 }

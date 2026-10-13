@@ -17,6 +17,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +25,7 @@ import java.util.logging.Logger;
 public final class AdvancedBanReader {
 
     private static final long PERMANENT = -1;
+    private static final String CONSOLE_OPERATOR = "CONSOLE";
 
     private enum Kind {
         BAN(Optional.of(PunishmentType.BAN)),
@@ -46,10 +48,13 @@ public final class AdvancedBanReader {
 
     private AdvancedBanReader() {}
 
-    public static ImportBatch read(Connection connection, Instant now, Logger logger) throws SQLException {
+    public static ImportBatch read(Connection connection, Instant now, Map<String, UUID> knownPlayers, Logger logger)
+            throws SQLException {
         Set<String> active = activeKeys(connection);
         List<Row> rows = rows(connection);
-        Map<String, UUID> operators = operators(rows);
+        Map<String, UUID> operators = new HashMap<>(knownPlayers);
+        operators.putAll(operators(rows));
+        Set<String> unresolved = new TreeSet<>();
         List<ImportRecord> records = new ArrayList<>();
         int skipped = 0;
         int failed = 0;
@@ -61,11 +66,16 @@ public final class AdvancedBanReader {
                     continue;
                 }
                 records.add(new ImportRecord(
-                        String.valueOf(row.id), punishment(row, kind.imported.get(), active, operators, now)));
+                        String.valueOf(row.id),
+                        punishment(row, kind.imported.get(), active, operators, unresolved, now)));
             } catch (RuntimeException e) {
                 logger.log(Level.WARNING, "Could not read AdvancedBan history row " + row.id, e);
                 failed++;
             }
+        }
+        if (!unresolved.isEmpty()) {
+            logger.warning("AdvancedBan operators not matched to a known player, attributed to the console: "
+                    + String.join(", ", unresolved));
         }
         return new ImportBatch(records, skipped, failed);
     }
@@ -122,12 +132,15 @@ public final class AdvancedBanReader {
     }
 
     private static Punishment punishment(
-            Row row, PunishmentType type, Set<String> active, Map<String, UUID> operators, Instant now) {
+            Row row,
+            PunishmentType type,
+            Set<String> active,
+            Map<String, UUID> operators,
+            Set<String> unresolved,
+            Instant now) {
         Instant start = Instant.ofEpochMilli(row.start);
         Instant expiry = type == PunishmentType.KICK || row.end == PERMANENT ? null : Instant.ofEpochMilli(row.end);
-        UUID issuer = row.operator == null
-                ? VanillaBanParser.CONSOLE_ID
-                : operators.getOrDefault(row.operator.toLowerCase(Locale.ROOT), VanillaBanParser.CONSOLE_ID);
+        UUID issuer = issuer(row.operator, operators, unresolved);
         boolean revoked = type != PunishmentType.KICK
                 && !active.contains(key(row.uuid, row.type, row.start))
                 && (expiry == null || expiry.isAfter(now));
@@ -139,6 +152,16 @@ public final class AdvancedBanReader {
                 row.reason,
                 expiry,
                 revoked ? new Revocation(VanillaBanParser.CONSOLE_ID, null, start) : null);
+    }
+
+    private static UUID issuer(String operator, Map<String, UUID> operators, Set<String> unresolved) {
+        if (operator == null || operator.equalsIgnoreCase(CONSOLE_OPERATOR)) return VanillaBanParser.CONSOLE_ID;
+        UUID resolved = operators.get(operator.toLowerCase(Locale.ROOT));
+        if (resolved == null) {
+            unresolved.add(operator);
+            return VanillaBanParser.CONSOLE_ID;
+        }
+        return resolved;
     }
 
     private static String key(String uuid, String type, long start) {
