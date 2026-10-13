@@ -3,6 +3,8 @@ package com.bradenkennedy.punishment.command;
 import static org.incendo.cloud.parser.standard.EnumParser.enumParser;
 
 import com.bradenkennedy.punishment.PluginConfig;
+import com.bradenkennedy.punishment.importer.AdvancedBanConnection;
+import com.bradenkennedy.punishment.importer.AdvancedBanReader;
 import com.bradenkennedy.punishment.importer.ImportBatch;
 import com.bradenkennedy.punishment.importer.ImportReport;
 import com.bradenkennedy.punishment.importer.ImportSource;
@@ -13,6 +15,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.time.Instant;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.kyori.adventure.audience.Audience;
@@ -30,6 +35,7 @@ public final class ImportCommands {
     private final CommandSupport support;
     private final PunishmentImporter importer;
     private final File serverFolder;
+    private final File pluginsFolder;
     private final Logger logger;
 
     public ImportCommands(
@@ -38,12 +44,14 @@ public final class ImportCommands {
             CommandSupport support,
             PunishmentImporter importer,
             File serverFolder,
+            File pluginsFolder,
             Logger logger) {
         this.audiences = audiences;
         this.config = config;
         this.support = support;
         this.importer = importer;
         this.serverFolder = serverFolder;
+        this.pluginsFolder = pluginsFolder;
         this.logger = logger;
     }
 
@@ -64,7 +72,7 @@ public final class ImportCommands {
         ImportBatch batch;
         try {
             batch = read(source);
-        } catch (IOException | RuntimeException e) {
+        } catch (IOException | SQLException | RuntimeException e) {
             logger.log(Level.SEVERE, "Could not read " + source + " data", e);
             audience.sendMessage(config.message("import.read-failed"));
             return;
@@ -85,9 +93,10 @@ public final class ImportCommands {
                 Placeholder.unparsed("failed", String.valueOf(report.failed()))));
     }
 
-    private ImportBatch read(ImportSource source) throws IOException {
+    private ImportBatch read(ImportSource source) throws IOException, SQLException {
         return switch (source) {
             case VANILLA -> readVanilla();
+            case ADVANCEDBAN -> readAdvancedBan();
         };
     }
 
@@ -100,6 +109,12 @@ public final class ImportCommands {
         if (!ips.exists()) return players;
         try (Reader reader = open("banned-ips.json")) {
             return players.plus(VanillaBanParser.parseIps(reader));
+        }
+    }
+
+    private ImportBatch readAdvancedBan() throws SQLException {
+        try (Connection connection = AdvancedBanConnection.open(new File(pluginsFolder, "AdvancedBan"))) {
+            return AdvancedBanReader.read(connection, Instant.now());
         }
     }
 

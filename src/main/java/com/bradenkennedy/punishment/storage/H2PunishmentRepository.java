@@ -60,7 +60,7 @@ public class H2PunishmentRepository implements PunishmentRepository {
         try {
             requireOpen();
             PunishmentModel model = new PunishmentModel(punishment);
-            model.setImportOrigin(source, sourceId);
+            model.markImported(source, sourceId);
             punishmentDao.create(model);
             return true;
         } catch (SQLException e) {

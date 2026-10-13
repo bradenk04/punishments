@@ -1,5 +1,6 @@
 package com.bradenkennedy.punishment.importer;
 
 public enum ImportSource {
-    VANILLA
+    VANILLA,
+    ADVANCEDBAN
 }

@@ -39,6 +39,7 @@ dependencies {
   compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
   compileOnly("com.mojang:brigadier:1.0.18")
+  compileOnly("org.hsqldb:hsqldb:2.7.4")
 
   implementation("net.kyori:adventure-api:4.26.1")
   implementation("net.kyori:adventure-text-minimessage:4.26.1")
@@ -49,6 +50,7 @@ dependencies {
   implementation("org.bstats:bstats-bukkit:3.2.1")
 
   testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
+  testImplementation("org.hsqldb:hsqldb:2.7.4")
   testImplementation("io.papermc.paper:paper-api:26.2.build.132-stable")
   testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v26.2:4.117.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")

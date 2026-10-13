@@ -31,7 +31,14 @@ class ImportCommandsTest extends CommandTestBase {
             }
         }
         var importer = new PunishmentImporter(repository, ban -> {}, plugin.getLogger());
-        new ImportCommands(audiences, config, support, importer, serverFolder.toFile(), plugin.getLogger())
+        new ImportCommands(
+                        audiences,
+                        config,
+                        support,
+                        importer,
+                        serverFolder.toFile(),
+                        serverFolder.toFile(),
+                        plugin.getLogger())
                 .register(manager);
     }
 
@@ -63,7 +70,8 @@ class ImportCommandsTest extends CommandTestBase {
     @Test
     void missingPlayersFileStoresNothing(@TempDir File emptyFolder) {
         var importer = new PunishmentImporter(repository, ban -> {}, plugin.getLogger());
-        var commands = new ImportCommands(audiences, config, support, importer, emptyFolder, plugin.getLogger());
+        var commands =
+                new ImportCommands(audiences, config, support, importer, emptyFolder, emptyFolder, plugin.getLogger());
         var other = new TestCommandManager();
         commands.register(other);
 

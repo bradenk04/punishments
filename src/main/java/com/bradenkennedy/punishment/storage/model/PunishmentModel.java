@@ -185,9 +185,10 @@ public class PunishmentModel {
         this.revokedAt = revokedAt;
     }
 
-    public void setImportOrigin(String importSource, String importId) {
+    public void markImported(String importSource, String importId) {
         this.importSource = importSource;
         this.importId = importId;
+        this.acknowledged = true;
     }
 
     public Punishment toPunishment() {

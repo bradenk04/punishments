@@ -80,7 +80,14 @@ public class PunishmentPlugin extends JavaPlugin {
                     }
                 },
                 getLogger());
-        new ImportCommands(adventure, config, support, importer, getServer().getWorldContainer(), getLogger())
+        new ImportCommands(
+                        adventure,
+                        config,
+                        support,
+                        importer,
+                        getServer().getWorldContainer(),
+                        getDataFolder().getParentFile(),
+                        getLogger())
                 .register(commandManager);
     }
 

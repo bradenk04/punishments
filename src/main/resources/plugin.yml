@@ -4,6 +4,8 @@ main: com.bradenkennedy.punishment.PunishmentPlugin
 description: Simple and effective punishment plugin
 api-version: '26.2'
 softdepend: [LuckPerms, Vault]
+libraries:
+  - org.hsqldb:hsqldb:2.7.4
 permissions:
   punishments.ban:
     description: Issue permanent player bans.
