@@ -2,12 +2,18 @@ package com.bradenkennedy.punishment;
 
 import com.bradenkennedy.punishment.api.model.PunishmentType;
 import com.bradenkennedy.punishment.command.CommandSupport;
+import com.bradenkennedy.punishment.command.ImportCommands;
 import com.bradenkennedy.punishment.command.KickCommands;
 import com.bradenkennedy.punishment.command.PunishmentCommands;
 import com.bradenkennedy.punishment.command.TimedPunishmentCommands;
 import com.bradenkennedy.punishment.command.WarnCommands;
 import com.bradenkennedy.punishment.exemption.ExemptionCheck;
 import com.bradenkennedy.punishment.exemption.OfflinePermissionLookups;
+import com.bradenkennedy.punishment.importer.ImportEnforcement;
+import com.bradenkennedy.punishment.importer.ImportSources;
+import com.bradenkennedy.punishment.importer.LegacyH2;
+import com.bradenkennedy.punishment.importer.PunishmentImporter;
+import com.bradenkennedy.punishment.importer.ServerKnownPlayers;
 import com.bradenkennedy.punishment.listener.BanListener;
 import com.bradenkennedy.punishment.listener.CacheLoadListener;
 import com.bradenkennedy.punishment.listener.MuteListener;
@@ -70,6 +76,15 @@ public class PunishmentPlugin extends JavaPlugin {
         timedCommands.register(commandManager, PunishmentType.BAN, banListener::kick);
         new WarnCommands(support, repository, warnListener).register(commandManager);
         new KickCommands(this, support, config).register(commandManager);
+        var importer =
+                new PunishmentImporter(repository, new ImportEnforcement(this, cache, banListener::kick), getLogger());
+        var importSources = new ImportSources(
+                getServer().getWorldContainer(),
+                getDataFolder().getParentFile(),
+                new LegacyH2(getDataFolder().toPath().resolve("lib"), LegacyH2.MAVEN_CENTRAL, LegacyH2.SHA256),
+                new ServerKnownPlayers(this),
+                getLogger());
+        new ImportCommands(adventure, config, support, importer, importSources, getLogger()).register(commandManager);
     }
 
     @Override

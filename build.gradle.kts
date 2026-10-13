@@ -33,12 +33,16 @@ repositories {
   }
 }
 
+val legacyH2: Configuration by configurations.creating
+
 dependencies {
+  legacyH2("com.h2database:h2:1.4.199")
   compileOnly("org.spigotmc:spigot-api:26.2-R0.1-SNAPSHOT")
   compileOnly("net.luckperms:api:5.5")
   compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
   compileOnly("com.mojang:brigadier:1.0.18")
+  compileOnly("org.hsqldb:hsqldb:2.7.4")
 
   implementation("net.kyori:adventure-api:4.26.1")
   implementation("net.kyori:adventure-text-minimessage:4.26.1")
@@ -49,6 +53,7 @@ dependencies {
   implementation("org.bstats:bstats-bukkit:3.2.1")
 
   testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
+  testImplementation("org.hsqldb:hsqldb:2.7.4")
   testImplementation("io.papermc.paper:paper-api:26.2.build.132-stable")
   testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v26.2:4.117.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")
@@ -71,6 +76,7 @@ tasks.processResources {
 
 tasks.test {
   useJUnitPlatform()
+  jvmArgumentProviders.add(LegacyH2Jar(legacyH2.incoming.files))
   finalizedBy(tasks.jacocoTestReport)
 }
 
@@ -157,4 +163,9 @@ val verifyShadowJar = tasks.register<JavaExec>("verifyShadowJar") {
 
 tasks.check {
   dependsOn(verifyShadowJar)
+}
+
+class LegacyH2Jar(@get:InputFiles @get:PathSensitive(PathSensitivity.NONE) val jar: FileCollection) :
+    CommandLineArgumentProvider {
+  override fun asArguments() = listOf("-DlegacyH2.jar=${jar.singleFile}")
 }

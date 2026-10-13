@@ -31,6 +31,14 @@ public class H2PunishmentRepository implements PunishmentRepository {
         this.punishmentDao = DaoManager.createDao(connectionSource, PunishmentModel.class);
 
         TableUtils.createTableIfNotExists(connectionSource, PunishmentModel.class);
+        addImportOrigin();
+    }
+
+    private void addImportOrigin() throws SQLException {
+        punishmentDao.executeRaw("ALTER TABLE `punishments` ADD COLUMN IF NOT EXISTS `importSource` VARCHAR(255)");
+        punishmentDao.executeRaw("ALTER TABLE `punishments` ADD COLUMN IF NOT EXISTS `importId` VARCHAR(255)");
+        punishmentDao.executeRaw("CREATE UNIQUE INDEX IF NOT EXISTS `punishments_import`"
+                + " ON `punishments` (`importSource`, `importId`)");
     }
 
     @Override
@@ -43,6 +51,37 @@ public class H2PunishmentRepository implements PunishmentRepository {
             return true;
         } catch (SQLException e) {
             throw new StorageException("create punishment", e);
+        }
+    }
+
+    @Override
+    public synchronized boolean createImported(Punishment punishment, String source, String sourceId) {
+        if (hasImported(source, sourceId)) return false;
+        try {
+            requireOpen();
+            PunishmentModel model = new PunishmentModel(punishment);
+            model.markImported(source, sourceId);
+            punishmentDao.create(model);
+            return true;
+        } catch (SQLException e) {
+            throw new StorageException("create imported punishment", e);
+        }
+    }
+
+    @Override
+    public boolean hasImported(String source, String sourceId) {
+        try {
+            requireOpen();
+            return punishmentDao
+                            .queryBuilder()
+                            .where()
+                            .eq("importSource", source)
+                            .and()
+                            .eq("importId", sourceId)
+                            .countOf()
+                    > 0;
+        } catch (SQLException e) {
+            throw new StorageException("check imported punishment", e);
         }
     }
 

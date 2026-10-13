@@ -147,7 +147,8 @@ class PunishmentHistoryInteractionTest extends CommandTestBase {
 
     @Test
     void hoverShowsFullDetails() {
-        Punishment ban = store(PunishmentType.BAN, Instant.now().plus(Duration.ofHours(2)), "griefing", Instant.now());
+        Instant issuedAt = Instant.now();
+        Punishment ban = store(PunishmentType.BAN, issuedAt.plus(Duration.ofHours(2)), "griefing", issuedAt);
 
         String hover = hoverText(onlyEntry());
 

@@ -11,6 +11,10 @@ import java.util.UUID;
 public interface PunishmentRepository {
     boolean create(Punishment punishment);
 
+    boolean createImported(Punishment punishment, String source, String sourceId);
+
+    boolean hasImported(String source, String sourceId);
+
     void revoke(UUID punishmentId, UUID revokedBy, String reason, Instant atTime);
 
     Optional<Punishment> findActive(UUID player, PunishmentType type);
