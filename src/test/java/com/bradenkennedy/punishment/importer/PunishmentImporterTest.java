@@ -36,7 +36,8 @@ class PunishmentImporterTest {
                         getClass().getResourceAsStream("/import/vanilla/banned-players.json"), StandardCharsets.UTF_8);
                 Reader ips = new InputStreamReader(
                         getClass().getResourceAsStream("/import/vanilla/banned-ips.json"), StandardCharsets.UTF_8)) {
-            batch = VanillaBanParser.parsePlayers(reader).plus(VanillaBanParser.parseIps(ips));
+            batch = VanillaBanParser.parsePlayers(reader, Logger.getAnonymousLogger())
+                    .plus(VanillaBanParser.parseIps(ips));
         }
     }
 

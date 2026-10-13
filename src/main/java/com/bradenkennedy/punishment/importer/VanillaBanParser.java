@@ -14,6 +14,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class VanillaBanParser {
 
@@ -24,13 +26,14 @@ public final class VanillaBanParser {
 
     private VanillaBanParser() {}
 
-    public static ImportBatch parsePlayers(Reader reader) {
+    public static ImportBatch parsePlayers(Reader reader, Logger logger) {
         List<ImportRecord> records = new ArrayList<>();
         int failed = 0;
         for (JsonElement element : entries(reader)) {
             try {
                 records.add(playerBan(element.getAsJsonObject()));
             } catch (RuntimeException e) {
+                logger.log(Level.WARNING, "Could not read vanilla ban entry " + element, e);
                 failed++;
             }
         }

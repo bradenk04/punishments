@@ -9,6 +9,8 @@ import com.bradenkennedy.punishment.command.TimedPunishmentCommands;
 import com.bradenkennedy.punishment.command.WarnCommands;
 import com.bradenkennedy.punishment.exemption.ExemptionCheck;
 import com.bradenkennedy.punishment.exemption.OfflinePermissionLookups;
+import com.bradenkennedy.punishment.importer.ImportEnforcement;
+import com.bradenkennedy.punishment.importer.ImportSources;
 import com.bradenkennedy.punishment.importer.LegacyH2;
 import com.bradenkennedy.punishment.importer.PunishmentImporter;
 import com.bradenkennedy.punishment.listener.BanListener;
@@ -73,24 +75,14 @@ public class PunishmentPlugin extends JavaPlugin {
         timedCommands.register(commandManager, PunishmentType.BAN, banListener::kick);
         new WarnCommands(support, repository, warnListener).register(commandManager);
         new KickCommands(this, support, config).register(commandManager);
-        var importer = new PunishmentImporter(
-                repository,
-                punishment -> {
-                    if (punishment.type() == PunishmentType.BAN && !punishment.expired()) {
-                        banListener.kick(punishment);
-                    }
-                },
+        var importer =
+                new PunishmentImporter(repository, new ImportEnforcement(this, cache, banListener::kick), getLogger());
+        var importSources = new ImportSources(
+                getServer().getWorldContainer(),
+                getDataFolder().getParentFile(),
+                new LegacyH2(getDataFolder().toPath().resolve("lib"), LegacyH2.MAVEN_CENTRAL, LegacyH2.SHA256),
                 getLogger());
-        new ImportCommands(
-                        adventure,
-                        config,
-                        support,
-                        importer,
-                        getServer().getWorldContainer(),
-                        getDataFolder().getParentFile(),
-                        new LegacyH2(getDataFolder().toPath().resolve("lib"), LegacyH2.MAVEN_CENTRAL, LegacyH2.SHA256),
-                        getLogger())
-                .register(commandManager);
+        new ImportCommands(adventure, config, support, importer, importSources, getLogger()).register(commandManager);
     }
 
     @Override

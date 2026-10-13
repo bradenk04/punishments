@@ -21,6 +21,7 @@ import java.time.Instant;
 import java.util.HexFormat;
 import java.util.Properties;
 import java.util.ServiceLoader;
+import java.util.logging.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -71,7 +72,8 @@ class LegacyH2Test {
     @Test
     void readsLegacyH2LiteBansDatabase() throws Exception {
         try (LiteBansDatabase database = LiteBansDatabase.open(liteBans.toFile(), legacyH2())) {
-            ImportBatch batch = LiteBansReader.read(database, Instant.parse("2026-01-01T00:00:00Z"));
+            ImportBatch batch =
+                    LiteBansReader.read(database, Instant.parse("2026-01-01T00:00:00Z"), Logger.getAnonymousLogger());
 
             assertEquals(6, batch.records().size());
             assertEquals(1, batch.skipped());
@@ -85,7 +87,7 @@ class LegacyH2Test {
         byte[] before = Files.readAllBytes(file);
 
         try (LiteBansDatabase database = LiteBansDatabase.open(liteBans.toFile(), legacyH2())) {
-            LiteBansReader.read(database, Instant.now());
+            LiteBansReader.read(database, Instant.now(), Logger.getAnonymousLogger());
         }
 
         assertArrayEquals(before, Files.readAllBytes(file));

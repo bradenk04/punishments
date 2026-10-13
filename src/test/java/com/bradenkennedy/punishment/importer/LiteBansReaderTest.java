@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
 import java.util.UUID;
+import java.util.logging.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -37,7 +38,7 @@ class LiteBansReaderTest {
                     if (!sql.isBlank()) statement.execute(sql);
                 }
             }
-            return LiteBansReader.read(new LiteBansDatabase(connection, "litebans_"), NOW);
+            return LiteBansReader.read(new LiteBansDatabase(connection, "litebans_"), NOW, Logger.getAnonymousLogger());
         }
     }
 

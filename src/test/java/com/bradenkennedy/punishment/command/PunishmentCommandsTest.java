@@ -36,11 +36,15 @@ class PunishmentCommandsTest extends CommandTestBase {
     }
 
     private Punishment store(PunishmentType type, Instant expiry) {
+        return store(type, Instant.now(), expiry);
+    }
+
+    private Punishment store(PunishmentType type, Instant issuedAt, Instant expiry) {
         var punishment = new Punishment(
                 UUID.randomUUID(),
                 target.getUniqueId(),
                 type,
-                new PunishmentIssuer(staff.getUniqueId(), Instant.now()),
+                new PunishmentIssuer(staff.getUniqueId(), issuedAt),
                 "reason",
                 expiry,
                 null);
@@ -166,7 +170,8 @@ class PunishmentCommandsTest extends CommandTestBase {
 
     @Test
     void entryShowsStaffDurationAndStatus() {
-        store(PunishmentType.BAN, Instant.now().plus(Duration.ofHours(2)));
+        Instant issuedAt = Instant.now();
+        store(PunishmentType.BAN, issuedAt, issuedAt.plus(Duration.ofHours(2)));
 
         String text = text(1);
         assertTrue(text.contains("by Staff"));

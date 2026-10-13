@@ -10,6 +10,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.UUID;
+import java.util.logging.Logger;
 import org.junit.jupiter.api.Test;
 
 class VanillaBanParserTest {
@@ -22,8 +23,10 @@ class VanillaBanParserTest {
     @Test
     void parsesPermanentBanWithConsoleIssuer() throws Exception {
         try (Reader reader = fixture("banned-players.json")) {
-            Punishment ban =
-                    VanillaBanParser.parsePlayers(reader).records().getFirst().punishment();
+            Punishment ban = VanillaBanParser.parsePlayers(reader, Logger.getAnonymousLogger())
+                    .records()
+                    .getFirst()
+                    .punishment();
 
             assertEquals(UUID.fromString("11111111-1111-1111-1111-111111111111"), ban.target());
             assertEquals(PunishmentType.BAN, ban.type());
@@ -37,8 +40,10 @@ class VanillaBanParserTest {
     @Test
     void keepsExpiredBansAsHistory() throws Exception {
         try (Reader reader = fixture("banned-players.json")) {
-            Punishment ban =
-                    VanillaBanParser.parsePlayers(reader).records().get(1).punishment();
+            Punishment ban = VanillaBanParser.parsePlayers(reader, Logger.getAnonymousLogger())
+                    .records()
+                    .get(1)
+                    .punishment();
 
             assertEquals(Instant.parse("2020-01-02T00:00:00Z"), ban.expiry());
         }
@@ -47,7 +52,7 @@ class VanillaBanParserTest {
     @Test
     void countsMalformedEntriesAsFailed() throws Exception {
         try (Reader reader = fixture("banned-players.json")) {
-            ImportBatch batch = VanillaBanParser.parsePlayers(reader);
+            ImportBatch batch = VanillaBanParser.parsePlayers(reader, Logger.getAnonymousLogger());
 
             assertEquals(2, batch.records().size());
             assertEquals(1, batch.failed());

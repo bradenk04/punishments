@@ -4,13 +4,9 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.hsqldb.jdbc.JDBCDriver;
 
 public final class AdvancedBanConnection {
-
-    private static final String HSQLDB_USER = "SA";
 
     private AdvancedBanConnection() {}
 
@@ -18,11 +14,6 @@ public final class AdvancedBanConnection {
         boolean mysql = YamlConfiguration.loadConfiguration(new File(advancedBanFolder, "config.yml"))
                 .getBoolean("UseMySQL", false);
         return mysql ? openMysql(advancedBanFolder) : openHsqldb(advancedBanFolder);
-    }
-
-    static String hsqldbUrl(File advancedBanFolder) {
-        return "jdbc:hsqldb:file:" + new File(advancedBanFolder, "data/storage").getPath()
-                + ";readonly=true;hsqldb.lock_file=false";
     }
 
     static String mysqlUrl(YamlConfiguration settings) {
@@ -33,12 +24,7 @@ public final class AdvancedBanConnection {
     }
 
     private static Connection openHsqldb(File advancedBanFolder) throws SQLException {
-        Properties credentials = new Properties();
-        credentials.setProperty("user", HSQLDB_USER);
-        credentials.setProperty("password", "");
-        Connection connection = new JDBCDriver().connect(hsqldbUrl(advancedBanFolder), credentials);
-        if (connection == null) throw new SQLException("HSQLDB driver rejected the AdvancedBan data URL");
-        return connection;
+        return HsqldbConnections.readOnly(new File(advancedBanFolder, "data/storage").toPath());
     }
 
     private static Connection openMysql(File advancedBanFolder) throws SQLException {

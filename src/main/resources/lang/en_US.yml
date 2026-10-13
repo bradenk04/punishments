@@ -45,6 +45,7 @@ history:
 storage-error: "<red>The database operation failed. Contact an administrator."
 storage-unavailable: "<red>Punishment checks are unavailable. Please try joining again later."
 import:
+  console-only: "<red>Imports can only be run from the console"
   read-failed: "<red>Could not read the source data. See the console log."
   progress: "<gray>Import progress: <processed>/<total>"
   report: "<green>Import finished: <imported> imported, <skipped> skipped, <failed> failed"

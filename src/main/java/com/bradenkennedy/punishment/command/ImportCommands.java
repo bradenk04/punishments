@@ -3,31 +3,21 @@ package com.bradenkennedy.punishment.command;
 import static org.incendo.cloud.parser.standard.EnumParser.enumParser;
 
 import com.bradenkennedy.punishment.PluginConfig;
-import com.bradenkennedy.punishment.importer.AdvancedBanConnection;
-import com.bradenkennedy.punishment.importer.AdvancedBanReader;
-import com.bradenkennedy.punishment.importer.ImportBatch;
 import com.bradenkennedy.punishment.importer.ImportReport;
 import com.bradenkennedy.punishment.importer.ImportSource;
-import com.bradenkennedy.punishment.importer.LegacyH2;
-import com.bradenkennedy.punishment.importer.LiteBansDatabase;
-import com.bradenkennedy.punishment.importer.LiteBansReader;
+import com.bradenkennedy.punishment.importer.ImportSources;
 import com.bradenkennedy.punishment.importer.PunishmentImporter;
-import com.bradenkennedy.punishment.importer.VanillaBanParser;
-import java.io.File;
+import com.bradenkennedy.punishment.importer.SourceBatch;
 import java.io.IOException;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.Instant;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.context.CommandContext;
 
@@ -37,9 +27,7 @@ public final class ImportCommands {
     private final PluginConfig config;
     private final CommandSupport support;
     private final PunishmentImporter importer;
-    private final File serverFolder;
-    private final File pluginsFolder;
-    private final LegacyH2 legacyH2;
+    private final ImportSources sources;
     private final Logger logger;
 
     public ImportCommands(
@@ -47,17 +35,13 @@ public final class ImportCommands {
             PluginConfig config,
             CommandSupport support,
             PunishmentImporter importer,
-            File serverFolder,
-            File pluginsFolder,
-            LegacyH2 legacyH2,
+            ImportSources sources,
             Logger logger) {
         this.audiences = audiences;
         this.config = config;
         this.support = support;
         this.importer = importer;
-        this.serverFolder = serverFolder;
-        this.pluginsFolder = pluginsFolder;
-        this.legacyH2 = legacyH2;
+        this.sources = sources;
         this.logger = logger;
     }
 
@@ -66,72 +50,43 @@ public final class ImportCommands {
                 .literal("import")
                 .required("source", enumParser(ImportSource.class))
                 .flag(manager.flagBuilder("dry-run"))
-                .senderType(ConsoleCommandSender.class)
                 .permission("punishments.import")
                 .handler(ctx -> support.execute(ctx, () -> importFrom(ctx))));
     }
 
-    private void importFrom(CommandContext<ConsoleCommandSender> ctx) {
+    private void importFrom(CommandContext<CommandSender> ctx) {
         Audience audience = audiences.sender(ctx.sender());
+        if (ctx.sender() instanceof Player) {
+            audience.sendMessage(config.message("import.console-only"));
+            return;
+        }
         ImportSource source = ctx.get("source");
         boolean dryRun = ctx.flags().isPresent("dry-run");
-        ImportBatch batch;
+        List<SourceBatch> batches;
         try {
-            batch = read(source);
+            batches = sources.read(source);
         } catch (IOException | SQLException | RuntimeException e) {
             logger.log(Level.SEVERE, "Could not read " + source + " data", e);
             audience.sendMessage(config.message("import.read-failed"));
             return;
         }
-        ImportReport report = importer.run(
-                source,
-                batch,
-                dryRun,
-                processed -> audience.sendMessage(config.message(
-                        "import.progress",
-                        Placeholder.unparsed("processed", String.valueOf(processed)),
-                        Placeholder.unparsed(
-                                "total", String.valueOf(batch.records().size())))));
+        ImportReport report = new ImportReport(0, 0, 0);
+        for (SourceBatch batch : batches) {
+            report = report.plus(importer.run(
+                    batch.source(),
+                    batch.batch(),
+                    dryRun,
+                    processed -> audience.sendMessage(config.message(
+                            "import.progress",
+                            Placeholder.unparsed("processed", String.valueOf(processed)),
+                            Placeholder.unparsed(
+                                    "total",
+                                    String.valueOf(batch.batch().records().size()))))));
+        }
         audience.sendMessage(config.message(
                 dryRun ? "import.dry-run-report" : "import.report",
                 Placeholder.unparsed("imported", String.valueOf(report.imported())),
                 Placeholder.unparsed("skipped", String.valueOf(report.skipped())),
                 Placeholder.unparsed("failed", String.valueOf(report.failed()))));
-    }
-
-    private ImportBatch read(ImportSource source) throws IOException, SQLException {
-        return switch (source) {
-            case VANILLA -> readVanilla();
-            case ADVANCEDBAN -> readAdvancedBan();
-            case LITEBANS -> readLiteBans();
-        };
-    }
-
-    private ImportBatch readVanilla() throws IOException {
-        ImportBatch players;
-        try (Reader reader = open("banned-players.json")) {
-            players = VanillaBanParser.parsePlayers(reader);
-        }
-        File ips = new File(serverFolder, "banned-ips.json");
-        if (!ips.exists()) return players;
-        try (Reader reader = open("banned-ips.json")) {
-            return players.plus(VanillaBanParser.parseIps(reader));
-        }
-    }
-
-    private ImportBatch readAdvancedBan() throws SQLException {
-        try (Connection connection = AdvancedBanConnection.open(new File(pluginsFolder, "AdvancedBan"))) {
-            return AdvancedBanReader.read(connection, Instant.now());
-        }
-    }
-
-    private ImportBatch readLiteBans() throws IOException, SQLException {
-        try (LiteBansDatabase database = LiteBansDatabase.open(new File(pluginsFolder, "LiteBans"), legacyH2)) {
-            return LiteBansReader.read(database, Instant.now());
-        }
-    }
-
-    private Reader open(String fileName) throws IOException {
-        return Files.newBufferedReader(new File(serverFolder, fileName).toPath(), StandardCharsets.UTF_8);
     }
 }

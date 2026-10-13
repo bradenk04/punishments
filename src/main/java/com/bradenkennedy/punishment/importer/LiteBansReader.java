@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class LiteBansReader {
 
@@ -36,15 +38,15 @@ public final class LiteBansReader {
 
     private LiteBansReader() {}
 
-    public static ImportBatch read(LiteBansDatabase database, Instant now) throws SQLException {
+    public static ImportBatch read(LiteBansDatabase database, Instant now, Logger logger) throws SQLException {
         ImportBatch batch = new ImportBatch(List.of(), 0, 0);
         for (Table table : Table.values()) {
-            batch = batch.plus(read(database.connection(), database.tablePrefix(), table, now));
+            batch = batch.plus(read(database.connection(), database.tablePrefix(), table, now, logger));
         }
         return batch;
     }
 
-    private static ImportBatch read(Connection connection, String prefix, Table table, Instant now)
+    private static ImportBatch read(Connection connection, String prefix, Table table, Instant now, Logger logger)
             throws SQLException {
         List<ImportRecord> records = new ArrayList<>();
         int skipped = 0;
@@ -56,9 +58,11 @@ public final class LiteBansReader {
                     skipped++;
                     continue;
                 }
+                String sourceId = table.suffix + ":" + rs.getLong("id");
                 try {
-                    records.add(new ImportRecord(table.suffix + ":" + rs.getLong("id"), punishment(rs, table, now)));
+                    records.add(new ImportRecord(sourceId, punishment(rs, table, now)));
                 } catch (RuntimeException e) {
+                    logger.log(Level.WARNING, "Could not read LiteBans row " + sourceId, e);
                     failed++;
                 }
             }

@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class AdvancedBanReader {
 
@@ -44,7 +46,7 @@ public final class AdvancedBanReader {
 
     private AdvancedBanReader() {}
 
-    public static ImportBatch read(Connection connection, Instant now) throws SQLException {
+    public static ImportBatch read(Connection connection, Instant now, Logger logger) throws SQLException {
         Set<String> active = activeKeys(connection);
         List<Row> rows = rows(connection);
         Map<String, UUID> operators = operators(rows);
@@ -61,6 +63,7 @@ public final class AdvancedBanReader {
                 records.add(new ImportRecord(
                         String.valueOf(row.id), punishment(row, kind.imported.get(), active, operators, now)));
             } catch (RuntimeException e) {
+                logger.log(Level.WARNING, "Could not read AdvancedBan history row " + row.id, e);
                 failed++;
             }
         }

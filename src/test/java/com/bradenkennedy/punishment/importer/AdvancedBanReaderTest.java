@@ -15,6 +15,7 @@ import java.sql.Statement;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.logging.Logger;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -40,7 +41,7 @@ class AdvancedBanReaderTest {
     private static ImportBatch read() throws Exception {
         try (Connection connection = DriverManager.getConnection("jdbc:hsqldb:mem:" + UUID.randomUUID(), "SA", "")) {
             createSchema(connection);
-            return AdvancedBanReader.read(connection, NOW);
+            return AdvancedBanReader.read(connection, NOW, Logger.getAnonymousLogger());
         }
     }
 
@@ -126,7 +127,11 @@ class AdvancedBanReaderTest {
         }
 
         try (Connection connection = AdvancedBanConnection.open(pluginFolder)) {
-            assertEquals(7, AdvancedBanReader.read(connection, NOW).records().size());
+            assertEquals(
+                    7,
+                    AdvancedBanReader.read(connection, NOW, Logger.getAnonymousLogger())
+                            .records()
+                            .size());
         }
         assertTrue(Arrays.stream(data.list()).anyMatch(name -> name.startsWith("storage")));
     }
