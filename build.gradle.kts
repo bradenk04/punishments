@@ -148,7 +148,7 @@ hangarPublish {
 val verifyShadowJar = tasks.register<JavaExec>("verifyShadowJar") {
   dependsOn(tasks.shadowJar)
   javaLauncher.set(javaToolchains.launcherFor {
-    languageVersion.set(JavaLanguageVersion.of(21))
+    languageVersion.set(JavaLanguageVersion.of(25))
   })
   classpath = files(tasks.shadowJar.flatMap { it.archiveFile })
   mainClass.set(file("src/shadowTest/java/VerifyShadowJar.java").absolutePath)
