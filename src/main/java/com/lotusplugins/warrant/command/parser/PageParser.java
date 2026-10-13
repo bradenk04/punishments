@@ -1,4 +1,4 @@
-package com.bradenkennedy.punishment.command.parser;
+package com.lotusplugins.warrant.command.parser;
 
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;

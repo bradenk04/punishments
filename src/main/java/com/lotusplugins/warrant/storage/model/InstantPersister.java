@@ -1,4 +1,4 @@
-package com.bradenkennedy.punishment.storage.model;
+package com.lotusplugins.warrant.storage.model;
 
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;

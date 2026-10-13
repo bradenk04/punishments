@@ -1,4 +1,4 @@
-package com.bradenkennedy.punishment.metrics;
+package com.lotusplugins.warrant.metrics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

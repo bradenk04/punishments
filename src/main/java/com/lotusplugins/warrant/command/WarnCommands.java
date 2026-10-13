@@ -1,15 +1,15 @@
-package com.bradenkennedy.punishment.command;
+package com.lotusplugins.warrant.command;
 
-import static com.bradenkennedy.punishment.command.CommandSupport.issuerId;
+import static com.lotusplugins.warrant.command.CommandSupport.issuerId;
 import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser;
 import static org.incendo.cloud.parser.standard.StringParser.greedyFlagYieldingStringParser;
 import static org.incendo.cloud.parser.standard.UUIDParser.uuidParser;
 
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
-import com.bradenkennedy.punishment.listener.WarnListener;
-import com.bradenkennedy.punishment.storage.PunishmentRepository;
+import com.lotusplugins.warrant.api.model.Punishment;
+import com.lotusplugins.warrant.api.model.PunishmentIssuer;
+import com.lotusplugins.warrant.api.model.PunishmentType;
+import com.lotusplugins.warrant.listener.WarnListener;
+import com.lotusplugins.warrant.storage.PunishmentRepository;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.Optional;
@@ -37,14 +37,14 @@ public final class WarnCommands {
                 .required("player", offlinePlayerParser())
                 .required("reason", greedyFlagYieldingStringParser())
                 .flag(silent)
-                .permission("punishments.warn")
+                .permission("warrant.warn")
                 .handler(ctx -> support.execute(ctx, () -> warn(ctx))));
         manager.command(manager.commandBuilder("unwarn")
                 .required("player", offlinePlayerParser())
                 .optional("id", uuidParser())
                 .optional("reason", greedyFlagYieldingStringParser())
                 .flag(silent)
-                .permission("punishments.unwarn")
+                .permission("warrant.unwarn")
                 .handler(ctx -> support.execute(ctx, () -> unwarn(ctx))));
     }
 

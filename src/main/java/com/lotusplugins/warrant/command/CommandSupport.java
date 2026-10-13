@@ -1,15 +1,15 @@
-package com.bradenkennedy.punishment.command;
+package com.lotusplugins.warrant.command;
 
-import com.bradenkennedy.punishment.PluginConfig;
-import com.bradenkennedy.punishment.api.events.PlayerPunishedEvent;
-import com.bradenkennedy.punishment.api.events.PlayerPunishmentRevokedEvent;
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
-import com.bradenkennedy.punishment.exemption.ExemptionCheck;
-import com.bradenkennedy.punishment.metrics.PunishmentCounter;
-import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
-import com.bradenkennedy.punishment.storage.PunishmentRepository;
-import com.bradenkennedy.punishment.storage.StorageException;
+import com.lotusplugins.warrant.PluginConfig;
+import com.lotusplugins.warrant.api.events.PlayerPunishedEvent;
+import com.lotusplugins.warrant.api.events.PlayerPunishmentRevokedEvent;
+import com.lotusplugins.warrant.api.model.Punishment;
+import com.lotusplugins.warrant.api.model.PunishmentType;
+import com.lotusplugins.warrant.exemption.ExemptionCheck;
+import com.lotusplugins.warrant.metrics.PunishmentCounter;
+import com.lotusplugins.warrant.storage.ActivePunishmentCache;
+import com.lotusplugins.warrant.storage.PunishmentRepository;
+import com.lotusplugins.warrant.storage.StorageException;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 public final class CommandSupport {
 
     private static final UUID CONSOLE_ID = new UUID(0, 0);
-    private static final String NOTIFY_PERMISSION = "punishments.notify";
+    private static final String NOTIFY_PERMISSION = "warrant.notify";
 
     private final PunishmentRepository repository;
     private final ActivePunishmentCache cache;
@@ -61,7 +61,7 @@ public final class CommandSupport {
         try {
             action.run();
         } catch (StorageException e) {
-            logger.log(Level.SEVERE, "Punishment command failed", e);
+            logger.log(Level.SEVERE, "Warrant command failed", e);
             audiences.sender(ctx.sender()).sendMessage(config.message("storage-error"));
         }
     }

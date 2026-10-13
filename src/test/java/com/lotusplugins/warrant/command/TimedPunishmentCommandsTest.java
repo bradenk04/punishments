@@ -1,13 +1,13 @@
-package com.bradenkennedy.punishment.command;
+package com.lotusplugins.warrant.command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.bradenkennedy.punishment.api.events.PlayerPunishedEvent;
-import com.bradenkennedy.punishment.api.events.PlayerPunishmentRevokedEvent;
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.lotusplugins.warrant.api.events.PlayerPunishedEvent;
+import com.lotusplugins.warrant.api.events.PlayerPunishmentRevokedEvent;
+import com.lotusplugins.warrant.api.model.Punishment;
+import com.lotusplugins.warrant.api.model.PunishmentType;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -121,7 +121,7 @@ class TimedPunishmentCommandsTest extends CommandTestBase {
             value = PunishmentType.class,
             names = {"BAN", "MUTE"})
     void targetWithExemptPermissionIsExempt(PunishmentType type) {
-        target.addAttachment(plugin, "punishments.exempt", true);
+        target.addAttachment(plugin, "warrant.exempt", true);
 
         run(staff, name(type) + " Target griefing");
 

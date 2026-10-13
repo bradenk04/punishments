@@ -1,8 +1,8 @@
-package com.bradenkennedy.punishment.listener;
+package com.lotusplugins.warrant.listener;
 
-import com.bradenkennedy.punishment.PluginConfig;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
-import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
+import com.lotusplugins.warrant.PluginConfig;
+import com.lotusplugins.warrant.api.model.PunishmentType;
+import com.lotusplugins.warrant.storage.ActivePunishmentCache;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;

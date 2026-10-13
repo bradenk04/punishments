@@ -1,4 +1,4 @@
-package com.bradenkennedy.punishment.command;
+package com.lotusplugins.warrant.command;
 
 import org.bukkit.command.CommandSender;
 import org.incendo.cloud.CommandManager;

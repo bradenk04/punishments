@@ -1,4 +1,4 @@
-package com.bradenkennedy.punishment.command.parser;
+package com.lotusplugins.warrant.command.parser;
 
 import java.time.Duration;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.bradenkennedy.punishment.storage;
+package com.lotusplugins.warrant.storage;
 
 public final class StorageException extends RuntimeException {
     private static final long serialVersionUID = 1L;

@@ -1,4 +1,4 @@
-package com.bradenkennedy.punishment.exemption;
+package com.lotusplugins.warrant.exemption;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -43,7 +43,7 @@ class ExemptionCheckTest {
     @Test
     void offlinePlayerUsesLookupForExemptPermission() {
         assertTrue(checkWith(true).isExempt(PLAYER, Optional.empty()).join());
-        assertEquals(List.of(PLAYER + ":punishments.exempt"), queried);
+        assertEquals(List.of(PLAYER + ":warrant.exempt"), queried);
     }
 
     @Test

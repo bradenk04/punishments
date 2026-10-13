@@ -1,17 +1,17 @@
-package com.bradenkennedy.punishment.command;
+package com.lotusplugins.warrant.command;
 
-import static com.bradenkennedy.punishment.command.CommandSupport.issuerId;
-import static com.bradenkennedy.punishment.command.CommandSupport.reasonOf;
-import static com.bradenkennedy.punishment.command.parser.DurationParser.durationParser;
+import static com.lotusplugins.warrant.command.CommandSupport.issuerId;
+import static com.lotusplugins.warrant.command.CommandSupport.reasonOf;
+import static com.lotusplugins.warrant.command.parser.DurationParser.durationParser;
 import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser;
 import static org.incendo.cloud.parser.standard.StringParser.greedyFlagYieldingStringParser;
 
-import com.bradenkennedy.punishment.PluginConfig;
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
-import com.bradenkennedy.punishment.command.parser.DurationParser;
-import com.bradenkennedy.punishment.storage.PunishmentRepository;
+import com.lotusplugins.warrant.PluginConfig;
+import com.lotusplugins.warrant.api.model.Punishment;
+import com.lotusplugins.warrant.api.model.PunishmentIssuer;
+import com.lotusplugins.warrant.api.model.PunishmentType;
+import com.lotusplugins.warrant.command.parser.DurationParser;
+import com.lotusplugins.warrant.storage.PunishmentRepository;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
@@ -42,20 +42,20 @@ public final class TimedPunishmentCommands {
                 .required("player", offlinePlayerParser())
                 .optional("reason", greedyFlagYieldingStringParser())
                 .flag(silent)
-                .permission("punishments." + name)
+                .permission("warrant." + name)
                 .handler(ctx -> support.execute(ctx, () -> issue(ctx, type, null, enforce))));
         manager.command(manager.commandBuilder("temp" + name)
                 .required("player", offlinePlayerParser())
                 .required("duration", durationParser())
                 .optional("reason", greedyFlagYieldingStringParser())
                 .flag(silent)
-                .permission("punishments.temp" + name)
+                .permission("warrant.temp" + name)
                 .handler(ctx -> support.execute(ctx, () -> issue(ctx, type, ctx.get("duration"), enforce))));
         manager.command(manager.commandBuilder("un" + name)
                 .required("player", offlinePlayerParser())
                 .flag(silent)
                 .optional("reason", greedyFlagYieldingStringParser())
-                .permission("punishments.un" + name)
+                .permission("warrant.un" + name)
                 .handler(ctx -> support.execute(ctx, () -> revoke(ctx, type))));
     }
 

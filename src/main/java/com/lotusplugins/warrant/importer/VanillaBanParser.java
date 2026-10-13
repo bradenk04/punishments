@@ -1,8 +1,8 @@
-package com.bradenkennedy.punishment.importer;
+package com.lotusplugins.warrant.importer;
 
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.lotusplugins.warrant.api.model.Punishment;
+import com.lotusplugins.warrant.api.model.PunishmentIssuer;
+import com.lotusplugins.warrant.api.model.PunishmentType;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

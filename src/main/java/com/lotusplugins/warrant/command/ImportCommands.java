@@ -1,13 +1,13 @@
-package com.bradenkennedy.punishment.command;
+package com.lotusplugins.warrant.command;
 
 import static org.incendo.cloud.parser.standard.EnumParser.enumParser;
 
-import com.bradenkennedy.punishment.PluginConfig;
-import com.bradenkennedy.punishment.importer.ImportReport;
-import com.bradenkennedy.punishment.importer.ImportSource;
-import com.bradenkennedy.punishment.importer.ImportSources;
-import com.bradenkennedy.punishment.importer.PunishmentImporter;
-import com.bradenkennedy.punishment.importer.SourceBatch;
+import com.lotusplugins.warrant.PluginConfig;
+import com.lotusplugins.warrant.importer.ImportReport;
+import com.lotusplugins.warrant.importer.ImportSource;
+import com.lotusplugins.warrant.importer.ImportSources;
+import com.lotusplugins.warrant.importer.PunishmentImporter;
+import com.lotusplugins.warrant.importer.SourceBatch;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -50,7 +50,7 @@ public final class ImportCommands {
                 .literal("import")
                 .required("source", enumParser(ImportSource.class))
                 .flag(manager.flagBuilder("dry-run"))
-                .permission("punishments.import")
+                .permission("warrant.import")
                 .handler(ctx -> support.execute(ctx, () -> importFrom(ctx))));
     }
 

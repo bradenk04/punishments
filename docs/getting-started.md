@@ -1,6 +1,6 @@
 ---
 title: Getting started
-description: Requirements and installation for Punishments.
+description: Requirements and installation for Warrant.
 sidebar:
   order: 1
 ---
@@ -16,24 +16,24 @@ LuckPerms and Vault are optional. When present they are used to check the [exemp
 
 ## Installation
 
-1. Download the latest jar from the [releases page](https://github.com/bradenk04/punishments/releases).
+1. Download the latest jar from the [releases page](https://github.com/lotusplugins/warrant/releases).
 2. Drop it into your server's `plugins/` folder.
 3. Start the server.
 
-On first start the plugin creates the following in `plugins/Punishment/`:
+On first start the plugin creates the following in `plugins/Warrant/`:
 
 | File                | Purpose                                  |
 |---------------------|------------------------------------------|
 | `config.yml`        | [Configuration](../configuration/)       |
 | `lang/en_US.yml`    | [Messages](../messages/)                 |
-| `punishments.mv.db` | The H2 database holding all punishments  |
+| `warrant.mv.db` | The H2 database holding all punishments  |
 
 ## First steps
 
 Give your staff a permission group, then try a command:
 
 ```
-/lp group moderator permission set punishments.moderator true
+/lp group moderator permission set warrant.moderator true
 /warn Steve Please keep chat friendly
 /punish history Steve
 ```

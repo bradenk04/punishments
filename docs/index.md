@@ -1,17 +1,17 @@
 ---
-title: Punishments
+title: Warrant
 description: Simple and effective punishment plugin for Spigot and Paper servers.
 sidebar:
   order: 0
 ---
 
-Punishments lets staff warn, kick, mute and ban players, permanently or for a set time, with a full history stored locally in H2.
+Warrant lets staff warn, kick, mute and ban players, permanently or for a set time, with a full history stored locally in H2.
 
 ## Features
 
 - **Warnings, kicks, mutes and bans.** Mutes and bans can be permanent or temporary.
 - **Punishment history.** Every punishment is recorded, including revoked and expired ones.
-- **Silent mode.** Add `-s` to any command so only staff with `punishments.notify` see the announcement.
+- **Silent mode.** Add `-s` to any command so only staff with `warrant.notify` see the announcement.
 - **Offline targets.** Punish players who aren't online. Warnings are delivered the next time they join.
 - **Mute command blocking.** Muted players can't use private-message commands like `/msg` or `/r`.
 - **MiniMessage formatting.** Every message lives in a language file and can be restyled.

@@ -1,13 +1,13 @@
-package com.bradenkennedy.punishment.importer;
+package com.lotusplugins.warrant.importer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.bradenkennedy.punishment.ServerTestBase;
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
-import com.bradenkennedy.punishment.api.model.Revocation;
+import com.lotusplugins.warrant.ServerTestBase;
+import com.lotusplugins.warrant.api.model.Punishment;
+import com.lotusplugins.warrant.api.model.PunishmentIssuer;
+import com.lotusplugins.warrant.api.model.PunishmentType;
+import com.lotusplugins.warrant.api.model.Revocation;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;

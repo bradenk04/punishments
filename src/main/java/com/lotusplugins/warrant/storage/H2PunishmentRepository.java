@@ -1,9 +1,9 @@
-package com.bradenkennedy.punishment.storage;
+package com.lotusplugins.warrant.storage;
 
-import com.bradenkennedy.punishment.api.model.HistoryPage;
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
-import com.bradenkennedy.punishment.storage.model.PunishmentModel;
+import com.lotusplugins.warrant.api.model.HistoryPage;
+import com.lotusplugins.warrant.api.model.Punishment;
+import com.lotusplugins.warrant.api.model.PunishmentType;
+import com.lotusplugins.warrant.storage.model.PunishmentModel;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -24,7 +24,7 @@ public class H2PunishmentRepository implements PunishmentRepository {
     private final Dao<PunishmentModel, UUID> punishmentDao;
 
     public H2PunishmentRepository(File dataFolder) throws SQLException {
-        String dbPath = new File(dataFolder, "punishments").getAbsolutePath();
+        String dbPath = new File(dataFolder, "warrant").getAbsolutePath();
         String url = "jdbc:h2:" + dbPath;
 
         this.connectionSource = new JdbcConnectionSource(url);

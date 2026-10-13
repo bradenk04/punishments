@@ -1,15 +1,15 @@
-package com.bradenkennedy.punishment.command;
+package com.lotusplugins.warrant.command;
 
-import static com.bradenkennedy.punishment.command.CommandSupport.issuerId;
-import static com.bradenkennedy.punishment.command.CommandSupport.reasonOf;
+import static com.lotusplugins.warrant.command.CommandSupport.issuerId;
+import static com.lotusplugins.warrant.command.CommandSupport.reasonOf;
 import static org.incendo.cloud.bukkit.parser.PlayerParser.playerParser;
 import static org.incendo.cloud.parser.standard.StringParser.greedyFlagYieldingStringParser;
 
-import com.bradenkennedy.punishment.PluginConfig;
-import com.bradenkennedy.punishment.PunishmentDetails;
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentIssuer;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.lotusplugins.warrant.PluginConfig;
+import com.lotusplugins.warrant.PunishmentDetails;
+import com.lotusplugins.warrant.api.model.Punishment;
+import com.lotusplugins.warrant.api.model.PunishmentIssuer;
+import com.lotusplugins.warrant.api.model.PunishmentType;
 import java.time.Instant;
 import java.util.UUID;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -36,7 +36,7 @@ public final class KickCommands {
                 .required("player", playerParser())
                 .optional("reason", greedyFlagYieldingStringParser())
                 .flag(manager.flagBuilder("silent").withAliases("s"))
-                .permission("punishments.kick")
+                .permission("warrant.kick")
                 .handler(ctx -> support.execute(ctx, () -> kick(ctx))));
     }
 

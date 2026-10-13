@@ -1,4 +1,4 @@
-package com.bradenkennedy.punishment.api.model;
+package com.lotusplugins.warrant.api.model;
 
 public enum PunishmentType {
     WARN,

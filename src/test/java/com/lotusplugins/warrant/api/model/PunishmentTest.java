@@ -1,4 +1,4 @@
-package com.bradenkennedy.punishment.api.model;
+package com.lotusplugins.warrant.api.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

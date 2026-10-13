@@ -1,7 +1,7 @@
-package com.bradenkennedy.punishment.listener;
+package com.lotusplugins.warrant.listener;
 
-import com.bradenkennedy.punishment.PluginConfig;
-import com.bradenkennedy.punishment.storage.PunishmentRepository;
+import com.lotusplugins.warrant.PluginConfig;
+import com.lotusplugins.warrant.storage.PunishmentRepository;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

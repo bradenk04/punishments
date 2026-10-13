@@ -1,12 +1,12 @@
-package com.bradenkennedy.punishment.listener;
+package com.lotusplugins.warrant.listener;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.bradenkennedy.punishment.ServerTestBase;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.lotusplugins.warrant.ServerTestBase;
+import com.lotusplugins.warrant.api.model.PunishmentType;
 import java.net.InetAddress;
 import java.time.Duration;
 import java.time.Instant;

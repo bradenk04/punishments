@@ -97,6 +97,6 @@ jobs:
       - name: Upload jar
         uses: actions/upload-artifact@v7
         with:
-          name: punishments-${{ github.sha }}
+          name: warrant-${{ github.sha }}
           path: build/libs/*-all.jar
           if-no-files-found: error

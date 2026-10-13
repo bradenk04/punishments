@@ -1,75 +1,75 @@
-name: Punishment
+name: Warrant
 version: '${version}'
-main: com.bradenkennedy.punishment.PunishmentPlugin
+main: com.lotusplugins.warrant.WarrantPlugin
 description: Simple and effective punishment plugin
 api-version: '26.2'
 softdepend: [LuckPerms, Vault]
 libraries:
   - org.hsqldb:hsqldb:2.7.4
 permissions:
-  punishments.ban:
+  warrant.ban:
     description: Issue permanent player bans.
     default: op
-  punishments.tempban:
+  warrant.tempban:
     description: Issue temporary player bans.
     default: op
-  punishments.unban:
+  warrant.unban:
     description: Revoke player bans.
     default: op
-  punishments.mute:
+  warrant.mute:
     description: Issue permanent player mutes.
     default: op
-  punishments.tempmute:
+  warrant.tempmute:
     description: Issue temporary player mutes.
     default: op
-  punishments.unmute:
+  warrant.unmute:
     description: Revoke player mutes.
     default: op
-  punishments.warn:
+  warrant.warn:
     description: Issue player warnings.
     default: op
-  punishments.unwarn:
+  warrant.unwarn:
     description: Revoke player warnings.
     default: op
-  punishments.kick:
+  warrant.kick:
     description: Kick players and record the punishment.
     default: op
-  punishments.history:
+  warrant.history:
     description: View a player's punishment history.
     default: op
-  punishments.notify:
+  warrant.notify:
     description: Receive silent punishment announcements.
     default: op
-  punishments.import:
+  warrant.import:
     description: Import punishment history from the server console.
     default: false
-  punishments.exempt:
+  warrant.exempt:
     description: Exempt a player from staff punishments; operators are not automatically exempt.
     default: false
-  punishments.moderator:
+  warrant.moderator:
     description: Mute, warn, kick, view history and receive staff notifications.
     default: false
     children:
-      punishments.mute: true
-      punishments.tempmute: true
-      punishments.unmute: true
-      punishments.warn: true
-      punishments.unwarn: true
-      punishments.kick: true
-      punishments.history: true
-      punishments.notify: true
-  punishments.admin:
+      warrant.mute: true
+      warrant.tempmute: true
+      warrant.unmute: true
+      warrant.warn: true
+      warrant.unwarn: true
+      warrant.kick: true
+      warrant.history: true
+      warrant.notify: true
+  warrant.admin:
     description: All moderation and migration commands, without exemption.
     default: false
     children:
-      punishments.moderator: true
-      punishments.ban: true
-      punishments.tempban: true
-      punishments.unban: true
-      punishments.import: true
-  punishments.*:
+      warrant.moderator: true
+      warrant.ban: true
+      warrant.tempban: true
+      warrant.unban: true
+      warrant.import: true
+  warrant.*:
     description: All punishment permissions, including explicit exemption.
     default: false
     children:
-      punishments.admin: true
-      punishments.exempt: true
+      warrant.admin: true
+      warrant.exempt: true

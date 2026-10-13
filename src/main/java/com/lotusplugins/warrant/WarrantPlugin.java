@@ -1,28 +1,28 @@
-package com.bradenkennedy.punishment;
+package com.lotusplugins.warrant;
 
-import com.bradenkennedy.punishment.api.model.PunishmentType;
-import com.bradenkennedy.punishment.command.CommandSupport;
-import com.bradenkennedy.punishment.command.ImportCommands;
-import com.bradenkennedy.punishment.command.KickCommands;
-import com.bradenkennedy.punishment.command.PunishmentCommands;
-import com.bradenkennedy.punishment.command.TimedPunishmentCommands;
-import com.bradenkennedy.punishment.command.WarnCommands;
-import com.bradenkennedy.punishment.exemption.ExemptionCheck;
-import com.bradenkennedy.punishment.exemption.OfflinePermissionLookups;
-import com.bradenkennedy.punishment.importer.ImportEnforcement;
-import com.bradenkennedy.punishment.importer.ImportSources;
-import com.bradenkennedy.punishment.importer.LegacyH2;
-import com.bradenkennedy.punishment.importer.PunishmentImporter;
-import com.bradenkennedy.punishment.importer.ServerKnownPlayers;
-import com.bradenkennedy.punishment.listener.BanListener;
-import com.bradenkennedy.punishment.listener.CacheLoadListener;
-import com.bradenkennedy.punishment.listener.MuteListener;
-import com.bradenkennedy.punishment.listener.WarnListener;
-import com.bradenkennedy.punishment.metrics.PluginMetrics;
-import com.bradenkennedy.punishment.metrics.PunishmentCounter;
-import com.bradenkennedy.punishment.storage.ActivePunishmentCache;
-import com.bradenkennedy.punishment.storage.H2PunishmentRepository;
-import com.bradenkennedy.punishment.storage.PunishmentRepository;
+import com.lotusplugins.warrant.api.model.PunishmentType;
+import com.lotusplugins.warrant.command.CommandSupport;
+import com.lotusplugins.warrant.command.ImportCommands;
+import com.lotusplugins.warrant.command.KickCommands;
+import com.lotusplugins.warrant.command.PunishmentCommands;
+import com.lotusplugins.warrant.command.TimedPunishmentCommands;
+import com.lotusplugins.warrant.command.WarnCommands;
+import com.lotusplugins.warrant.exemption.ExemptionCheck;
+import com.lotusplugins.warrant.exemption.OfflinePermissionLookups;
+import com.lotusplugins.warrant.importer.ImportEnforcement;
+import com.lotusplugins.warrant.importer.ImportSources;
+import com.lotusplugins.warrant.importer.LegacyH2;
+import com.lotusplugins.warrant.importer.PunishmentImporter;
+import com.lotusplugins.warrant.importer.ServerKnownPlayers;
+import com.lotusplugins.warrant.listener.BanListener;
+import com.lotusplugins.warrant.listener.CacheLoadListener;
+import com.lotusplugins.warrant.listener.MuteListener;
+import com.lotusplugins.warrant.listener.WarnListener;
+import com.lotusplugins.warrant.metrics.PluginMetrics;
+import com.lotusplugins.warrant.metrics.PunishmentCounter;
+import com.lotusplugins.warrant.storage.ActivePunishmentCache;
+import com.lotusplugins.warrant.storage.H2PunishmentRepository;
+import com.lotusplugins.warrant.storage.PunishmentRepository;
 import java.sql.SQLException;
 import java.util.concurrent.Executor;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -31,7 +31,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.LegacyPaperCommandManager;
 
-public class PunishmentPlugin extends JavaPlugin {
+public class WarrantPlugin extends JavaPlugin {
 
     private BukkitAudiences adventure;
 

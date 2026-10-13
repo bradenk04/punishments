@@ -1,4 +1,4 @@
-package com.bradenkennedy.punishment.exemption;
+package com.lotusplugins.warrant.exemption;
 
 import java.util.concurrent.Executor;
 import net.luckperms.api.LuckPerms;

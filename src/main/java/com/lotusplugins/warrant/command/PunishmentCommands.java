@@ -1,18 +1,18 @@
-package com.bradenkennedy.punishment.command;
+package com.lotusplugins.warrant.command;
 
-import static com.bradenkennedy.punishment.command.CommandSupport.nameOf;
-import static com.bradenkennedy.punishment.command.parser.PageParser.pageParser;
+import static com.lotusplugins.warrant.command.CommandSupport.nameOf;
+import static com.lotusplugins.warrant.command.parser.PageParser.pageParser;
 import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser;
 import static org.incendo.cloud.parser.standard.EnumParser.enumParser;
 
-import com.bradenkennedy.punishment.PluginConfig;
-import com.bradenkennedy.punishment.PunishmentDetails;
-import com.bradenkennedy.punishment.api.model.HistoryPage;
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
-import com.bradenkennedy.punishment.api.model.Revocation;
-import com.bradenkennedy.punishment.command.parser.DurationParser;
-import com.bradenkennedy.punishment.storage.PunishmentRepository;
+import com.lotusplugins.warrant.PluginConfig;
+import com.lotusplugins.warrant.PunishmentDetails;
+import com.lotusplugins.warrant.api.model.HistoryPage;
+import com.lotusplugins.warrant.api.model.Punishment;
+import com.lotusplugins.warrant.api.model.PunishmentType;
+import com.lotusplugins.warrant.api.model.Revocation;
+import com.lotusplugins.warrant.command.parser.DurationParser;
+import com.lotusplugins.warrant.storage.PunishmentRepository;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public final class PunishmentCommands {
                 .required("player", offlinePlayerParser())
                 .optional("page", pageParser())
                 .flag(manager.flagBuilder("type").withAliases("t").withComponent(enumParser(PunishmentType.class)))
-                .permission("punishments.history")
+                .permission("warrant.history")
                 .handler(ctx -> support.execute(ctx, () -> history(ctx))));
     }
 

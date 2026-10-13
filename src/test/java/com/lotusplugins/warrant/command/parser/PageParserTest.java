@@ -1,4 +1,4 @@
-package com.bradenkennedy.punishment.command.parser;
+package com.lotusplugins.warrant.command.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

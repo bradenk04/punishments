@@ -1,8 +1,8 @@
-package com.bradenkennedy.punishment.storage;
+package com.lotusplugins.warrant.storage;
 
-import com.bradenkennedy.punishment.api.model.HistoryPage;
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.lotusplugins.warrant.api.model.HistoryPage;
+import com.lotusplugins.warrant.api.model.Punishment;
+import com.lotusplugins.warrant.api.model.PunishmentType;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;

@@ -1,10 +1,10 @@
-package com.bradenkennedy.punishment.command;
+package com.lotusplugins.warrant.command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.bradenkennedy.punishment.api.model.PunishmentType;
-import com.bradenkennedy.punishment.listener.WarnListener;
+import com.lotusplugins.warrant.api.model.PunishmentType;
+import com.lotusplugins.warrant.listener.WarnListener;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,21 +42,21 @@ class CommandRegistrationTest extends CommandTestBase {
     void kickRegistersWithPermission() {
         new KickCommands(plugin, support, config).register(manager);
 
-        assertEquals(Map.of("kick", "punishments.kick"), permissionsByPath());
+        assertEquals(Map.of("kick", "warrant.kick"), permissionsByPath());
     }
 
     @Test
     void historyRegistersWithPermission() {
         new PunishmentCommands(audiences, repository, config, support).register(manager);
 
-        assertEquals(Map.of("punish history", "punishments.history"), permissionsByPath());
+        assertEquals(Map.of("punish history", "warrant.history"), permissionsByPath());
     }
 
     @Test
     void warnRegistersWarnAndUnwarn() {
         new WarnCommands(support, repository, warnListener()).register(manager);
 
-        assertEquals(Map.of("warn", "punishments.warn", "unwarn", "punishments.unwarn"), permissionsByPath());
+        assertEquals(Map.of("warn", "warrant.warn", "unwarn", "warrant.unwarn"), permissionsByPath());
     }
 
     @ParameterizedTest
@@ -71,11 +71,11 @@ class CommandRegistrationTest extends CommandTestBase {
         assertEquals(
                 Map.of(
                         name,
-                        "punishments." + name,
+                        "warrant." + name,
                         "temp" + name,
-                        "punishments.temp" + name,
+                        "warrant.temp" + name,
                         "un" + name,
-                        "punishments.un" + name),
+                        "warrant.un" + name),
                 permissionsByPath());
     }
 

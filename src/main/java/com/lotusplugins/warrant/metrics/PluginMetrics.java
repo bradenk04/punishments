@@ -1,4 +1,4 @@
-package com.bradenkennedy.punishment.metrics;
+package com.lotusplugins.warrant.metrics;
 
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;

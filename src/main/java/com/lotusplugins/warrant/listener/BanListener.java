@@ -1,11 +1,11 @@
-package com.bradenkennedy.punishment.listener;
+package com.lotusplugins.warrant.listener;
 
-import com.bradenkennedy.punishment.PluginConfig;
-import com.bradenkennedy.punishment.PunishmentDetails;
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
-import com.bradenkennedy.punishment.storage.PunishmentRepository;
-import com.bradenkennedy.punishment.storage.StorageException;
+import com.lotusplugins.warrant.PluginConfig;
+import com.lotusplugins.warrant.PunishmentDetails;
+import com.lotusplugins.warrant.api.model.Punishment;
+import com.lotusplugins.warrant.api.model.PunishmentType;
+import com.lotusplugins.warrant.storage.PunishmentRepository;
+import com.lotusplugins.warrant.storage.StorageException;
 import java.util.logging.Level;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;

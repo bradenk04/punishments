@@ -1,4 +1,4 @@
-package com.bradenkennedy.punishment.exemption;
+package com.lotusplugins.warrant.exemption;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -8,7 +8,7 @@ import org.bukkit.OfflinePlayer;
 
 public final class ExemptionCheck {
 
-    static final String PERMISSION = "punishments.exempt";
+    static final String PERMISSION = "warrant.exempt";
 
     private final OfflinePermissionLookup offlineLookup;
     private final Executor mainThread;

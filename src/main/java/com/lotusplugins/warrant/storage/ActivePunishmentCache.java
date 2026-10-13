@@ -1,7 +1,7 @@
-package com.bradenkennedy.punishment.storage;
+package com.lotusplugins.warrant.storage;
 
-import com.bradenkennedy.punishment.api.model.Punishment;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.lotusplugins.warrant.api.model.Punishment;
+import com.lotusplugins.warrant.api.model.PunishmentType;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;

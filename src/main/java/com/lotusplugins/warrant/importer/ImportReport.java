@@ -1,4 +1,4 @@
-package com.bradenkennedy.punishment.importer;
+package com.lotusplugins.warrant.importer;
 
 public record ImportReport(int imported, int skipped, int failed) {
 

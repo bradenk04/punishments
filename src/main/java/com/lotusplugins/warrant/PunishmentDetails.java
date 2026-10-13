@@ -1,6 +1,6 @@
-package com.bradenkennedy.punishment;
+package com.lotusplugins.warrant;
 
-import com.bradenkennedy.punishment.api.model.Punishment;
+import com.lotusplugins.warrant.api.model.Punishment;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
