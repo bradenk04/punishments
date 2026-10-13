@@ -33,7 +33,10 @@ repositories {
   }
 }
 
+val legacyH2: Configuration by configurations.creating
+
 dependencies {
+  legacyH2("com.h2database:h2:1.4.199")
   compileOnly("org.spigotmc:spigot-api:26.2-R0.1-SNAPSHOT")
   compileOnly("net.luckperms:api:5.5")
   compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
@@ -73,6 +76,7 @@ tasks.processResources {
 
 tasks.test {
   useJUnitPlatform()
+  jvmArgumentProviders.add(LegacyH2Jar(legacyH2.incoming.files))
   finalizedBy(tasks.jacocoTestReport)
 }
 
@@ -159,4 +163,9 @@ val verifyShadowJar = tasks.register<JavaExec>("verifyShadowJar") {
 
 tasks.check {
   dependsOn(verifyShadowJar)
+}
+
+class LegacyH2Jar(@get:InputFiles @get:PathSensitive(PathSensitivity.NONE) val jar: FileCollection) :
+    CommandLineArgumentProvider {
+  override fun asArguments() = listOf("-DlegacyH2.jar=${jar.singleFile}")
 }

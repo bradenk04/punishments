@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.bradenkennedy.punishment.importer.LegacyH2;
 import com.bradenkennedy.punishment.importer.PunishmentImporter;
 import java.io.File;
 import java.nio.file.Files;
@@ -38,8 +39,13 @@ class ImportCommandsTest extends CommandTestBase {
                         importer,
                         serverFolder.toFile(),
                         serverFolder.toFile(),
+                        legacyH2(serverFolder),
                         plugin.getLogger())
                 .register(manager);
+    }
+
+    private static LegacyH2 legacyH2(Path folder) {
+        return new LegacyH2(folder, LegacyH2.MAVEN_CENTRAL, LegacyH2.SHA256);
     }
 
     @Test
@@ -70,8 +76,15 @@ class ImportCommandsTest extends CommandTestBase {
     @Test
     void missingPlayersFileStoresNothing(@TempDir File emptyFolder) {
         var importer = new PunishmentImporter(repository, ban -> {}, plugin.getLogger());
-        var commands =
-                new ImportCommands(audiences, config, support, importer, emptyFolder, emptyFolder, plugin.getLogger());
+        var commands = new ImportCommands(
+                audiences,
+                config,
+                support,
+                importer,
+                emptyFolder,
+                emptyFolder,
+                legacyH2(emptyFolder.toPath()),
+                plugin.getLogger());
         var other = new TestCommandManager();
         commands.register(other);
 

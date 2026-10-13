@@ -8,6 +8,9 @@ import com.bradenkennedy.punishment.importer.AdvancedBanReader;
 import com.bradenkennedy.punishment.importer.ImportBatch;
 import com.bradenkennedy.punishment.importer.ImportReport;
 import com.bradenkennedy.punishment.importer.ImportSource;
+import com.bradenkennedy.punishment.importer.LegacyH2;
+import com.bradenkennedy.punishment.importer.LiteBansDatabase;
+import com.bradenkennedy.punishment.importer.LiteBansReader;
 import com.bradenkennedy.punishment.importer.PunishmentImporter;
 import com.bradenkennedy.punishment.importer.VanillaBanParser;
 import java.io.File;
@@ -36,6 +39,7 @@ public final class ImportCommands {
     private final PunishmentImporter importer;
     private final File serverFolder;
     private final File pluginsFolder;
+    private final LegacyH2 legacyH2;
     private final Logger logger;
 
     public ImportCommands(
@@ -45,6 +49,7 @@ public final class ImportCommands {
             PunishmentImporter importer,
             File serverFolder,
             File pluginsFolder,
+            LegacyH2 legacyH2,
             Logger logger) {
         this.audiences = audiences;
         this.config = config;
@@ -52,6 +57,7 @@ public final class ImportCommands {
         this.importer = importer;
         this.serverFolder = serverFolder;
         this.pluginsFolder = pluginsFolder;
+        this.legacyH2 = legacyH2;
         this.logger = logger;
     }
 
@@ -97,6 +103,7 @@ public final class ImportCommands {
         return switch (source) {
             case VANILLA -> readVanilla();
             case ADVANCEDBAN -> readAdvancedBan();
+            case LITEBANS -> readLiteBans();
         };
     }
 
@@ -115,6 +122,12 @@ public final class ImportCommands {
     private ImportBatch readAdvancedBan() throws SQLException {
         try (Connection connection = AdvancedBanConnection.open(new File(pluginsFolder, "AdvancedBan"))) {
             return AdvancedBanReader.read(connection, Instant.now());
+        }
+    }
+
+    private ImportBatch readLiteBans() throws IOException, SQLException {
+        try (LiteBansDatabase database = LiteBansDatabase.open(new File(pluginsFolder, "LiteBans"), legacyH2)) {
+            return LiteBansReader.read(database, Instant.now());
         }
     }
 
