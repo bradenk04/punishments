@@ -1,6 +1,6 @@
 <div align="center">
 
-![Punishments banner](https://placehold.co/1200x300/1e1e2e/f38ba8/png?text=Punishments&font=montserrat)
+![Warrant banner](https://placehold.co/1200x300/1e1e2e/f38ba8/png?text=Warrant&font=montserrat)
 
 **Simple and effective punishment plugin for Spigot / Paper servers.**
 
@@ -16,7 +16,7 @@ Warn, kick, mute and ban players, permanently or for a set time, with a full his
 
 - **Warnings, kicks, mutes and bans.** Mutes and bans can be permanent or temporary (`/tempmute`, `/tempban`).
 - **Punishment history.** Every punishment is recorded, including revoked and expired ones.
-- **Silent mode.** Add `-s` / `--silent` to any command so only staff with `punishments.notify` see the announcement.
+- **Silent mode.** Add `-s` / `--silent` to any command so only staff with `warrant.notify` see the announcement.
 - **Offline targets.** Ban, mute or warn players who aren't online. Warnings are delivered the next time they join.
 - **Mute command blocking.** Muted players can't use private-message commands like `/msg`, `/tell` or `/r`.
 - **MiniMessage formatting.** Every message lives in a language file and can be restyled.
@@ -33,9 +33,9 @@ Warn, kick, mute and ban players, permanently or for a set time, with a full his
 
 ## Installation
 
-1. Download the latest jar from the [releases page](https://github.com/bradenk04/punishments/releases), or [build it yourself](#building-from-source).
+1. Download the latest jar from the [releases page](https://github.com/lotusplugins/warrant/releases), or [build it yourself](#building-from-source).
 2. Drop it into your server's `plugins/` folder.
-3. Start the server. `config.yml`, `lang/en_US.yml` and the H2 database (`punishments.mv.db`) are created in `plugins/Punishment/`.
+3. Start the server. `config.yml`, `lang/en_US.yml` and the H2 database (`warrant.mv.db`) are created in `plugins/Warrant/`.
 
 ## Commands
 
@@ -43,16 +43,16 @@ Warn, kick, mute and ban players, permanently or for a set time, with a full his
 
 | Command                                  | Description                                    | Permission                |
 |------------------------------------------|------------------------------------------------|---------------------------|
-| `/warn <player> <reason>`                | Warn a player (reason required)                | `punishments.warn`        |
-| `/unwarn <player> [id] [reason]`         | Remove a warning (latest one if no ID is given) | `punishments.unwarn`      |
-| `/kick <player> [reason]`                | Kick an online player                          | `punishments.kick`        |
-| `/mute <player> [reason]`                | Permanently mute a player                      | `punishments.mute`        |
-| `/tempmute <player> <duration> [reason]` | Mute a player for a set time                   | `punishments.tempmute`    |
-| `/unmute <player> [reason]`              | Lift an active mute                            | `punishments.unmute`      |
-| `/ban <player> [reason]`                 | Permanently ban a player                       | `punishments.ban`         |
-| `/tempban <player> <duration> [reason]`  | Ban a player for a set time                    | `punishments.tempban`     |
-| `/unban <player> [reason]`               | Lift an active ban                             | `punishments.unban`       |
-| `/punish history <player>`               | View a player's punishment history             | `punishments.history`     |
+| `/warn <player> <reason>`                | Warn a player (reason required)                | `warrant.warn`        |
+| `/unwarn <player> [id] [reason]`         | Remove a warning (latest one if no ID is given) | `warrant.unwarn`      |
+| `/kick <player> [reason]`                | Kick an online player                          | `warrant.kick`        |
+| `/mute <player> [reason]`                | Permanently mute a player                      | `warrant.mute`        |
+| `/tempmute <player> <duration> [reason]` | Mute a player for a set time                   | `warrant.tempmute`    |
+| `/unmute <player> [reason]`              | Lift an active mute                            | `warrant.unmute`      |
+| `/ban <player> [reason]`                 | Permanently ban a player                       | `warrant.ban`         |
+| `/tempban <player> <duration> [reason]`  | Ban a player for a set time                    | `warrant.tempban`     |
+| `/unban <player> [reason]`               | Lift an active ban                             | `warrant.unban`       |
+| `/punish history <player>`               | View a player's punishment history             | `warrant.history`     |
 
 ### Durations
 
@@ -70,15 +70,15 @@ Durations combine a number with a unit: `s` (seconds), `m` (minutes), `h` (hours
 
 | Permission           | Description                                                    |
 |----------------------|----------------------------------------------------------------|
-| `punishments.notify` | See announcements for silent punishments                       |
-| `punishments.exempt` | Can't be punished (server operators are always exempt)         |
+| `warrant.notify` | See announcements for silent punishments                       |
+| `warrant.exempt` | Can't be punished (server operators are always exempt)         |
 
 ## Configuration
 
 ### `config.yml`
 
 ```yaml
-# Language file to load from plugins/Punishment/lang/
+# Language file to load from plugins/Warrant/lang/
 language: en_US
 
 mute:
@@ -120,8 +120,8 @@ ban:
 Listen for `PlayerPunishedEvent` and `PlayerPunishmentRevokedEvent` to react to punishments, or cancel them before they're saved.
 
 ```java
-import com.bradenkennedy.punishment.api.events.PlayerPunishedEvent;
-import com.bradenkennedy.punishment.api.model.PunishmentType;
+import com.lotusplugins.warrant.api.events.PlayerPunishedEvent;
+import com.lotusplugins.warrant.api.model.PunishmentType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -143,8 +143,8 @@ public final class PunishmentLogger implements Listener {
 ## Building from source
 
 ```sh
-git clone https://github.com/bradenk04/punishments.git
-cd punishments
+git clone https://github.com/lotusplugins/warrant.git
+cd warrant
 ./gradlew shadowJar
 ```
 

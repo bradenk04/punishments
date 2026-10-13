@@ -1,4 +1,4 @@
-import com.bradenkennedy.punishment.storage.H2PunishmentRepository;
+import com.lotusplugins.warrant.storage.H2PunishmentRepository;
 import java.nio.file.Files;
 import java.sql.DriverManager;
 import java.util.UUID;
@@ -12,8 +12,8 @@ class VerifyShadowJar {
                 throw new AssertionError("Unrelocated database classes in distributable");
             }
             for (String entry : new String[] {
-                "com/bradenkennedy/punishment/libs/h2/Driver.class",
-                "com/bradenkennedy/punishment/libs/ormlite/jdbc/JdbcConnectionSource.class",
+                "com/lotusplugins/warrant/libs/h2/Driver.class",
+                "com/lotusplugins/warrant/libs/ormlite/jdbc/JdbcConnectionSource.class",
                 "META-INF/services/java.sql.Driver"
             }) {
                 if (jar.getJarEntry(entry) == null) {
@@ -28,7 +28,7 @@ class VerifyShadowJar {
                 throw new AssertionError("H2 query failed");
             }
             if (!DriverManager.getDriver("jdbc:h2:mem:shadow_smoke").getClass().getName()
-                    .equals("com.bradenkennedy.punishment.libs.h2.Driver")) {
+                    .equals("com.lotusplugins.warrant.libs.h2.Driver")) {
                 throw new AssertionError("Wrong JDBC driver loaded");
             }
         }

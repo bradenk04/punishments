@@ -5,13 +5,13 @@ sidebar:
   order: 6
 ---
 
-Punishments can import existing history from other plugins.
+Warrant can import existing history from other plugins.
 
 ```
 /punish import <source> [--dry-run]
 ```
 
-Imports can only be run from the console and need `punishments.import`.
+Imports can only be run from the console and need `warrant.import`.
 
 ## Sources
 

@@ -116,11 +116,11 @@ tasks.shadowJar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
   }
   mergeServiceFiles()
-  relocate("com.j256.ormlite", "com.bradenkennedy.punishment.libs.ormlite")
-  relocate("org.h2", "com.bradenkennedy.punishment.libs.h2")
-  relocate("net.kyori", "com.bradenkennedy.punishment.libs.kyori")
-  relocate("org.incendo.cloud", "com.bradenkennedy.punishment.libs.cloud")
-  relocate("org.bstats", "com.bradenkennedy.punishment.libs.bstats")
+  relocate("com.j256.ormlite", "com.lotusplugins.warrant.libs.ormlite")
+  relocate("org.h2", "com.lotusplugins.warrant.libs.h2")
+  relocate("net.kyori", "com.lotusplugins.warrant.libs.kyori")
+  relocate("org.incendo.cloud", "com.lotusplugins.warrant.libs.cloud")
+  relocate("org.bstats", "com.lotusplugins.warrant.libs.bstats")
 }
 
 modrinth {

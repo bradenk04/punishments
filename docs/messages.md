@@ -5,7 +5,7 @@ sidebar:
   order: 5
 ---
 
-Every message is in `plugins/Punishment/lang/<language>.yml` and uses [MiniMessage](https://docs.advntr.dev/minimessage/format.html) formatting.
+Every message is in `plugins/Warrant/lang/<language>.yml` and uses [MiniMessage](https://docs.advntr.dev/minimessage/format.html) formatting.
 
 ```yaml
 ban:

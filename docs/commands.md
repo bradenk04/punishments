@@ -1,6 +1,6 @@
 ---
 title: Commands
-description: Every Punishments command, its arguments and permission.
+description: Every Warrant command, its arguments and permission.
 sidebar:
   order: 2
 ---
@@ -9,21 +9,21 @@ sidebar:
 
 | Command                                  | Description                                     | Permission             |
 |------------------------------------------|-------------------------------------------------|------------------------|
-| `/warn <player> <reason>`                | Warn a player (reason required)                 | `punishments.warn`     |
-| `/unwarn <player> [id] [reason]`         | Remove a warning (the latest if no ID is given) | `punishments.unwarn`   |
-| `/kick <player> [reason]`                | Kick an online player                           | `punishments.kick`     |
-| `/mute <player> [reason]`                | Permanently mute a player                       | `punishments.mute`     |
-| `/tempmute <player> <duration> [reason]` | Mute a player for a set time                    | `punishments.tempmute` |
-| `/unmute <player> [reason]`              | Lift an active mute                             | `punishments.unmute`   |
-| `/ban <player> [reason]`                 | Permanently ban a player                        | `punishments.ban`      |
-| `/tempban <player> <duration> [reason]`  | Ban a player for a set time                     | `punishments.tempban`  |
-| `/unban <player> [reason]`               | Lift an active ban                              | `punishments.unban`    |
-| `/punish history <player> [page]`        | View a player's punishment history              | `punishments.history`  |
-| `/punish import <source>`                | Import history from another plugin              | `punishments.import`   |
+| `/warn <player> <reason>`                | Warn a player (reason required)                 | `warrant.warn`     |
+| `/unwarn <player> [id] [reason]`         | Remove a warning (the latest if no ID is given) | `warrant.unwarn`   |
+| `/kick <player> [reason]`                | Kick an online player                           | `warrant.kick`     |
+| `/mute <player> [reason]`                | Permanently mute a player                       | `warrant.mute`     |
+| `/tempmute <player> <duration> [reason]` | Mute a player for a set time                    | `warrant.tempmute` |
+| `/unmute <player> [reason]`              | Lift an active mute                             | `warrant.unmute`   |
+| `/ban <player> [reason]`                 | Permanently ban a player                        | `warrant.ban`      |
+| `/tempban <player> <duration> [reason]`  | Ban a player for a set time                     | `warrant.tempban`  |
+| `/unban <player> [reason]`               | Lift an active ban                              | `warrant.unban`    |
+| `/punish history <player> [page]`        | View a player's punishment history              | `warrant.history`  |
+| `/punish import <source>`                | Import history from another plugin              | `warrant.import`   |
 
 ## Silent mode
 
-Add `-s` or `--silent` to any punishment command. The announcement is then only shown to staff with `punishments.notify`.
+Add `-s` or `--silent` to any punishment command. The announcement is then only shown to staff with `warrant.notify`.
 
 ```
 /ban Herobrine -s Ban evasion
