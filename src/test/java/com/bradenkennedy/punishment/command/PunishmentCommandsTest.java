@@ -29,7 +29,7 @@ class PunishmentCommandsTest extends CommandTestBase {
 
     @BeforeEach
     void registerCommands() {
-        commands = new PunishmentCommands(audiences, repository, config);
+        commands = new PunishmentCommands(audiences, repository, config, support);
         commands.register(manager);
         staff = server.addPlayer("Staff");
         target = server.addPlayer("Target");

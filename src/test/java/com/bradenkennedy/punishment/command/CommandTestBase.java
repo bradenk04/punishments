@@ -27,7 +27,8 @@ abstract class CommandTestBase extends ServerTestBase {
                 new ExemptionCheck(
                         (id, permission) -> CompletableFuture.completedFuture(offlineExempt.contains(id)),
                         Runnable::run),
-                counter);
+                counter,
+                plugin.getLogger());
     }
 
     protected void run(CommandSender sender, String input) {
