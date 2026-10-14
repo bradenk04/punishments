@@ -7,10 +7,10 @@ sidebar:
 
 ## Requirements
 
-| Component | Version             |
-|-----------|---------------------|
-| Server    | Spigot / Paper 26.2 |
-| Java      | 25 or newer         |
+| Component | Version              |
+|-----------|----------------------|
+| Server    | Spigot / Paper 26.2+ |
+| Java      | 25 or newer          |
 
 LuckPerms and Vault are optional. When present they are used to check the [exempt permission](../permissions/#exemption) for players who are offline.
 

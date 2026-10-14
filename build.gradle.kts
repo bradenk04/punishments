@@ -11,7 +11,7 @@ plugins {
 val pluginVersion = project.version.toString()
 val releaseNotes = providers.fileContents(layout.buildDirectory.file("release-notes.md")).asText.orElse("")
 val preRelease = pluginVersion.contains("-")
-val gameVersion = "26.2"
+val supportedGameVersions = listOf("26.2", "26.3")
 
 repositories {
   mavenCentral()
@@ -129,7 +129,7 @@ modrinth {
   versionNumber.set(pluginVersion)
   versionType.set(if (preRelease) "beta" else "release")
   uploadFile.set(tasks.shadowJar)
-  gameVersions.add(gameVersion)
+  gameVersions.addAll(supportedGameVersions)
   loaders.addAll("spigot", "paper")
   changelog.set(releaseNotes)
   debugMode.set(providers.environmentVariable("MODRINTH_DEBUG").isPresent)
@@ -145,7 +145,7 @@ hangarPublish {
     platforms {
       paper {
         jar.set(tasks.shadowJar.flatMap { it.archiveFile })
-        platformVersions.set(listOf(gameVersion))
+        platformVersions.set(supportedGameVersions)
       }
     }
   }

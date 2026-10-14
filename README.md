@@ -26,10 +26,10 @@ Warn, kick, mute and ban players, permanently or for a set time, with a full his
 
 ## Requirements
 
-| Component | Version             |
-|-----------|---------------------|
-| Server    | Spigot / Paper 26.2 |
-| Java      | 25 or newer         |
+| Component | Version              |
+|-----------|----------------------|
+| Server    | Spigot / Paper 26.2+ |
+| Java      | 25 or newer          |
 
 ## Installation
 
