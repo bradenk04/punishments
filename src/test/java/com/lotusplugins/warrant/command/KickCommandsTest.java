@@ -9,6 +9,8 @@ import com.lotusplugins.warrant.api.model.Punishment;
 import com.lotusplugins.warrant.api.model.PunishmentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockbukkit.mockbukkit.entity.PlayerMock;
 
 class KickCommandsTest extends CommandTestBase {
@@ -32,6 +34,16 @@ class KickCommandsTest extends CommandTestBase {
         assertEquals("spamming", stored.reason());
         assertEquals(staff.getUniqueId(), stored.issuer().issuer());
         assertFalse(target.isOnline());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"kick Target spamming loudly -s", "kick Target -s spamming loudly"})
+    void silentKickKeepsReason(String input) {
+        run(staff, input);
+
+        assertEquals(
+                "spamming loudly",
+                history(target.getUniqueId(), PunishmentType.KICK).getFirst().reason());
     }
 
     @Test

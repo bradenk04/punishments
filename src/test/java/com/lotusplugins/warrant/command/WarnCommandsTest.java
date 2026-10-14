@@ -12,6 +12,8 @@ import com.lotusplugins.warrant.listener.WarnListener;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockbukkit.mockbukkit.entity.PlayerMock;
 
 class WarnCommandsTest extends CommandTestBase {
@@ -41,6 +43,16 @@ class WarnCommandsTest extends CommandTestBase {
         assertEquals("be nice", stored.reason());
         assertEquals(staff.getUniqueId(), stored.issuer().issuer());
         assertEquals(null, stored.expiry());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"warn Target be nice -s", "warn Target -s be nice"})
+    void silentWarnKeepsReason(String input) {
+        run(staff, input);
+
+        assertEquals(
+                "be nice",
+                history(target.getUniqueId(), PunishmentType.WARN).getFirst().reason());
     }
 
     @Test
