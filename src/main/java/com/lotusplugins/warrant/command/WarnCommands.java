@@ -1,8 +1,8 @@
 package com.lotusplugins.warrant.command;
 
 import static com.lotusplugins.warrant.command.CommandSupport.issuerId;
+import static com.lotusplugins.warrant.command.parser.ReasonParser.reasonParser;
 import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser;
-import static org.incendo.cloud.parser.standard.StringParser.greedyFlagYieldingStringParser;
 import static org.incendo.cloud.parser.standard.UUIDParser.uuidParser;
 
 import com.lotusplugins.warrant.api.model.Punishment;
@@ -35,14 +35,14 @@ public final class WarnCommands {
         var silent = manager.flagBuilder("silent").withAliases("s");
         manager.command(manager.commandBuilder("warn")
                 .required("player", offlinePlayerParser())
-                .required("reason", greedyFlagYieldingStringParser())
+                .required("reason", reasonParser())
                 .flag(silent)
                 .permission("warrant.warn")
                 .handler(ctx -> support.execute(ctx, () -> warn(ctx))));
         manager.command(manager.commandBuilder("unwarn")
                 .required("player", offlinePlayerParser())
                 .optional("id", uuidParser())
-                .optional("reason", greedyFlagYieldingStringParser())
+                .optional("reason", reasonParser())
                 .flag(silent)
                 .permission("warrant.unwarn")
                 .handler(ctx -> support.execute(ctx, () -> unwarn(ctx))));

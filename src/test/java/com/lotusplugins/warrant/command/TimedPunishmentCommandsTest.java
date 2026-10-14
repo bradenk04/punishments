@@ -66,6 +66,38 @@ class TimedPunishmentCommandsTest extends CommandTestBase {
     @EnumSource(
             value = PunishmentType.class,
             names = {"BAN", "MUTE"})
+    void silentFlagAfterReasonKeepsReason(PunishmentType type) {
+        run(staff, name(type) + " Target griefing badly -s");
+
+        assertEquals(
+                "griefing badly", history(target.getUniqueId(), type).getFirst().reason());
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = PunishmentType.class,
+            names = {"BAN", "MUTE"})
+    void silentFlagBeforeReasonKeepsReason(PunishmentType type) {
+        run(staff, name(type) + " Target -s griefing badly");
+
+        assertEquals(
+                "griefing badly", history(target.getUniqueId(), type).getFirst().reason());
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = PunishmentType.class,
+            names = {"BAN", "MUTE"})
+    void silentTemporaryPunishmentKeepsReason(PunishmentType type) {
+        run(staff, "temp" + name(type) + " Target 1h -s spamming");
+
+        assertEquals("spamming", history(target.getUniqueId(), type).getFirst().reason());
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = PunishmentType.class,
+            names = {"BAN", "MUTE"})
     void temporaryPunishmentExpiresAfterDuration(PunishmentType type) {
         Instant before = Instant.now();
 

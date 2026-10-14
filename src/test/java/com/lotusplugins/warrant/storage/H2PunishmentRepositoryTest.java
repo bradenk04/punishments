@@ -6,12 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.j256.ormlite.dao.DaoManager;
 import com.lotusplugins.warrant.api.model.HistoryPage;
 import com.lotusplugins.warrant.api.model.Punishment;
 import com.lotusplugins.warrant.api.model.PunishmentIssuer;
 import com.lotusplugins.warrant.api.model.PunishmentType;
 import com.lotusplugins.warrant.storage.model.PunishmentModel;
-import com.j256.ormlite.dao.DaoManager;
 import java.io.File;
 import java.sql.SQLException;
 import java.time.Duration;

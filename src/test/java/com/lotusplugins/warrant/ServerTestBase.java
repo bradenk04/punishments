@@ -1,13 +1,13 @@
 package com.lotusplugins.warrant;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.lotusplugins.warrant.api.model.Punishment;
 import com.lotusplugins.warrant.api.model.PunishmentIssuer;
 import com.lotusplugins.warrant.api.model.PunishmentType;
 import com.lotusplugins.warrant.storage.ActivePunishmentCache;
 import com.lotusplugins.warrant.storage.H2PunishmentRepository;
 import com.lotusplugins.warrant.storage.model.PunishmentModel;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
 import java.io.File;
 import java.sql.SQLException;
 import java.time.Instant;

@@ -1,12 +1,12 @@
 package com.lotusplugins.warrant.importer;
 
-import com.lotusplugins.warrant.api.model.Punishment;
-import com.lotusplugins.warrant.api.model.PunishmentIssuer;
-import com.lotusplugins.warrant.api.model.PunishmentType;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.lotusplugins.warrant.api.model.Punishment;
+import com.lotusplugins.warrant.api.model.PunishmentIssuer;
+import com.lotusplugins.warrant.api.model.PunishmentType;
 import java.io.Reader;
 import java.time.Instant;
 import java.time.OffsetDateTime;
