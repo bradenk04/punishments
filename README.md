@@ -1,6 +1,6 @@
 <div align="center">
 
-![Warrant banner](https://placehold.co/1200x300/1e1e2e/f38ba8/png?text=Warrant&font=montserrat)
+![Warrant banner](https://logo-generator.bradenk04.workers.dev/banner.svg?src=github&id=lotusplugins%2Fwarrant&c=eyJpY29uIjoiZ2F2ZWwiLCJpY29uU2V0IjoicGhvc3Bob3IiLCJpY29uVmFyaWFudCI6ImZpbGwiLCJpY29uU2l6ZSI6NTYsInNoYXBlIjoic3F1aXJjbGUiLCJwYXR0ZXJuIjoibWVzaCIsInN0b3BzIjpbeyJjb2xvciI6IiM3ZjFkMWQiLCJwb3MiOjB9LHsiY29sb3IiOiIjZGMyNjI2IiwicG9zIjo1MH0seyJjb2xvciI6IiNmYjkyM2MiLCJwb3MiOjEwMH1dLCJiZyI6WyIjMWYyOTM3IiwiIzBiMGYxNyJdLCJyaW5nIjpmYWxzZX0&stats=stars%2Cforks%2Cversion%2Clicense&title=Warrant&desc=Lightweight+Spigot+plugin+for+server+punishments%3A+bans%2C+mutes%2C+and+kicks.)
 
 **Simple and effective punishment plugin for Spigot / Paper servers.**
 
