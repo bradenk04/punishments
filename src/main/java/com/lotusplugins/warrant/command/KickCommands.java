@@ -2,8 +2,8 @@ package com.lotusplugins.warrant.command;
 
 import static com.lotusplugins.warrant.command.CommandSupport.issuerId;
 import static com.lotusplugins.warrant.command.CommandSupport.reasonOf;
+import static com.lotusplugins.warrant.command.parser.ReasonParser.reasonParser;
 import static org.incendo.cloud.bukkit.parser.PlayerParser.playerParser;
-import static org.incendo.cloud.parser.standard.StringParser.greedyFlagYieldingStringParser;
 
 import com.lotusplugins.warrant.PluginConfig;
 import com.lotusplugins.warrant.PunishmentDetails;
@@ -34,7 +34,7 @@ public final class KickCommands {
     public void register(CommandManager<CommandSender> manager) {
         manager.command(manager.commandBuilder("kick")
                 .required("player", playerParser())
-                .optional("reason", greedyFlagYieldingStringParser())
+                .optional("reason", reasonParser())
                 .flag(manager.flagBuilder("silent").withAliases("s"))
                 .permission("warrant.kick")
                 .handler(ctx -> support.execute(ctx, () -> kick(ctx))));

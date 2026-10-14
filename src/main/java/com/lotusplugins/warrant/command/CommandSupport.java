@@ -5,6 +5,7 @@ import com.lotusplugins.warrant.api.events.PlayerPunishedEvent;
 import com.lotusplugins.warrant.api.events.PlayerPunishmentRevokedEvent;
 import com.lotusplugins.warrant.api.model.Punishment;
 import com.lotusplugins.warrant.api.model.PunishmentType;
+import com.lotusplugins.warrant.command.parser.ReasonParser;
 import com.lotusplugins.warrant.exemption.ExemptionCheck;
 import com.lotusplugins.warrant.metrics.PunishmentCounter;
 import com.lotusplugins.warrant.storage.ActivePunishmentCache;
@@ -73,7 +74,7 @@ public final class CommandSupport {
     }
 
     void announce(CommandContext<CommandSender> ctx, String messageKey, OfflinePlayer target, TagResolver... extra) {
-        boolean silent = ctx.flags().isPresent("silent");
+        boolean silent = ctx.flags().isPresent("silent") || ctx.contains(ReasonParser.LEADING_SILENT_KEY);
         var resolver = TagResolver.builder()
                 .resolver(Placeholder.unparsed("name", nameOf(target)))
                 .resolver(Placeholder.unparsed("staff", ctx.sender().getName()))

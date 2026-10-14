@@ -3,8 +3,8 @@ package com.lotusplugins.warrant.command;
 import static com.lotusplugins.warrant.command.CommandSupport.issuerId;
 import static com.lotusplugins.warrant.command.CommandSupport.reasonOf;
 import static com.lotusplugins.warrant.command.parser.DurationParser.durationParser;
+import static com.lotusplugins.warrant.command.parser.ReasonParser.reasonParser;
 import static org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser;
-import static org.incendo.cloud.parser.standard.StringParser.greedyFlagYieldingStringParser;
 
 import com.lotusplugins.warrant.PluginConfig;
 import com.lotusplugins.warrant.api.model.Punishment;
@@ -40,21 +40,21 @@ public final class TimedPunishmentCommands {
         var silent = manager.flagBuilder("silent").withAliases("s");
         manager.command(manager.commandBuilder(name)
                 .required("player", offlinePlayerParser())
-                .optional("reason", greedyFlagYieldingStringParser())
+                .optional("reason", reasonParser())
                 .flag(silent)
                 .permission("warrant." + name)
                 .handler(ctx -> support.execute(ctx, () -> issue(ctx, type, null, enforce))));
         manager.command(manager.commandBuilder("temp" + name)
                 .required("player", offlinePlayerParser())
                 .required("duration", durationParser())
-                .optional("reason", greedyFlagYieldingStringParser())
+                .optional("reason", reasonParser())
                 .flag(silent)
                 .permission("warrant.temp" + name)
                 .handler(ctx -> support.execute(ctx, () -> issue(ctx, type, ctx.get("duration"), enforce))));
         manager.command(manager.commandBuilder("un" + name)
                 .required("player", offlinePlayerParser())
                 .flag(silent)
-                .optional("reason", greedyFlagYieldingStringParser())
+                .optional("reason", reasonParser())
                 .permission("warrant.un" + name)
                 .handler(ctx -> support.execute(ctx, () -> revoke(ctx, type))));
     }
