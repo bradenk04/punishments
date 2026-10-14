@@ -69,13 +69,7 @@ class CommandRegistrationTest extends CommandTestBase {
         new TimedPunishmentCommands(support, repository, config).register(manager, type, punishment -> {});
 
         assertEquals(
-                Map.of(
-                        name,
-                        "warrant." + name,
-                        "temp" + name,
-                        "warrant.temp" + name,
-                        "un" + name,
-                        "warrant.un" + name),
+                Map.of(name, "warrant." + name, "temp" + name, "warrant.temp" + name, "un" + name, "warrant.un" + name),
                 permissionsByPath());
     }
 

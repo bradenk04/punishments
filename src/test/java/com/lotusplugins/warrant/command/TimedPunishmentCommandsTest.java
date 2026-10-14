@@ -69,7 +69,8 @@ class TimedPunishmentCommandsTest extends CommandTestBase {
     void silentFlagAfterReasonKeepsReason(PunishmentType type) {
         run(staff, name(type) + " Target griefing badly -s");
 
-        assertEquals("griefing badly", history(target.getUniqueId(), type).getFirst().reason());
+        assertEquals(
+                "griefing badly", history(target.getUniqueId(), type).getFirst().reason());
     }
 
     @ParameterizedTest
@@ -79,7 +80,8 @@ class TimedPunishmentCommandsTest extends CommandTestBase {
     void silentFlagBeforeReasonKeepsReason(PunishmentType type) {
         run(staff, name(type) + " Target -s griefing badly");
 
-        assertEquals("griefing badly", history(target.getUniqueId(), type).getFirst().reason());
+        assertEquals(
+                "griefing badly", history(target.getUniqueId(), type).getFirst().reason());
     }
 
     @ParameterizedTest
