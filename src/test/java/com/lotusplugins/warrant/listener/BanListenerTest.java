@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.lotusplugins.warrant.Scheduling;
 import com.lotusplugins.warrant.ServerTestBase;
 import com.lotusplugins.warrant.api.model.PunishmentType;
 import java.net.InetAddress;
@@ -23,7 +24,7 @@ class BanListenerTest extends ServerTestBase {
 
     @BeforeEach
     void createListener() {
-        listener = new BanListener(plugin, repository, config);
+        listener = new BanListener(plugin, new Scheduling(plugin), repository, config);
     }
 
     private AsyncPlayerPreLoginEvent preLogin(UUID uuid) {
@@ -97,11 +98,13 @@ class BanListenerTest extends ServerTestBase {
     }
 
     @Test
-    void kickRemovesBannedOnlinePlayerAfterOneTick() {
+    void kickRemovesBannedOnlinePlayerAfterTwoTicks() {
         PlayerMock target = server.addPlayer("Target");
         var ban = store(target.getUniqueId(), PunishmentType.BAN, null);
 
         listener.kick(ban);
+        assertTrue(target.isOnline());
+        server.getScheduler().performOneTick();
         assertTrue(target.isOnline());
         server.getScheduler().performOneTick();
 

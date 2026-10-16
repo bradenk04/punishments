@@ -3,6 +3,7 @@ version: '${version}'
 main: com.lotusplugins.warrant.WarrantPlugin
 description: Simple and effective punishment plugin
 api-version: '26.2'
+folia-supported: true
 softdepend: [LuckPerms, Vault]
 libraries:
   - org.hsqldb:hsqldb:2.7.4

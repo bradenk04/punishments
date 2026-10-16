@@ -3,6 +3,7 @@ package com.lotusplugins.warrant.importer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.lotusplugins.warrant.Scheduling;
 import com.lotusplugins.warrant.ServerTestBase;
 import java.util.Map;
 import java.util.UUID;
@@ -17,7 +18,7 @@ class ServerKnownPlayersTest extends ServerTestBase {
         UUID id = server.addPlayer("StaffMember").getUniqueId();
 
         CompletableFuture<Map<String, UUID>> snapshot =
-                CompletableFuture.supplyAsync(() -> new ServerKnownPlayers(plugin).get());
+                CompletableFuture.supplyAsync(() -> new ServerKnownPlayers(plugin, new Scheduling(plugin)).get());
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
         while (!snapshot.isDone() && System.nanoTime() < deadline) {
             server.getScheduler().performOneTick();

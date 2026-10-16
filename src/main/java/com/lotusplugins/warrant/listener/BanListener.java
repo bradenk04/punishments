@@ -2,6 +2,7 @@ package com.lotusplugins.warrant.listener;
 
 import com.lotusplugins.warrant.PluginConfig;
 import com.lotusplugins.warrant.PunishmentDetails;
+import com.lotusplugins.warrant.Scheduling;
 import com.lotusplugins.warrant.api.model.Punishment;
 import com.lotusplugins.warrant.api.model.PunishmentType;
 import com.lotusplugins.warrant.storage.PunishmentRepository;
@@ -18,11 +19,13 @@ import org.bukkit.plugin.Plugin;
 public final class BanListener implements Listener {
 
     private final Plugin plugin;
+    private final Scheduling scheduling;
     private final PunishmentRepository repository;
     private final PluginConfig config;
 
-    public BanListener(Plugin plugin, PunishmentRepository repository, PluginConfig config) {
+    public BanListener(Plugin plugin, Scheduling scheduling, PunishmentRepository repository, PluginConfig config) {
         this.plugin = plugin;
+        this.scheduling = scheduling;
         this.repository = repository;
         this.config = config;
     }
@@ -42,10 +45,10 @@ public final class BanListener implements Listener {
     }
 
     public void kick(Punishment ban) {
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        scheduling.global(() -> {
             Player player = Bukkit.getPlayer(ban.target());
             if (player != null) {
-                player.kickPlayer(screen(ban));
+                scheduling.onPlayer(player, () -> player.kickPlayer(screen(ban)));
             }
         });
     }

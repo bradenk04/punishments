@@ -48,7 +48,8 @@ public class WarrantPlugin extends JavaPlugin {
 
         var config = new PluginConfig(this, MiniMessage.miniMessage());
         var cache = new ActivePunishmentCache();
-        var banListener = new BanListener(this, repository, config);
+        var scheduling = new Scheduling(this);
+        var banListener = new BanListener(this, scheduling, repository, config);
         var warnListener = new WarnListener(repository, config, adventure);
         getServer().getPluginManager().registerEvents(new CacheLoadListener(this, repository, cache, config), this);
         getServer()
@@ -60,7 +61,7 @@ public class WarrantPlugin extends JavaPlugin {
         var counter = new PunishmentCounter();
         PluginMetrics.start(this, counter, "H2", "standalone");
 
-        Executor mainThread = task -> getServer().getScheduler().runTask(this, task);
+        Executor mainThread = scheduling::global;
         var support = new CommandSupport(
                 repository,
                 cache,
@@ -75,14 +76,14 @@ public class WarrantPlugin extends JavaPlugin {
         timedCommands.register(commandManager, PunishmentType.MUTE, mute -> {});
         timedCommands.register(commandManager, PunishmentType.BAN, banListener::kick);
         new WarnCommands(support, repository, warnListener).register(commandManager);
-        new KickCommands(this, support, config).register(commandManager);
-        var importer =
-                new PunishmentImporter(repository, new ImportEnforcement(this, cache, banListener::kick), getLogger());
+        new KickCommands(scheduling, support, config).register(commandManager);
+        var importer = new PunishmentImporter(
+                repository, new ImportEnforcement(scheduling, cache, banListener::kick), getLogger());
         var importSources = new ImportSources(
                 getServer().getWorldContainer(),
                 getDataFolder().getParentFile(),
                 new LegacyH2(getDataFolder().toPath().resolve("lib"), LegacyH2.MAVEN_CENTRAL, LegacyH2.SHA256),
-                new ServerKnownPlayers(this),
+                new ServerKnownPlayers(this, scheduling),
                 getLogger());
         new ImportCommands(adventure, config, support, importer, importSources, getLogger()).register(commandManager);
     }

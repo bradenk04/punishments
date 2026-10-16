@@ -7,26 +7,25 @@ import static org.incendo.cloud.bukkit.parser.PlayerParser.playerParser;
 
 import com.lotusplugins.warrant.PluginConfig;
 import com.lotusplugins.warrant.PunishmentDetails;
+import com.lotusplugins.warrant.Scheduling;
 import com.lotusplugins.warrant.api.model.Punishment;
 import com.lotusplugins.warrant.api.model.PunishmentIssuer;
 import com.lotusplugins.warrant.api.model.PunishmentType;
 import java.time.Instant;
 import java.util.UUID;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.context.CommandContext;
 
 public final class KickCommands {
-    private final Plugin plugin;
+    private final Scheduling scheduling;
     private final CommandSupport support;
     private final PluginConfig config;
 
-    public KickCommands(Plugin plugin, CommandSupport support, PluginConfig config) {
-        this.plugin = plugin;
+    public KickCommands(Scheduling scheduling, CommandSupport support, PluginConfig config) {
+        this.scheduling = scheduling;
         this.support = support;
         this.config = config;
     }
@@ -63,6 +62,6 @@ public final class KickCommands {
                         "kick.screen",
                         config.reason(kick.reason()),
                         PunishmentDetails.resolvers(kick, ctx.sender().getName())));
-        Bukkit.getScheduler().runTask(plugin, () -> target.kickPlayer(screen));
+        scheduling.onPlayer(target, () -> target.kickPlayer(screen));
     }
 }

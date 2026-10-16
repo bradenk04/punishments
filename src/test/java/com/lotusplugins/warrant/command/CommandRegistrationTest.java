@@ -3,6 +3,7 @@ package com.lotusplugins.warrant.command;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.lotusplugins.warrant.Scheduling;
 import com.lotusplugins.warrant.api.model.PunishmentType;
 import com.lotusplugins.warrant.listener.WarnListener;
 import java.util.List;
@@ -40,7 +41,7 @@ class CommandRegistrationTest extends CommandTestBase {
 
     @Test
     void kickRegistersWithPermission() {
-        new KickCommands(plugin, support, config).register(manager);
+        new KickCommands(new Scheduling(plugin), support, config).register(manager);
 
         assertEquals(Map.of("kick", "warrant.kick"), permissionsByPath());
     }
@@ -75,7 +76,7 @@ class CommandRegistrationTest extends CommandTestBase {
 
     @Test
     void everyIssuingCommandHasSilentFlagWithAlias() {
-        new KickCommands(plugin, support, config).register(manager);
+        new KickCommands(new Scheduling(plugin), support, config).register(manager);
         new WarnCommands(support, repository, warnListener()).register(manager);
         new TimedPunishmentCommands(support, repository, config)
                 .register(manager, PunishmentType.BAN, punishment -> {});

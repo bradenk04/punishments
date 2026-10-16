@@ -1,18 +1,19 @@
 package com.lotusplugins.warrant.importer;
 
+import com.lotusplugins.warrant.Scheduling;
 import com.lotusplugins.warrant.api.model.Punishment;
 import com.lotusplugins.warrant.storage.ActivePunishmentCache;
 import java.util.function.Consumer;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.Bukkit;
 
 public final class ImportEnforcement implements Consumer<Punishment> {
 
-    private final Plugin plugin;
+    private final Scheduling scheduling;
     private final ActivePunishmentCache cache;
     private final Consumer<Punishment> kickBanned;
 
-    public ImportEnforcement(Plugin plugin, ActivePunishmentCache cache, Consumer<Punishment> kickBanned) {
-        this.plugin = plugin;
+    public ImportEnforcement(Scheduling scheduling, ActivePunishmentCache cache, Consumer<Punishment> kickBanned) {
+        this.scheduling = scheduling;
         this.cache = cache;
         this.kickBanned = kickBanned;
     }
@@ -23,8 +24,8 @@ public final class ImportEnforcement implements Consumer<Punishment> {
         switch (punishment.type()) {
             case BAN -> kickBanned.accept(punishment);
             case MUTE ->
-                plugin.getServer().getScheduler().runTask(plugin, () -> {
-                    if (plugin.getServer().getPlayer(punishment.target()) != null) cache.put(punishment);
+                scheduling.global(() -> {
+                    if (Bukkit.getPlayer(punishment.target()) != null) cache.put(punishment);
                 });
             case WARN, KICK -> {}
         }

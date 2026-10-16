@@ -3,6 +3,7 @@ package com.lotusplugins.warrant.importer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.lotusplugins.warrant.Scheduling;
 import com.lotusplugins.warrant.ServerTestBase;
 import com.lotusplugins.warrant.api.model.Punishment;
 import com.lotusplugins.warrant.api.model.PunishmentIssuer;
@@ -23,7 +24,7 @@ class ImportEnforcementTest extends ServerTestBase {
 
     @BeforeEach
     void createEnforcement() {
-        enforcement = new ImportEnforcement(plugin, cache, kicked::add);
+        enforcement = new ImportEnforcement(new Scheduling(plugin), cache, kicked::add);
     }
 
     private static Punishment punishment(UUID target, PunishmentType type, Instant expiry, boolean revoked) {

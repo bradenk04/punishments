@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.lotusplugins.warrant.Scheduling;
 import com.lotusplugins.warrant.api.events.PlayerPunishedEvent;
 import com.lotusplugins.warrant.api.model.Punishment;
 import com.lotusplugins.warrant.api.model.PunishmentType;
@@ -20,7 +21,7 @@ class KickCommandsTest extends CommandTestBase {
 
     @BeforeEach
     void registerCommands() {
-        new KickCommands(plugin, support, config).register(manager);
+        new KickCommands(new Scheduling(plugin), support, config).register(manager);
         staff = server.addPlayer("Staff");
         target = server.addPlayer("Target");
     }
